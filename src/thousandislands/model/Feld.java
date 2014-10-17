@@ -14,7 +14,6 @@ public class Feld {
 	private List<Feld> direkteNachbarn = new ArrayList<Feld>();
 	private int x;
 	private int y;
-	private String symbol;
 	
 	public Feld (int x, int y) {
 		status = Status.ENTDECKT;
@@ -22,7 +21,6 @@ public class Feld {
 		typ = Typ.VOR_MEER;
 		this.x = x;
 		this.y = y;
-		symbol = ".";
 	}
 	
 	public Status getStatus() {
@@ -35,23 +33,6 @@ public class Feld {
 	
 	public void setTyp(Typ typ) {
 		this.typ = typ;
-		switch (typ) {
-		case MEER: 
-			symbol = ".";
-			break;		
-		case STRAND: 
-			symbol = "-";
-			break;		
-		case DSCHUNGEL: 
-			symbol = "+";
-			break;		
-		case ZENTRUM: 
-			symbol = "#";
-			break;		
-		default: 
-			symbol = " ";
-			break;		
-		}
 	}
 	
 	public List<Feld> getNachbarn() {
@@ -69,14 +50,6 @@ public class Feld {
 	public void setDirekterNachbar(Feld feld) {
 		direkteNachbarn.add(feld);
 	}
-	
-	public String getSymbol() {
-		return symbol;
-	}
-	
-	public void setSymbol(String s) {
-		symbol = s;
-	}
 
 	public int getX() {
 		return x;
@@ -91,8 +64,7 @@ public class Feld {
 		case MEER: return Color.BLUE;
 		case STRAND: return Color.YELLOW;	
 		case DSCHUNGEL: return Color.GREEN;
-		case ZENTRUM: return Color.GREEN;
-//		case ZENTRUM: return Color.BLACK;
+		case ZENTRUM: return Color.BLACK;
 		default: return Color.GRAY;
 		}
 	}

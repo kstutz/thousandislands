@@ -33,6 +33,7 @@ public class InselBauer {
 		erstelleDrittenRing();
 		erstelleViertenRing();
 		erstelleStrand();
+		zentrum.setTyp(Typ.ZENTRUM);
 	}
 	
 	private void erstelleErstenRing() {
@@ -44,52 +45,36 @@ public class InselBauer {
 	}
 	
 	private void erstelleZweitenRing() {
-		//hier wuerfeln, ob große oder kleine Insel
-		
-		//kleine Insel: wieder auf 4 wuerfeln
-		
-		
-		//so wir große Insel
+		int zufall = rand.nextInt(2);
 		List<Feld> moeglicheFelder = findeZweiteFelder();
-		for (Feld feld : moeglicheFelder) {
-			zweiterRing.add(feld);
-			feld.setTyp(Typ.DSCHUNGEL);
-			inselfelder.add(feld);
+		if (zufall == 0) {
+			for (Feld feld : moeglicheFelder) {
+				zweiterRing.add(feld);
+				feld.setTyp(Typ.DSCHUNGEL);
+				inselfelder.add(feld);
+			}
+		} else {
+			for (Feld feld : moeglicheFelder) {
+				int zufall2 = rand.nextInt(4);
+				if (zufall2 != 0) {
+					zweiterRing.add(feld);
+					feld.setTyp(Typ.DSCHUNGEL);
+					inselfelder.add(feld);
+				} else {
+					feld.setTyp(Typ.MEER);
+				}
+			}			
 		}
 	}
 	
 	private void erstelleDrittenRing() {
-		List<Feld> moeglicheFelder = findeDritteFelder();
-		for (Feld feld : moeglicheFelder) {
-			int zufall = rand.nextInt(4);
-			if (zufall != 0) {
-				zweiterRing.add(feld);
-				feld.setTyp(Typ.DSCHUNGEL);
-				inselfelder.add(feld);
-			} else {
-				feld.setTyp(Typ.MEER);
-			}
-		}
-	}
-	
-	private void erstelleViertenRing() {
 		List<Feld> direkteNachbarn = new ArrayList<>();
-		for(Feld feld2 : zweiterRing) {
-			if (feld2.getTyp() != Typ.MEER) {
-				direkteNachbarn.addAll(feld2.getDirekteNachbarn());
-			} else {
-				List<Feld> bla = feld2.getDirekteNachbarn();
-				for (Feld nachbar : bla) {
-					if(nachbar.getTyp() == Typ.VOR_MEER) {
-						nachbar.setTyp(Typ.MEER);
-					}
-				}
-				
-			}
+		for (Feld feld2 : zweiterRing) {
+			direkteNachbarn.addAll(feld2.getDirekteNachbarn());
 		}
 		for (Feld feld3 : direkteNachbarn) {
 			if (feld3.getTyp() == Typ.VOR_MEER) {
-				int zufall = rand.nextInt(2);
+				int zufall = rand.nextInt(3);
 				if (zufall != 0) {
 					dritterRing.add(feld3);
 					feld3.setTyp(Typ.DSCHUNGEL);
@@ -98,7 +83,29 @@ public class InselBauer {
 					feld3.setTyp(Typ.MEER);
 				}
 			}
-		}		
+		}
+	}
+
+	private void erstelleViertenRing() {
+		int zufall = rand.nextInt(2);
+		if (zufall == 0) {
+			List<Feld> direkteNachbarn = new ArrayList<>();
+			for(Feld feld3 : dritterRing) {
+				direkteNachbarn.addAll(feld3.getDirekteNachbarn());
+			}
+			for (Feld feld4 : direkteNachbarn) {
+				if (feld4.getTyp() == Typ.VOR_MEER) {
+					int zufall2 = rand.nextInt(2);
+					if (zufall2 != 0) {
+						vierterRing.add(feld4);
+						feld4.setTyp(Typ.ZENTRUM);
+						inselfelder.add(feld4);						
+					} else {
+						feld4.setTyp(Typ.MEER);
+					}
+				}
+			}			
+		}
 	}
 
 	private void erstelleStrand() {
