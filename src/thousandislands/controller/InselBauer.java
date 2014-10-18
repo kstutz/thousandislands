@@ -33,7 +33,9 @@ public class InselBauer {
 		erstelleDrittenRing();
 		erstelleViertenRing();
 		erstelleStrand();
-		zentrum.setTyp(Typ.ZENTRUM);
+		erstelleZweckfeld();
+		zentrum.setTyp(Typ.DSCHUNGEL);
+//		zentrum.setTyp(Typ.ZENTRUM);
 	}
 	
 	private void erstelleErstenRing() {
@@ -98,21 +100,59 @@ public class InselBauer {
 					int zufall2 = rand.nextInt(2);
 					if (zufall2 != 0) {
 						vierterRing.add(feld4);
-						feld4.setTyp(Typ.ZENTRUM);
+						feld4.setTyp(Typ.DSCHUNGEL);
+//						feld4.setTyp(Typ.ZENTRUM);
 						inselfelder.add(feld4);						
 					} else {
 						feld4.setTyp(Typ.MEER);
 					}
 				}
-			}			
+			}
 		}
 	}
 
 	private void erstelleStrand() {
-		// TODO Auto-generated method stub
+		List<Feld> strandfelder = new ArrayList<>();
+		List<Feld> moeglicheFelder;
+		if (vierterRing.size() > 0) {
+			moeglicheFelder = vierterRing;
+		} else {
+			moeglicheFelder = dritterRing;			
+		}
 		
+		do {
+			for (Feld feld : moeglicheFelder) {
+				int zufall = rand.nextInt(4);
+				if (zufall == 0) {
+					strandfelder.add(feld);
+					feld.setTyp(Typ.STRAND);
+				}
+			}
+		} while (strandfelder.size() == 0);
 	}
-	
+
+	private void erstelleZweckfeld() {
+		boolean gefunden = false;
+		do {
+			int zufall = rand.nextInt(inselfelder.size());
+			Feld zweckfeld = inselfelder.get(zufall);
+			if (zweckfeld.getTyp() == Typ.DSCHUNGEL) {
+				gefunden = true;
+				List<Feld> direkteNachbarn = zweckfeld.getDirekteNachbarn();
+				for (Feld nachbar : direkteNachbarn) {
+					if (nachbar.getTyp() == Typ.MEER || nachbar.getTyp() == Typ.VOR_MEER ) {
+						gefunden = false;
+						break;
+					}
+				}
+				if (gefunden == true) {
+					zweckfeld.setTyp(Typ.ZWECK);					
+				}
+			}
+		} while (!gefunden);
+	}
+
+
 	
 	private List<Feld> findeZweiteFelder(){
 		int x = zentrum.getX() - 2;

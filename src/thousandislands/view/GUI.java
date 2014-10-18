@@ -6,22 +6,40 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 
 import thousandislands.model.Feld;
+import thousandislands.model.Spieldaten;
 
 public class GUI extends JFrame{
+	private Landkarte spielfeld;
+	private RechteSpalte rechteSpalte;
+	private Spieldaten daten;
+	
 
-	public GUI(Feld[][] felder){
+	public GUI(Spieldaten daten){
 		setSize(new Dimension(1000, 600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setTitle("Tausend Inseln");
-		Spielfeld spielfeld = new Spielfeld(felder);
-		add(spielfeld, BorderLayout.CENTER);
-		spielfeld.repaint();
+
+		this.daten = daten;		
+		macheStartklar();
+		
 		setVisible(true);
 	}
 	
+	private void macheStartklar() {
+		//Spielfeld hinzufuegen
+		spielfeld = new Landkarte(daten.getFelder());
+		add(spielfeld, BorderLayout.CENTER);
+		spielfeld.repaint();
+		
+		//rechte Spalte hinzufuegen
+		rechteSpalte = new RechteSpalte();
+		add(rechteSpalte, BorderLayout.EAST);		
+	}
 	
-
-	
-
+	public void aktualisiere() {
+		spielfeld.repaint();
+		rechteSpalte.setzeWasseranzeige(daten.getWasser());
+		rechteSpalte.setzeNahrungsanzeige(daten.getNahrung());
+	}
 }

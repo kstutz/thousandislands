@@ -1,6 +1,5 @@
 package thousandislands.model;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +11,7 @@ public class Feld {
 	private Typ typ;
 	private List<Feld> nachbarn = new ArrayList<Feld>();
 	private List<Feld> direkteNachbarn = new ArrayList<Feld>();
+	private boolean personDa = false;
 	private int x;
 	private int y;
 	
@@ -58,14 +58,12 @@ public class Feld {
 	public int getY() {
 		return y;
 	}
-	
-	public Color getFarbe() {
-		switch (typ) {
-		case MEER: return Color.BLUE;
-		case STRAND: return Color.YELLOW;	
-		case DSCHUNGEL: return Color.GREEN;
-		case ZENTRUM: return Color.BLACK;
-		default: return Color.GRAY;
-		}
+
+	public boolean istPersonDa() {
+		return personDa;
 	}
+
+	public void setPersonDa(boolean personDa) {
+		this.personDa = personDa;
+	}	
 }

@@ -1,6 +1,6 @@
 package thousandislands.model.enums;
 
 public enum Typ {
-	MEER, STRAND, DSCHUNGEL, ZENTRUM,
-	VOR_MEER;
+	MEER, STRAND, DSCHUNGEL, ZWECK,
+	VOR_MEER, ROT;
 }

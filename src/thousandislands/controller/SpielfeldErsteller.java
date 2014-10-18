@@ -38,6 +38,8 @@ public class SpielfeldErsteller {
 				}
 			}
 		}
+		
+		felder[0][0].setPersonDa(true);
 	}
 	
 	public Feld[][] getSpielfeld() {
