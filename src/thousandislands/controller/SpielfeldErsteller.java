@@ -23,6 +23,7 @@ public class SpielfeldErsteller {
 
 	private Feld [][] felder = new Feld[FELDANZAHL_WAAGERECHT][FELDANZAHL_SENKRECHT];
 	private List<Insel> inseln = new ArrayList<Insel>();
+	private List<Feld> zweckfelder = new ArrayList<>();
 	private Random rand = new Random();
 	
 	
@@ -38,8 +39,8 @@ public class SpielfeldErsteller {
 				}
 			}
 		}
+		verteileZwecke();
 		
-		felder[0][0].setPersonDa(true);
 	}
 	
 	public Feld[][] getSpielfeld() {
@@ -61,6 +62,7 @@ public class SpielfeldErsteller {
 				if (i > 0) {
 					felder[i][j].setNachbar(felder[i-1][j]);
 					felder[i][j].setDirekterNachbar(felder[i-1][j]);
+					felder[i][j].setNachbarW(felder[i-1][j]);
 					if (j > 0) {
 						felder[i][j].setNachbar(felder[i-1][j-1]);
 					}
@@ -71,6 +73,7 @@ public class SpielfeldErsteller {
 				if (i < FELDANZAHL_WAAGERECHT-1) { 
 					felder[i][j].setNachbar(felder[i+1][j]);
 					felder[i][j].setDirekterNachbar(felder[i+1][j]);
+					felder[i][j].setNachbarO(felder[i+1][j]);
 					if (j > 0) {
 						felder[i][j].setNachbar(felder[i+1][j-1]);
 					}
@@ -81,10 +84,12 @@ public class SpielfeldErsteller {
 				if (j > 0) {
 					felder[i][j].setNachbar(felder[i][j-1]);
 					felder[i][j].setDirekterNachbar(felder[i][j-1]);
+					felder[i][j].setNachbarN(felder[i][j-1]);
 				}
 				if (j < FELDANZAHL_SENKRECHT-1) {
 					felder[i][j].setNachbar(felder[i][j+1]);
 					felder[i][j].setDirekterNachbar(felder[i][j+1]);
+					felder[i][j].setNachbarS(felder[i][j+1]);
 				}
 			}
 		}		
@@ -99,7 +104,10 @@ public class SpielfeldErsteller {
 			if (!istUmgebungFrei(zentrum)) {
 				continue;
 			}
-			new InselBauer(zentrum, felder);
+//			zweckfelder.add(new InselBauer(zentrum, felder).getZweckfeld());
+			zentrum = felder[zentrum.getX()-6][zentrum.getY()-6];
+			new InselBauer2(zentrum,felder);
+			
 			inselanzahl++;
 		}
 	}
@@ -130,5 +138,57 @@ public class SpielfeldErsteller {
 		}
 		
 		return true;
-	}	
+	}
+	
+	private void verteileZwecke() {
+		List<Feld> ersteZwei = sucheInselnLinksOben();
+		ersteZwei.get(0).setTyp(Typ.QUELLE);
+		ersteZwei.get(1).setTyp(Typ.FRUECHTE);
+
+//		for (Feld feld : zweckfelder) {
+//			if (feld.getTyp() == Typ.ZWECK) {
+//				int zufall = rand.nextInt(3);
+//				if (zufall == 0) {
+//					feld.setTyp(Typ.QUELLE);
+//				}
+//				if (zufall == 1) {
+//					feld.setTyp(Typ.FRUECHTE);
+//				}
+//				if (zufall == 2) {
+//					feld.setTyp(Typ.HOLZ);
+//				}
+//			}
+//		}
+	}
+	
+	private List<Feld> sucheInselnLinksOben() {
+		Feld naechstes = new Feld(-1, -1);
+		Feld zweitnaechstes = new Feld(-1, -1);
+		int kleinsterAbstand1 = 100000;
+		int kleinsterAbstand2 = 100000;
+		
+		for (Feld feld : zweckfelder ) {
+			
+			int entfernung = feld.getX() + feld.getY();
+			System.out.println("Entfernung: " + entfernung);
+			System.out.println(feld.getX() + ", " + feld.getY());
+			
+			if (entfernung < kleinsterAbstand1) {
+				naechstes = feld;
+				kleinsterAbstand1 = entfernung;
+			} else if (entfernung < kleinsterAbstand2) {
+				zweitnaechstes = feld;
+				kleinsterAbstand2 = entfernung;
+			}
+		}
+		naechstes.setTyp(Typ.ROT);
+		zweitnaechstes.setTyp(Typ.ROT);
+		
+		List<Feld> ersteZweiInseln = new ArrayList<>();
+		ersteZweiInseln.add(naechstes);
+		ersteZweiInseln.add(zweitnaechstes);
+		return ersteZweiInseln;		
+	}
+	
+
 }

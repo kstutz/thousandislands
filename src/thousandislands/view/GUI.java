@@ -5,7 +5,6 @@ import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
-import thousandislands.model.Feld;
 import thousandislands.model.Spieldaten;
 
 public class GUI extends JFrame{
@@ -15,7 +14,7 @@ public class GUI extends JFrame{
 	
 
 	public GUI(Spieldaten daten){
-		setSize(new Dimension(1000, 600));
+		setSize(new Dimension(1100, 600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setTitle("Tausend Inseln");
@@ -24,6 +23,8 @@ public class GUI extends JFrame{
 		macheStartklar();
 		
 		setVisible(true);
+		setFocusable(true);
+	    requestFocus();
 	}
 	
 	private void macheStartklar() {

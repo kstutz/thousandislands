@@ -15,10 +15,9 @@ public class InselBauer {
 	private List<Feld> zweiterRing = new ArrayList<>();
 	private List<Feld> dritterRing = new ArrayList<>();
 	private List<Feld> vierterRing = new ArrayList<>();
+	private Feld zweckfeld;
 	
 	private Random rand = new Random();
-
-	
 	
 	public InselBauer(Feld zentrum, Feld[][] spielfeld) {
 		this.zentrum = zentrum;
@@ -36,6 +35,10 @@ public class InselBauer {
 		erstelleZweckfeld();
 		zentrum.setTyp(Typ.DSCHUNGEL);
 //		zentrum.setTyp(Typ.ZENTRUM);
+	}
+	
+	public Feld getZweckfeld() {
+		return zweckfeld;
 	}
 	
 	private void erstelleErstenRing() {
@@ -146,12 +149,12 @@ public class InselBauer {
 					}
 				}
 				if (gefunden == true) {
-					zweckfeld.setTyp(Typ.ZWECK);					
+					zweckfeld.setTyp(Typ.ZWECK);
+					this.zweckfeld = zweckfeld;
 				}
 			}
 		} while (!gefunden);
 	}
-
 
 	
 	private List<Feld> findeZweiteFelder(){
@@ -170,20 +173,20 @@ public class InselBauer {
 		return liste;
 	}
 	
-	private List<Feld> findeDritteFelder(){
-		int x = zentrum.getX() - 3;
-		int y = zentrum.getY() - 3;
-		
-		List<Feld> liste = new ArrayList<>();
-		for (int i=0; i<7; i++){
-			liste.add(spielfeld[x+i][y]);
-			liste.add(spielfeld[x+i][y+6]);
-		}
-		for (int i=1; i<6; i++){
-			liste.add(spielfeld[x][y+i]);
-			liste.add(spielfeld[x+6][y+i]);
-		}
-		return liste;
-	}
+//	private List<Feld> findeDritteFelder(){
+//		int x = zentrum.getX() - 3;
+//		int y = zentrum.getY() - 3;
+//		
+//		List<Feld> liste = new ArrayList<>();
+//		for (int i=0; i<7; i++){
+//			liste.add(spielfeld[x+i][y]);
+//			liste.add(spielfeld[x+i][y+6]);
+//		}
+//		for (int i=1; i<6; i++){
+//			liste.add(spielfeld[x][y+i]);
+//			liste.add(spielfeld[x+6][y+i]);
+//		}
+//		return liste;
+//	}
 
 }

@@ -14,6 +14,10 @@ public class Feld {
 	private boolean personDa = false;
 	private int x;
 	private int y;
+	private Feld nachbarO;
+	private Feld nachbarW;
+	private Feld nachbarN;
+	private Feld nachbarS;
 	
 	public Feld (int x, int y) {
 		status = Status.ENTDECKT;
@@ -65,5 +69,37 @@ public class Feld {
 
 	public void setPersonDa(boolean personDa) {
 		this.personDa = personDa;
-	}	
+	}
+
+	public Feld getNachbarO() {
+		return nachbarO;
+	}
+
+	public void setNachbarO(Feld feld) {
+		this.nachbarO = feld;
+	}
+
+	public Feld getNachbarW() {
+		return nachbarW;
+	}
+
+	public void setNachbarW(Feld feld) {
+		this.nachbarW = feld;
+	}
+
+	public Feld getNachbarN() {
+		return nachbarN;
+	}
+	
+	public void setNachbarN(Feld feld) {
+		this.nachbarN = feld;
+	}
+
+	public Feld getNachbarS() {
+		return nachbarS;
+	}
+
+	public void setNachbarS(Feld feld) {
+		this.nachbarS = feld;
+	}
 }

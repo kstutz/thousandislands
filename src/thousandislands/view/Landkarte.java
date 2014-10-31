@@ -33,7 +33,7 @@ public class Landkarte extends JPanel{
 	
 	private Color getFarbe(Feld feld) {
 		if (feld.istPersonDa()) {
-			return Color.ORANGE;
+			return Color.MAGENTA;
 		}
 		switch (feld.getTyp()) {
 		case MEER: return Color.BLUE;
@@ -41,6 +41,8 @@ public class Landkarte extends JPanel{
 		case DSCHUNGEL: return Color.GREEN;
 		case ZWECK: return Color.BLACK;
 		case ROT: return Color.RED;
+		case QUELLE: return Color.CYAN;
+		case FRUECHTE: return Color.ORANGE;
 		default: return Color.GRAY;
 		}
 	}
