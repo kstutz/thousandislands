@@ -27,9 +27,18 @@ public class InselBauer2 {
 	
 	public void erstelleInsel(){
 		
-		fuelleArrayGross();
+		int zufall = rand.nextInt(3);
+		if (zufall == 0) {
+			fuelleArrayKlein();
+		} else if (zufall == 1) {
+			fuelleArrayMittel();
+		} else {
+			fuelleArrayGross();
+		}
+		
 		wuerfele();
 		entferneSeen();
+		erstelleStrand();
 //		erstelleZweckfeld();
 	}
 	
@@ -123,6 +132,71 @@ public class InselBauer2 {
 		return false;
 	}
 	
+	private void erstelleStrand() {		
+		int anzahlStraende = 2 + rand.nextInt(4); 
+		
+		for (int i=0; i<anzahlStraende; i++) {
+			int zufall;
+			Feld feld;
+			
+			do {
+				zufall = rand.nextInt(inselfelder.size());
+				feld = inselfelder.get(zufall);			
+			} while (!koennteStrandSein(feld));
+			
+			feld.setTyp(Typ.STRAND);
+			
+			List<Feld> nachbarn = feld.getDirekteNachbarn();
+			for (Feld nachbar : nachbarn) {
+				if (koennteStrandSein(nachbar)) {
+					nachbar.setTyp(Typ.STRAND);
+				}
+			}
+		}
+		
+		for (Feld feld : inselfelder) {
+			if (feld.getTyp() == Typ.DSCHUNGEL && sollteStrandSein(feld)) {
+				feld.setTyp(Typ.STRAND);
+			}
+		}
+		
+	}
+	
+	private boolean koennteStrandSein(Feld feld) {
+		if (feld.getTyp() == Typ.DSCHUNGEL && liegtAmMeer(feld) && !istInselchen(feld)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private boolean istInselchen(Feld feld) {
+		List<Feld> nachbarn = feld.getDirekteNachbarn();
+		if (feld.getTyp() != Typ.DSCHUNGEL) {
+			return false;
+		}
+		for (Feld nachbar : nachbarn) {
+			if (nachbar.getTyp() != Typ.MEER) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean sollteStrandSein(Feld feld) {
+		boolean strandNachbar = false;
+		
+		for (Feld nachbar : feld.getDirekteNachbarn()) {
+			if (nachbar.getTyp() == Typ.DSCHUNGEL) {
+				return false;
+			}
+			if (nachbar.getTyp() == Typ.STRAND) {
+				strandNachbar = true;
+			}
+		}
+		return strandNachbar;
+	}
+
 	
 	public Feld getZweckfeld() {
 		return zweckfeld;
