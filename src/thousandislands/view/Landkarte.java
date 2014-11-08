@@ -39,6 +39,7 @@ public class Landkarte extends JPanel{
 		case MEER: return Color.BLUE;
 		case STRAND: return Color.YELLOW;	
 		case DSCHUNGEL: return Color.GREEN;
+		case SCHATZ: return Color.GREEN;
 		case ZWECK: return Color.BLACK;
 		case ROT: return Color.RED;
 		case QUELLE: return Color.CYAN;

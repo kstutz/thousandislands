@@ -24,13 +24,14 @@ public class SpielfeldErsteller {
 	private Feld [][] felder = new Feld[FELDANZAHL_WAAGERECHT][FELDANZAHL_SENKRECHT];
 	private List<Insel> inseln = new ArrayList<Insel>();
 	private List<Feld> zweckfelder = new ArrayList<>();
+	private Feld anfangSchatzinsel;
 	private Random rand = new Random();
 	
 	
 	public SpielfeldErsteller(){
 		erzeugeFelder();
 		verbindeFelder();
-		erstelleInseln2();
+		erstelleInseln();
 		
 		for (int i = 0; i<FELDANZAHL_WAAGERECHT; i++) {
 			for (int j=0; j<FELDANZAHL_SENKRECHT; j++) {
@@ -96,17 +97,26 @@ public class SpielfeldErsteller {
 	}
 	
 	
-	public void erstelleInseln2() {
+	public void erstelleInseln() {
 		int inselanzahl = 0;
+		
+		//erste Insel erstellen mit Wasser
+		//zweite Insel erstellen mit Nahrung		
 		
 		while (inselanzahl < ANZAHL_INSELN) {
 			Feld zentrum = findeZentrum();
 			if (!istUmgebungFrei(zentrum)) {
 				continue;
 			}
-//			zweckfelder.add(new InselBauer(zentrum, felder).getZweckfeld());
+
 			zentrum = felder[zentrum.getX()-6][zentrum.getY()-6];
-			new InselBauer2(zentrum,felder);
+			InselBauer inselbauer = new InselBauer(zentrum,felder);
+			zweckfelder.add(inselbauer.getZweckfeld());
+			
+			if (inselanzahl == 3) {
+				anfangSchatzinsel = zentrum;
+				inselbauer.versteckeSchatz();
+			}
 			
 			inselanzahl++;
 		}
@@ -189,6 +199,4 @@ public class SpielfeldErsteller {
 		ersteZweiInseln.add(zweitnaechstes);
 		return ersteZweiInseln;		
 	}
-	
-
 }

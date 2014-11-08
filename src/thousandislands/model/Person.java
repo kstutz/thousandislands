@@ -8,9 +8,11 @@ public class Person {
 	private int maxWasser = 100;
 	private int maxNahrung = 100;
 	private Feld aktuellesFeld;
+	private boolean hatSchatzkarte;
 	
 	public Person(Feld feld) {
 		aktuellesFeld = feld;
+		hatSchatzkarte = false;
 	}
 		
 	public int getWasser() {
@@ -95,4 +97,11 @@ public class Person {
 		return true;
 	}
 
+	public boolean hatSchatzkarte() {
+		return hatSchatzkarte;
+	}
+	
+	public void kriegtSchatzkarte() {
+		hatSchatzkarte = true;
+	}
 }

@@ -12,6 +12,7 @@ public class Feld {
 	private List<Feld> nachbarn = new ArrayList<Feld>();
 	private List<Feld> direkteNachbarn = new ArrayList<Feld>();
 	private boolean personDa = false;
+	private boolean hatFlaschenpost = false;
 	private int x;
 	private int y;
 	private Feld nachbarO;
@@ -102,4 +103,16 @@ public class Feld {
 	public void setNachbarS(Feld feld) {
 		this.nachbarS = feld;
 	}
+
+	public boolean hatFlaschenpost() {
+		return hatFlaschenpost;
+	}
+
+//	public void setSchatz(boolean hatSchatz) {
+//		this.hatSchatz = hatSchatz;
+//	}
+//
+//	public boolean hatSchatz() {
+//		return hatSchatz;
+//	}
 }

@@ -55,13 +55,25 @@ public class Controller extends KeyAdapter {
 			person.nahrungAbziehen();
 			gui.aktualisiere();
 		}
-		if (person.getAktuellesFeld().getTyp() == Typ.ZWECK) {
+		
+		Feld aktuellesFeld = person.getAktuellesFeld();
+		if (aktuellesFeld.getTyp() == Typ.ZWECK) {
 			behandleZweckfeld();
+		}
+		if (person.hatSchatzkarte() && aktuellesFeld.getTyp() == Typ.SCHATZ) {
+			behandleSchatzfund();
+		}
+		if (aktuellesFeld.hatFlaschenpost()) {
+			person.kriegtSchatzkarte();
 		}
 	}
 
 	private void behandleZweckfeld() {
 		// TODO Auto-generated method stub
-		
 	}	
+	
+	private void behandleSchatzfund() {
+		// TODO Auto-generated method stub		
+	}
+
 }
