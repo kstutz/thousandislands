@@ -3,16 +3,23 @@ package thousandislands.model;
 import thousandislands.model.enums.Typ;
 
 public class Person {
-	private int wasser = 100;
-	private int nahrung = 100;
-	private int maxWasser = 100;
-	private int maxNahrung = 100;
+	private int wasser;
+	private int nahrung;
+	private int maxWasser;
+	private int maxNahrung;
 	private Feld aktuellesFeld;
 	private boolean hatSchatzkarte;
+	private boolean hatFloss;
+	private boolean hatKrug;
+	private boolean hatKorb;
 	
 	public Person(Feld feld) {
 		aktuellesFeld = feld;
 		hatSchatzkarte = false;
+		wasser = 100;
+		nahrung = 100;
+		maxWasser = 100;
+		maxNahrung = 100;
 	}
 		
 	public int getWasser() {
@@ -104,4 +111,29 @@ public class Person {
 	public void kriegtSchatzkarte() {
 		hatSchatzkarte = true;
 	}
+
+	public boolean hatFloss() {
+		return hatFloss;
+	}
+
+	public void setFloss(boolean hatFloss) {
+		this.hatFloss = hatFloss;
+	}
+
+	public boolean hatKrug() {
+		return hatKrug;
+	}
+
+	public void setKrug(boolean hatKrug) {
+		this.hatKrug = hatKrug;
+	}
+
+	public boolean hatKorb() {
+		return hatKorb;
+	}
+
+	public void setKorb(boolean hatKorb) {
+		this.hatKorb = hatKorb;
+	}
+
 }

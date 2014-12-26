@@ -5,10 +5,12 @@ import java.util.List;
 
 import thousandislands.model.enums.Status;
 import thousandislands.model.enums.Typ;
+import thousandislands.model.enums.Zweck;
 
 public class Feld {
 	private Status status;
 	private Typ typ;
+	private Zweck zweck;
 	private List<Feld> nachbarn = new ArrayList<Feld>();
 	private List<Feld> direkteNachbarn = new ArrayList<Feld>();
 	private boolean personDa = false;
@@ -106,6 +108,14 @@ public class Feld {
 
 	public boolean hatFlaschenpost() {
 		return hatFlaschenpost;
+	}
+
+	public Zweck getZweck() {
+		return zweck;
+	}
+
+	public void setZweck(Zweck zweck) {
+		this.zweck = zweck;
 	}
 
 //	public void setSchatz(boolean hatSchatz) {

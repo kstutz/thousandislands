@@ -3,6 +3,8 @@ package thousandislands.model;
 public class Spieldaten {
 	private Feld[][] felder;
 	private Person person;
+	private String[] schiffsteile = {	"Mast", "Rumpf", "Segel", "Kompass", "Werkzeug", 
+			"Tonkruege", "Koerbe", "Wasser", "Nahrung"};
 	
 	public Spieldaten(Feld[][] felder, Person person) {
 		this.felder = felder;
@@ -21,4 +23,7 @@ public class Spieldaten {
 		return felder;
 	}
 	
+	public String[] getSchiffsteile() {
+		return schiffsteile;
+	}
 }

@@ -7,6 +7,7 @@ import java.util.Random;
 import thousandislands.model.Feld;
 import thousandislands.model.Insel;
 import thousandislands.model.enums.Typ;
+import thousandislands.model.enums.Zweck;
 
 public class SpielfeldErsteller {
 	
@@ -17,8 +18,6 @@ public class SpielfeldErsteller {
 	private static final int FELDANZAHL_WAAGERECHT = 100;
 	private static final int FELDANZAHL_SENKRECHT = 60;
 	private static final int ABSTAND_FUER_ZENTRUM = 6;
-//	private static final int BEREICHSBREITE_IN_FELDERN = 20;
-//	private static final int BEREICHSHOEHE_IN_FELDERN = 20;	
 	private static final int ANZAHL_INSELN = 15;
 
 	private Feld [][] felder = new Feld[FELDANZAHL_WAAGERECHT][FELDANZAHL_SENKRECHT];
@@ -100,8 +99,9 @@ public class SpielfeldErsteller {
 	public void erstelleInseln() {
 		int inselanzahl = 0;
 		
-		//erste Insel erstellen mit Wasser
-		//zweite Insel erstellen mit Nahrung		
+		//TODO: erste Insel erstellen mit Wasser
+		//TODO: zweite Insel erstellen mit Nahrung		
+		//TODO: dritte Insel erstellen als Schiffbauinsel (rechts, Mitte, großer Strand)
 		
 		while (inselanzahl < ANZAHL_INSELN) {
 			Feld zentrum = findeZentrum();
@@ -113,7 +113,7 @@ public class SpielfeldErsteller {
 			InselBauer inselbauer = new InselBauer(zentrum,felder);
 			zweckfelder.add(inselbauer.getZweckfeld());
 			
-			if (inselanzahl == 3) {
+			if (inselanzahl == 4) {
 				anfangSchatzinsel = zentrum;
 				inselbauer.versteckeSchatz();
 			}
@@ -151,9 +151,14 @@ public class SpielfeldErsteller {
 	}
 	
 	private void verteileZwecke() {
+		
+		//TODO: Inseln ausnehmen, die schon Zweck haben (erste, zweite, Schiffbau)
+		
 		List<Feld> ersteZwei = sucheInselnLinksOben();
-		ersteZwei.get(0).setTyp(Typ.QUELLE);
-		ersteZwei.get(1).setTyp(Typ.FRUECHTE);
+		ersteZwei.get(0).setTyp(Typ.ZWECK);
+		ersteZwei.get(0).setZweck(Zweck.WASSER);
+		ersteZwei.get(1).setTyp(Typ.ZWECK);
+		ersteZwei.get(1).setZweck(Zweck.NAHRUNG);
 
 //		for (Feld feld : zweckfelder) {
 //			if (feld.getTyp() == Typ.ZWECK) {
