@@ -25,7 +25,8 @@ public class Feld {
 	public Feld (int x, int y) {
 		status = Status.ENTDECKT;
 //		status = Status.UNENTDECKT;
-		typ = Typ.VOR_MEER;
+		typ = Typ.MEER;
+//		typ = Typ.VOR_MEER;
 		this.x = x;
 		this.y = y;
 	}

@@ -1,7 +1,10 @@
 package thousandislands.controller;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.EventListener;
 import java.util.Set;
 
 import thousandislands.model.Feld;
@@ -15,7 +18,7 @@ import thousandislands.model.enums.Zweck;
 import thousandislands.view.GUI;
 
 
-public class Controller extends KeyAdapter {
+public class Controller extends KeyAdapter implements ActionListener {
 	private GUI gui;
 	private Person person;
 	private Inventar inventar;
@@ -36,6 +39,7 @@ public class Controller extends KeyAdapter {
 		gui = new GUI(spieldaten);
 		gui.aktualisiere();
 		gui.addKeyListener(this);
+		gui.actionListenerHinzufuegen(this);
 		gui.zeigeNachricht("Hallo!");
 	}
 	
@@ -151,17 +155,43 @@ public class Controller extends KeyAdapter {
 				} else {
 					gui.zeigeNachricht("Ich habe Lianen! Wenn ich jetzt noch Holz finde, kann ich mir ein Floss bauen.");
 				}
-			}
-			
+			}			
 			break;
 			
+		case TON:
+			gui.zeigeNachricht("Hier gibt's Ton! Daraus kann ich mir einen Krug fuer mein Wasser formen.");
+
+			//wenn schon Ton auf Floss oder auf Schiffbauinsel, dann braucht man keinen mehr
+			if (inventar.enthaelt(Ladung.TON) || schiffsteile.contains(Schiffsteile.WASSER)) {
+				gui.zeigeNachricht("Ich habe schon genug Ton!");
+				break;
+			}
+			break;
+		
+		case SCHILF:
+			gui.zeigeNachricht("Schilf! Daraus kann ich mir einen Korb für die Früchte flechten.");
+			gui.beschrifteKnopf("Korb flechten");			
+
+			//wenn schon Korb auf Floss oder auf Schiffbauinsel, dann braucht man keinen mehr
+			if (inventar.enthaelt(Ladung.KORB) || schiffsteile.contains(Schiffsteile.NAHRUNG)) {
+				gui.zeigeNachricht("Ich habe schon einen Korb für meinen Proviant!");
+				break;
+			}
+			break;
+		
+		case FEUER:
+			break;
+			
+		case PAPAYA:
+			break;
 			
 		default: break;
 	    }
 	}	
 	
 	private void behandleSchatzfund() {
-		// TODO Auto-generated method stub		
+		// TODO: Segel in Inventar (wenn es nicht zu schwer ist!)
+		// TODO: Schatzkartenknopf ausgrauen
 	}
 	
 	private int getTragfaehigkeit() {
@@ -172,5 +202,15 @@ public class Controller extends KeyAdapter {
 		}
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent event) {		
+		if (event.getActionCommand().equals("KARTE")){
+			gui.zeigeNachricht("Karte!");
+			// TODO: Schatzkarte anzeigen bei Schatzkartenknopf
+		} else {
+			gui.zeigeNachricht("Alles!");
+			// TODO: Text-Ausgabe bei Knopf für alles			
+		}
+	}
 
 }

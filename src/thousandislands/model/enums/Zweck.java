@@ -3,6 +3,8 @@ package thousandislands.model.enums;
 public enum Zweck {
 	
 	WASSER, NAHRUNG, HOLZ, LIANEN,
-	SCHIFFBAU;
+	TON, FEUER, GROSSER_BAUM, SCHILF, 
+	HUETTE, PAPAYA, RUINE, 
+	SCHIFFBAU, LEER;
 
 }

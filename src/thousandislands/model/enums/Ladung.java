@@ -2,8 +2,9 @@ package thousandislands.model.enums;
 
 public enum Ladung {
 	LIANE (1),
-	KOMPASS (1),
 	HOLZ (5),
+	TON (2),
+	KOMPASS (1),
 	KRUG (2),
 	KORB (2),
 	MAST (5),

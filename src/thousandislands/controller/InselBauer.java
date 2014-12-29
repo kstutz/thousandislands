@@ -6,20 +6,23 @@ import java.util.Random;
 
 import thousandislands.model.Feld;
 import thousandislands.model.enums.Typ;
+import thousandislands.model.enums.Zweck;
 
 public class InselBauer {
 	private int xDazu;
 	private int yDazu;
 	private Feld[][] spielfeld;
+	private Zweck zweck;
 	private int[][] spielfeldteil;
 	private List<Feld> inselfelder = new ArrayList<>();
 	private Feld zweckfeld;
 	private Random rand = new Random();
 	
-	public InselBauer(Feld anfang, Feld[][] spielfeld) {
+	public InselBauer(Feld anfang, Feld[][] spielfeld, Zweck zweck) {
 		this.xDazu = anfang.getX();
 		this.yDazu = anfang.getY();
 		this.spielfeld = spielfeld;
+		this.zweck = zweck;
 		
 		erstelleInsel();
 	}
@@ -27,18 +30,25 @@ public class InselBauer {
 	
 	public void erstelleInsel(){		
 		int zufall = rand.nextInt(3);
-		if (zufall == 0) {
+		if (zufall == 0 || zweck == Zweck.WASSER) {
 			fuelleArrayKlein();
-		} else if (zufall == 1) {
+		} else if (zufall == 1 || zweck == Zweck.NAHRUNG) {
 			fuelleArrayMittel();
 		} else {
 			fuelleArrayGross();
 		}
 		
-		wuerfele();
-		entferneSeen();
-		erstelleStrand();
-		erstelleZweckfeld();
+		if (zweck == Zweck.SCHIFFBAU) {
+		    fuelleArraySchiffbau();	
+			wuerfele();
+			entferneSeen();
+			erstelleZweckfeld();			
+		} else {
+			wuerfele();
+			entferneSeen();
+			erstelleStrand();
+			erstelleZweckfeld();			
+		}
 	}
 	
 
@@ -93,13 +103,33 @@ public class InselBauer {
 
 		spielfeldteil = muster;
 	}
-	
+
+	private void fuelleArraySchiffbau() {
+		
+		int muster[][] = { 	{0,0,0,0,0,0,0,0,0,0,0,0},
+							{0,0,0,-3,-3,-3,-3,-3,-3,0,0,0},
+							{0,0,-3,-4,-5,-5,-5,-5,-4,-3,0,0},
+							{0,1,2,3,-5,-5,-5,-5,3,2,1,0},
+							{0,2,3,4,5,-5,-5,-5,4,3,2,0},
+							{0,2,3,4,5,5,5,5,4,3,2,0},
+							{0,2,4,5,5,5,5,5,5,4,2,0},
+							{0,2,4,5,5,5,5,5,5,4,2,0},
+							{0,1,2,3,4,5,5,4,3,2,1,0},
+							{0,0,1,2,3,4,4,3,2,1,0,0},
+							{0,0,0,1,2,2,2,2,1,0,0,0},
+							{0,0,0,0,0,0,0,0,0,0,0,0}};
+		
+		spielfeldteil = muster;
+	}
+
 	private void wuerfele() {
 		for (int i = 0; i<12; i++) {
 			for (int j = 0; j<12; j++) {
 				spielfeldteil[i][j] += rand.nextInt(4);
-				if (spielfeldteil[i][j] < 4) {
+				if (spielfeldteil[i][j] >= 0 && spielfeldteil[i][j] < 4) {
 					spielfeld[i+xDazu][j+yDazu].setTyp(Typ.MEER);
+				} else if (spielfeldteil[i][j] < 0) {
+					spielfeld[i+xDazu][j+yDazu].setTyp(Typ.STRAND);
 				} else {
 					spielfeld[i+xDazu][j+yDazu].setTyp(Typ.DSCHUNGEL);
 					inselfelder.add(spielfeld[i+xDazu][j+yDazu]);
@@ -207,6 +237,12 @@ public class InselBauer {
 				}
 			}
 		} while (this.zweckfeld == null);
+		
+		zweckfeld.setTyp(Typ.ZWECK);
+
+		if (zweck != null) {
+			zweckfeld.setZweck(zweck);
+		}
 	}
 	
 	private boolean koennteZweckfeldSein(Feld feld) {

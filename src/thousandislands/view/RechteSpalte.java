@@ -18,8 +18,6 @@ public class RechteSpalte extends JPanel {
 	private JLabel wasser = new JLabel();
 	private JLabel nahrung = new JLabel();
 	private List<JLabel> labelListe = new ArrayList<>();
-	private JButton knopfFuerAlles;
-	private JButton kartenknopf;
 	
 	RechteSpalte() {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -35,13 +33,14 @@ public class RechteSpalte extends JPanel {
 		schiffsteileErstellen();
 		add(Box.createRigidArea(new Dimension(0,10)));
 		
-		knopfFuerAlles = new JButton();
-		knopfFuerAlles.setVisible(false);
-		add(knopfFuerAlles);
+//		knopfFuerAlles = new JButton();
+//		knopfFuerAlles.setVisible(false);
+////		knopfFuerAlles.addActionListener(arg0);
+//		add(knopfFuerAlles);
 		
-		kartenknopf = new JButton("Schatzkarte");
-		kartenknopf.setVisible(false);
-		add(kartenknopf);
+//		kartenknopf = new JButton("Schatzkarte");
+//		kartenknopf.setVisible(false);
+//		add(kartenknopf);
 	}
 
 	public void setzeWasseranzeige(String s) {
@@ -60,18 +59,18 @@ public class RechteSpalte extends JPanel {
 		}
 	}
 	
-	public void knopfFuerAllesText(String s) {
-		knopfFuerAlles.setText(s);
-		knopfFuerAlles.setVisible(true);
-	}
-
-	public void knopfFuerAllesSichtbar(boolean bool) {
-		knopfFuerAlles.setVisible(bool);
-	}
-
-	public void kartenknopfSichtbar(boolean bool) {
-		kartenknopf.setVisible(bool);
-	}
+//	public void knopfFuerAllesText(String s) {
+//		knopfFuerAlles.setText(s);
+//		knopfFuerAlles.setVisible(true);
+//	}
+//
+//	public void knopfFuerAllesSichtbar(boolean bool) {
+//		knopfFuerAlles.setVisible(bool);
+//	}
+//
+//	public void kartenknopfSichtbar(boolean bool) {
+//		kartenknopf.setVisible(bool);
+//	}
 	
 	private void schiffsteileErstellen() {
 		for (Schiffsteile teil : Schiffsteile.values()) {
