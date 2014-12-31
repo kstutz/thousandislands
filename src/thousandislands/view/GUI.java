@@ -35,7 +35,7 @@ public class GUI extends JFrame{
 	
 	private void macheStartklar() {
 		//Spielfeld hinzufuegen
-		spielfeld = new Landkarte(daten.getFelder());
+		spielfeld = new Landkarte(daten);
 		add(spielfeld, BorderLayout.CENTER);
 		spielfeld.repaint();
 		
@@ -64,16 +64,69 @@ public class GUI extends JFrame{
 		spielfeld.repaint();
 		rechteSpalte.setzeWasseranzeige(daten.getWasser());
 		rechteSpalte.setzeNahrungsanzeige(daten.getNahrung());
-		nachrichtenzeile.setText("");
-//		knopfFuerAlles.setVisible(false);
+		nachrichtenzeile.setText(" ");
+		knopfFuerAlles.setText(" ");
 	}
 	
 	public void zeigeNachricht(String s) {
 		nachrichtenzeile.setText(s);
 	}
 	
-	public void beschrifteKnopf(String text) {
-		knopfFuerAlles.setText(text);
+	
+	public void setzeKnopf(String befehl) {
+		
+		switch(befehl) {
+		
+		case "HOLZ_MITNEHMEN":
+			knopfFuerAlles.setText("Holz mitnehmen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
+		case "LIANEN_MITNEHMEN":
+			knopfFuerAlles.setText("Lianen mitnehmen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
+		case "KRUG_FUELLEN":
+			knopfFuerAlles.setText("Krug fuellen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
+		case "KORB_FUELLEN":
+			knopfFuerAlles.setText("Korb fuellen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
+		case "KRUG_FORMEN":
+			knopfFuerAlles.setText("Krug formen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;			
+		case "FEUER_MACHEN":
+			knopfFuerAlles.setText("Feuer machen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
+		case "KRUG_BRENNEN":
+			knopfFuerAlles.setText("Krug brennen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
+		case "KORB_FLECHTEN":
+			knopfFuerAlles.setText("Korb flechten");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
+		case "PAPAYA_MITNEHMEN":
+			knopfFuerAlles.setText("Papaya mitnehmen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
+		case "TROTZDEM_MITNEHMEN":
+			knopfFuerAlles.setText("Trotzdem mitnehmen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
+
+		case "FLOSS_BAUEN":
+			knopfFuerAlles.setText("Floß bauen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
+			
+		default:
+			break;
+		
+		}
 	}
 
 	public void actionListenerHinzufuegen(Controller controller) {

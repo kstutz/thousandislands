@@ -16,6 +16,9 @@ public class Person {
 	public Person(Feld feld) {
 		aktuellesFeld = feld;
 		hatSchatzkarte = false;
+		hatFloss = false;
+		hatKrug = false;
+		hatKorb = false;
 		wasser = 100;
 		nahrung = 100;
 		maxWasser = 100;

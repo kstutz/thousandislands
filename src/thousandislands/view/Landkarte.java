@@ -14,13 +14,17 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import thousandislands.model.Feld;
+import thousandislands.model.Person;
+import thousandislands.model.Spieldaten;
 import thousandislands.model.enums.Zweck;
 
 public class Landkarte extends JPanel{
 	Feld[][] felder;
+	Spieldaten spieldaten;
 	
-	public Landkarte(Feld[][] felder) {
-		this.felder = felder;
+	public Landkarte(Spieldaten spieldaten) {
+		this.felder = spieldaten.getFelder();
+		this.spieldaten = spieldaten;
 	}
 	
 	protected void paintComponent(Graphics g) {
@@ -47,7 +51,11 @@ public class Landkarte extends JPanel{
 	private Color getFarbe(Feld feld) {
 
 		if (feld.istPersonDa()) {
-			return Color.MAGENTA;
+			if (spieldaten.hatFloss()) {
+				return Color.ORANGE;
+			} else {
+				return Color.MAGENTA;				
+			}
 		}
 
 		switch (feld.getTyp()) {
@@ -59,29 +67,6 @@ public class Landkarte extends JPanel{
 		case ROT: return Color.RED;
 		default: return Color.GRAY;
 		}
-
-//		switch (feld.getTyp()) {
-//		case MEER: 
-//			farbe = Color.BLUE;
-//			break;
-//		case STRAND: 
-//			farbe = Color.YELLOW;	
-//			break;
-//		case DSCHUNGEL: 
-//			farbe =  Color.GREEN;
-//			break;
-//		case SCHATZ: 
-//			farbe =  Color.GREEN;
-//			break;
-//		case ZWECK: 
-//			farbe =  Color.BLACK;
-//			break;
-//		case ROT: 
-//			farbe = Color.RED;
-//			break;
-//		default: 
-//			farbe = Color.GRAY;
-//		}
 		
 	}
 	
