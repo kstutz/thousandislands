@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import thousandislands.model.Feld;
+import thousandislands.model.Flaschenpost;
 import thousandislands.model.Inventar;
 import thousandislands.model.Person;
 import thousandislands.model.Spieldaten;
@@ -20,20 +21,27 @@ import thousandislands.view.GUI;
 
 
 public class Controller extends KeyAdapter implements ActionListener {
+	private static final int FLASCHENPOST_LAENGE = 50;
+	private static final int FLASCHENPOST_ABSTAND = 50;	
 	private GUI gui;
 	private Person person;
 	private Inventar inventar;
 	private Set<Schiffsteile> schiffsteile;
+	private int schrittzaehler = 0;
+	private boolean flaschenpostSichtbar;
+	private Flaschenpost flaschenpost;
 	
 	public static void main (String[] args) {
 		new Controller();
 	}
 	
 	Controller() {
-		Feld[][] spielfeld = new SpielfeldErsteller().getSpielfeld();
+		SpielfeldErsteller ersteller = new SpielfeldErsteller();
+		Feld[][] spielfeld = ersteller.getSpielfeld();
 		person = new Person(spielfeld[0][0]);
 		spielfeld[0][0].setPersonDa(true);
 		Spieldaten spieldaten = new Spieldaten(spielfeld, person);
+		flaschenpost = new Flaschenpost(spielfeld);
 		
 		inventar = new Inventar();
 		schiffsteile = new HashSet<>();
@@ -42,6 +50,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.aktualisiere();
 		gui.addKeyListener(this);
 		gui.actionListenerHinzufuegen(this);
+		gui.erstelleSchatzkarte(ersteller.getSchatzkartenanfang());
 		gui.zeigeNachricht("Hallo!");
 	}
 	
@@ -66,20 +75,32 @@ public class Controller extends KeyAdapter implements ActionListener {
 		}
 		//TODO: Nachricht, dass man nur ueber Strand auf Insel kommt?
 		if (bewegt) {
+			schrittzaehler++;
 			person.wasserAbziehen();
 			person.nahrungAbziehen();
 			gui.aktualisiere();
 		}
 		
-		Feld aktuellesFeld = person.getAktuellesFeld();
-		if (aktuellesFeld.getTyp() == Typ.ZWECK) {
-			behandleZweckfeld(aktuellesFeld.getZweck());
+		if (!person.hatSchatzkarte()) {
+			flaschenpostZeigen();
 		}
-		if (person.hatSchatzkarte() && aktuellesFeld.getTyp() == Typ.SCHATZ) {
+		
+		Feld aktuellesFeld = person.getAktuellesFeld();
+		if (person.hatSchatzkarte() 
+				&& aktuellesFeld.getTyp() == Typ.SCHATZ 
+				&& !inventar.enthaelt(Ladung.SEGEL)
+				&& !schiffsteile.contains(Schiffsteile.SEGEL)) {
 			behandleSchatzfund();
 		}
 		if (aktuellesFeld.hatFlaschenpost()) {
+			aktuellesFeld.setFlaschenpost(false);
 			person.kriegtSchatzkarte();
+			gui.kartenknopfSichtbar(true);
+			gui.zeigeNachricht("Ich habe die Flaschenpost endlich erwischt!");
+		}
+
+		if (aktuellesFeld.getTyp() == Typ.ZWECK) {
+			behandleZweckfeld(aktuellesFeld.getZweck());
 		}
 		
 		//Strand mit Holz und Liane -> Floss bauen
@@ -92,7 +113,31 @@ public class Controller extends KeyAdapter implements ActionListener {
 		//TODO: Floss muss am Strand bleiben, waehrend Maennchen rumlaeuft, oder?
 		
 	}
+	
+	private void flaschenpostZeigen() {
+		if ( !flaschenpostSichtbar ) {
+			if (schrittzaehler % FLASCHENPOST_ABSTAND == 0) {
+				flaschenpost.erzeugen();
+				flaschenpostSichtbar = true;
+			}
+		} else {
+			if (schrittzaehler % FLASCHENPOST_LAENGE == 0) {
+				flaschenpost.entfernen();
+				flaschenpostSichtbar = false;
+			} else {
+			    flaschenpost.bewegen();	
+			}
+		}
+	}
 
+	private void behandleSchatzfund() {
+		gui.kartenknopfSichtbar(false);
+		gui.zeigeNachricht("Hey, der Schatz ist eine alte Piraten-Notfallkiste! "
+				+ "Sie enthält ein Segel, wie praktisch.");
+		gui.setzeKnopf("SEGEL_MITNEHMEN");
+	}
+	
+	
 	private void behandleZweckfeld(Zweck zweck) {		
 		switch (zweck) {
 		case WASSER:
@@ -226,7 +271,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 			} else { //wir brauchen Papaya, verdammt
 				gui.zeigeNachricht("Bäh, Papaya! Was soll ich denn damit?");
 				gui.setzeKnopf("PAPAYA_MITNEHMEN");				
-			}				
+			}
 			break;
 			
 		case RUINE:
@@ -241,19 +286,6 @@ public class Controller extends KeyAdapter implements ActionListener {
 	    }
 	}	
 	
-	private void behandleSchatzfund() {
-		// TODO: Segel in Inventar (wenn es nicht zu schwer ist!)
-		// TODO: Schatzkartenknopf ausgrauen
-	}
-	
-	private int getTragfaehigkeit() {
-		if (person.hatFloss()) {
-			return 10;
-		} else {
-			return 1;
-		}
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		
@@ -406,6 +438,14 @@ public class Controller extends KeyAdapter implements ActionListener {
 			person.setFloss(true);
 			gui.zeigeNachricht("Toll, jetzt habe ich ein Floss, so dass ich schneller vorankomme "
 					+ "und mehr Dinge transportieren kann.");
+			inventar.ladungEntfernen(Ladung.HOLZ);
+			inventar.ladungEntfernen(Ladung.LIANE);			
+			break;
+		
+		case "SEGEL_MITNEHMEN":
+			gui.zeigeNachricht("Jetzt habe ich ein Segel für mein Schiff!");
+			inventar.ladungHinzufuegen(Ladung.SEGEL);
+			//Gewicht ignoriert, da Feldtyp-Aendern gerade zu kompliziert
 			break;
 	    
 		case "ABLADEN":
@@ -416,6 +456,22 @@ public class Controller extends KeyAdapter implements ActionListener {
 		default:
 			break;
 		}
+		
+		gui.requestFocus();
+		
+		if (event.getActionCommand().equals("PAPAYA_MITNEHMEN")
+				|| event.getActionCommand().equals("FEUER_MACHEN")) {
+			gui.knopfFuerAllesSichtbar(true);
+		} else {
+			gui.knopfFuerAllesSichtbar(false);			
+		}
 	}
-
+	
+	private int getTragfaehigkeit() {
+		if (person.hatFloss()) {
+			return 10;
+		} else {
+			return 1;
+		}
+	}
 }

@@ -57,6 +57,10 @@ public class Landkarte extends JPanel{
 				return Color.MAGENTA;				
 			}
 		}
+		
+		if (feld.hatFlaschenpost()) {
+			return Color.CYAN;
+		}
 
 		switch (feld.getTyp()) {
 		case MEER: return Color.BLUE;

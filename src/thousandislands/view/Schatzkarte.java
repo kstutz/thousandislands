@@ -1,6 +1,7 @@
 package thousandislands.view;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -10,17 +11,21 @@ import javax.swing.JPanel;
 import thousandislands.model.Feld;
 
 public class Schatzkarte extends JDialog{
-	Feld[][] felder;
+	private Feld[][] felder;
+	private int xDazu;
+	private int yDazu;
 	
-	public Schatzkarte(Feld[][] felder) {
+	public Schatzkarte(Feld[][] felder, Feld startfeld) {
 		this.felder = felder;
+		xDazu = startfeld.getX();
+		yDazu = startfeld.getY();
+
 		KartenPanel kartenPanel = new KartenPanel();
-		this.add(kartenPanel);
-		
-//		setSize(new Dimension(400, 400));
-//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		add(kartenPanel);
+
+		setModal(true);
+		setSize(new Dimension(240, 240));
 		setLocationRelativeTo(null);
-		setVisible(true);
 	}
 	
 	private class KartenPanel extends JPanel {
@@ -34,7 +39,7 @@ public class Schatzkarte extends JDialog{
 		private void karteZeichnen(Graphics g) {
 			for (int i=0; i<12; i++) {
 				for (int j=0; j<12; j++) {
-					g.setColor(getFarbe(felder[i][j]));
+					g.setColor(getFarbe(felder[xDazu + i][yDazu + j]));
 					g.fillRect(i*20, j*20, 20, 20);
 				}
 			}
@@ -42,12 +47,12 @@ public class Schatzkarte extends JDialog{
 		
 		private Color getFarbe(Feld feld) {
 			switch (feld.getTyp()) {
-			case MEER: return Color.WHITE;
-			case STRAND: return Color.LIGHT_GRAY;	
-			case DSCHUNGEL: return Color.GRAY;
-			case ZWECK: return Color.DARK_GRAY;
+			case MEER: return Color.LIGHT_GRAY;
+			case STRAND: return Color.GRAY;	
+			case DSCHUNGEL: return Color.DARK_GRAY;
+//			case ZWECK: return Color.BLACK;
 			case SCHATZ: return Color.RED;
-			default: return Color.GRAY;
+			default: return Color.DARK_GRAY;
 			}
 		}
 	}	

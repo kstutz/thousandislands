@@ -24,7 +24,7 @@ public class SpielfeldErsteller {
 
 	private Feld [][] felder = new Feld[FELDANZAHL_WAAGERECHT][FELDANZAHL_SENKRECHT];
 	private List<Insel> inseln = new ArrayList<Insel>();
-	private Feld anfangSchatzinsel;
+	private Feld schatzkartenanfang;
 	private Random rand = new Random();
 	
 	
@@ -32,14 +32,6 @@ public class SpielfeldErsteller {
 		erzeugeFelder();
 		verbindeFelder();
 		erstelleInseln();
-		
-//		for (int i = 0; i<FELDANZAHL_WAAGERECHT; i++) {
-//			for (int j=0; j<FELDANZAHL_SENKRECHT; j++) {
-//				if (felder[i][j].getTyp() == Typ.VOR_MEER) {
-//					felder[i][j].setTyp(Typ.MEER); 
-//				}
-//			}
-//		}
 	}
 	
 	public Feld[][] getSpielfeld() {
@@ -135,12 +127,16 @@ public class SpielfeldErsteller {
 			zwecke.remove(0);				
 			
 			if (inselanzahl == 4) {
-				anfangSchatzinsel = startpunkt;
+				schatzkartenanfang = startpunkt;
 				inselbauer.versteckeSchatz();
 			}
 			
 			inselanzahl++;
 		}
+	}
+	
+	public Feld getSchatzkartenanfang() {
+		return schatzkartenanfang;
 	}
 
 	private Feld findeStartpunkt(int x, int y, int breite, int hoehe) {

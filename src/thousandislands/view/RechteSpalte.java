@@ -8,7 +8,6 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -31,16 +30,7 @@ public class RechteSpalte extends JPanel {
 		add(Box.createRigidArea(new Dimension(0,10)));
 		
 		schiffsteileErstellen();
-		add(Box.createRigidArea(new Dimension(0,10)));
-		
-//		knopfFuerAlles = new JButton();
-//		knopfFuerAlles.setVisible(false);
-////		knopfFuerAlles.addActionListener(arg0);
-//		add(knopfFuerAlles);
-		
-//		kartenknopf = new JButton("Schatzkarte");
-//		kartenknopf.setVisible(false);
-//		add(kartenknopf);
+		add(Box.createRigidArea(new Dimension(0,10)));		
 	}
 
 	public void setzeWasseranzeige(String s) {
@@ -58,20 +48,7 @@ public class RechteSpalte extends JPanel {
 			}
 		}
 	}
-	
-//	public void knopfFuerAllesText(String s) {
-//		knopfFuerAlles.setText(s);
-//		knopfFuerAlles.setVisible(true);
-//	}
-//
-//	public void knopfFuerAllesSichtbar(boolean bool) {
-//		knopfFuerAlles.setVisible(bool);
-//	}
-//
-//	public void kartenknopfSichtbar(boolean bool) {
-//		kartenknopf.setVisible(bool);
-//	}
-	
+
 	private void schiffsteileErstellen() {
 		for (Schiffsteile teil : Schiffsteile.values()) {
 			JLabel label = new JLabel(teil.toString());

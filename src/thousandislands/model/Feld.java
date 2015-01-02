@@ -110,6 +110,10 @@ public class Feld {
 	public boolean hatFlaschenpost() {
 		return hatFlaschenpost;
 	}
+	
+	public void setFlaschenpost(boolean bool) {
+		hatFlaschenpost = bool;
+	}
 
 	public Zweck getZweck() {
 		return zweck;

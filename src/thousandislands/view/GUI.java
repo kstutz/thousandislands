@@ -2,6 +2,8 @@ package thousandislands.view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -9,14 +11,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import thousandislands.controller.Controller;
+import thousandislands.model.Feld;
 import thousandislands.model.Spieldaten;
 
-public class GUI extends JFrame{
+public class GUI extends JFrame implements ActionListener{
 	private Landkarte spielfeld;
 	private RechteSpalte rechteSpalte;
 	private JButton knopfFuerAlles;
-	private JButton kartenknopf;	
+	private JButton kartenknopf;
 	private JLabel nachrichtenzeile;
+	private Schatzkarte schatzkarte;
 	private Spieldaten daten;
 	
 	public GUI(Spieldaten daten){
@@ -25,7 +29,7 @@ public class GUI extends JFrame{
 		setLocationRelativeTo(null);
 		setTitle("Tausend Inseln");
 
-		this.daten = daten;		
+		this.daten = daten;
 		macheStartklar();
 		
 		setVisible(true);
@@ -49,8 +53,9 @@ public class GUI extends JFrame{
 		rechteSpalte.add(Box.createRigidArea(new Dimension(0,10)));
 
 		kartenknopf = new JButton("Schatzkarte");
-//		kartenknopf.setVisible(false);
+		kartenknopf.setVisible(false);
 		kartenknopf.setActionCommand("KARTE");
+		kartenknopf.addActionListener(this);
 		rechteSpalte.add(kartenknopf);
 		
 		add(rechteSpalte, BorderLayout.EAST);
@@ -60,20 +65,30 @@ public class GUI extends JFrame{
 		add(nachrichtenzeile, BorderLayout.SOUTH);
 	}
 	
+	public void erstelleSchatzkarte(Feld startfeld) {
+		schatzkarte = new Schatzkarte(daten.getFelder(), startfeld);
+	}
+	
 	public void aktualisiere() {
 		spielfeld.repaint();
 		rechteSpalte.setzeWasseranzeige(daten.getWasser());
 		rechteSpalte.setzeNahrungsanzeige(daten.getNahrung());
 		nachrichtenzeile.setText(" ");
-		knopfFuerAlles.setText(" ");
+//		knopfFuerAlles.setText(" ");
+		knopfFuerAlles.setVisible(false);
 	}
 	
 	public void zeigeNachricht(String s) {
 		nachrichtenzeile.setText(s);
 	}
 	
+	public void kartenknopfSichtbar(boolean bool) {
+		kartenknopf.setVisible(bool);
+	}
+	
 	
 	public void setzeKnopf(String befehl) {
+		knopfFuerAlles.setVisible(true);
 		
 		switch(befehl) {
 		
@@ -117,7 +132,10 @@ public class GUI extends JFrame{
 			knopfFuerAlles.setText("Trotzdem mitnehmen");
 			knopfFuerAlles.setActionCommand(befehl);
 			break;
-
+		case "SEGEL_MITNEHMEN":
+			knopfFuerAlles.setText("Segel mitnehmen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
 		case "FLOSS_BAUEN":
 			knopfFuerAlles.setText("Floß bauen");
 			knopfFuerAlles.setActionCommand(befehl);
@@ -131,6 +149,15 @@ public class GUI extends JFrame{
 
 	public void actionListenerHinzufuegen(Controller controller) {
 		knopfFuerAlles.addActionListener(controller);
-		kartenknopf.addActionListener(controller);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		schatzkarte.setVisible(true);
+		requestFocus();
+	}
+
+	public void knopfFuerAllesSichtbar(boolean bool) {
+		knopfFuerAlles.setVisible(bool);
 	}
 }
