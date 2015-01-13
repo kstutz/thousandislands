@@ -7,7 +7,11 @@ public class Spieldaten {
 	public Spieldaten(Feld[][] felder, Person person) {
 		this.felder = felder;
 		this.person = person;
-	}	
+	}
+	
+	public Person getPerson() {
+		return person;
+	}
 
 	public String getWasser() {
 		return person.getWasser() + " / " + person.getMaxWasser();

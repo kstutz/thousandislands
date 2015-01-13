@@ -14,6 +14,7 @@ public class Feld {
 	private List<Feld> nachbarn = new ArrayList<Feld>();
 	private List<Feld> direkteNachbarn = new ArrayList<Feld>();
 	private boolean personDa = false;
+	private boolean flossDa = false;
 	private boolean hatFlaschenpost = false;
 	private int x;
 	private int y;
@@ -26,7 +27,6 @@ public class Feld {
 		status = Status.ENTDECKT;
 //		status = Status.UNENTDECKT;
 		typ = Typ.MEER;
-//		typ = Typ.VOR_MEER;
 		this.x = x;
 		this.y = y;
 	}
@@ -73,6 +73,14 @@ public class Feld {
 
 	public void setPersonDa(boolean personDa) {
 		this.personDa = personDa;
+	}
+
+	public boolean istFlossDa() {
+		return flossDa;
+	}
+
+	public void setFlossDa(boolean flossDa) {
+		this.flossDa = flossDa;
 	}
 
 	public Feld getNachbarO() {
@@ -122,12 +130,4 @@ public class Feld {
 	public void setZweck(Zweck zweck) {
 		this.zweck = zweck;
 	}
-
-//	public void setSchatz(boolean hatSchatz) {
-//		this.hatSchatz = hatSchatz;
-//	}
-//
-//	public boolean hatSchatz() {
-//		return hatSchatz;
-//	}
 }

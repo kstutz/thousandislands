@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import thousandislands.model.Feld;
 import thousandislands.model.Person;
 import thousandislands.model.Spieldaten;
+import thousandislands.model.enums.Typ;
 import thousandislands.model.enums.Zweck;
 
 public class Landkarte extends JPanel{
@@ -37,13 +38,20 @@ public class Landkarte extends JPanel{
 	private void spielfeldZeichnen(Graphics g) {
 		for (int i=0; i<100; i++) {
 			for (int j=0; j<60; j++) {
-				g.setColor(getFarbe(felder[i][j]));
-				g.fillRect(i*10, j*10, 10, 10);
 				
-				if (felder[i][j].getZweck() != null) {
-					BufferedImage bild = getBildchen(felder[i][j].getZweck());
+				BufferedImage bild = getBildchen(felder[i][j]);
+				if (bild != null) {
 					g.drawImage(bild, i*10, j*10, null);
-				}				
+				} else {
+					g.setColor(getFarbe(felder[i][j]));
+					g.fillRect(i*10, j*10, 10, 10);					
+				}
+				
+				
+//				if (felder[i][j].getZweck() != null) {
+//					BufferedImage bild = getBildchen(felder[i][j].getZweck());
+//					g.drawImage(bild, i*10, j*10, null);
+//				}				
 			}
 		}
 	}
@@ -74,60 +82,100 @@ public class Landkarte extends JPanel{
 		
 	}
 	
-	private BufferedImage getBildchen(Zweck zweck) {
+	private BufferedImage getBildchen(Feld feld) {
 		BufferedImage bild = null;
-		String pfad = "../../img/";
 		URL datei;
-		
-//		try {
-//			System.out.println(getClass().getResource("../../img/quelle2.png").toURI());
-//		} catch (URISyntaxException ex) {} 
+		String dateiname = "";
+//		Person person = spieldaten.getPerson();
 
-    	switch(zweck) {
-		case WASSER: 
-			datei = getClass().getResource(pfad + "quelle4.png");
-			break;
-		case NAHRUNG: 
-			datei = getClass().getResource(pfad + "nahrung.png");
-			break;
-		case HOLZ: 
-			datei = getClass().getResource(pfad + "holz.png");
-			break;
-		case LIANEN: 
-			datei = getClass().getResource(pfad + "lianen.png");
-			break;
-		case TON: 
-			datei = getClass().getResource(pfad + "ton.png");
-			break;
-		case FEUER: 
-			datei = getClass().getResource(pfad + "feuer.png");
-			break;
-		case SCHILF: 
-			datei = getClass().getResource(pfad + "schilf.png");
-			break;
-		case GROSSER_BAUM: 
-			datei = getClass().getResource(pfad + "grosserbaum.png");
-			break;
-		case HUETTE: 
-			datei = getClass().getResource(pfad + "huette.png");
-			break;
-		case PAPAYA: 
-			datei = getClass().getResource(pfad + "papaya.png");
-			break;
-		case RUINE: 
-			datei = getClass().getResource(pfad + "ruine.png");
-			break;
-		default: 
-			datei = getClass().getResource(pfad + "leer.png");
-			break;
+		if (feld.istPersonDa()) {
+			dateiname = findeBildFuerPerson(spieldaten.getPerson(), feld);
+		} else if (feld.getTyp() == Typ.ZWECK) {
+			dateiname = findeBildFuerZweck(feld);			
+		} else if (feld.istFlossDa()) {
+			dateiname = "floss.png";
+		} else if (feld.hatFlaschenpost()) {
+			dateiname = "flasche1.png";
 		}
-    	
-		try {
-		    bild = ImageIO.read(datei);
-		} catch (IOException e) {
-			System.out.println(e);
+		
+		
+		if (!dateiname.isEmpty()) {
+	    	datei = getClass().getClassLoader().getResource(dateiname);
+	    	
+			try {
+			    bild = ImageIO.read(datei);
+			} catch (IOException e) {
+				System.out.println(e);
+			}			
 		}
 		
 		return bild;
+	}
+
+	private String findeBildFuerZweck(Feld feld) {
+		String dateiname = "";
+		
+    	switch(feld.getZweck()) {
+		case WASSER: 
+			dateiname = "quelle4.png";
+			break;
+		case NAHRUNG: 
+			dateiname = "nahrung.png";
+			break;
+		case HOLZ: 
+			dateiname = "holz.png";
+			break;
+		case LIANEN: 
+			dateiname = "lianen.png";
+			break;
+		case TON: 
+			dateiname = "ton.png";
+			break;
+		case FEUER: 
+			dateiname = "feuer.png";
+			break;
+		case SCHILF: 
+			dateiname = "schilf.png";
+			break;
+		case GROSSER_BAUM: 
+			dateiname = "grosserbaum.png";
+			break;
+		case HUETTE: 
+			dateiname = "huette.png";
+			break;
+		case PAPAYA: 
+			dateiname = "papaya.png";
+			break;
+		case RUINE: 
+			dateiname = "ruine.png";
+			break;
+		default: 
+			dateiname = "leer.png";
+			break;
+		}			
+		return dateiname;
+	}
+
+	private String findeBildFuerPerson(Person person, Feld feld) {
+		String dateiname = "";
+		
+		switch (person.getFortbewegung()) {
+		case SCHWIMMEN:
+			dateiname = "schwimmer.png";
+			break;
+		case LAUFEN:
+			if (feld.getTyp() == Typ.STRAND) {
+				dateiname = "mann_strand.png";
+			} else {
+				dateiname = "mann_dschungel.png";				
+			}
+			break;
+		case FLOSSFAHREN:
+			//TODO: Bildchen fuer Mann auf Floss erstellen
+			dateiname = "floss.png";
+			break;
+		}
+		
+		return dateiname;
 	}
 }

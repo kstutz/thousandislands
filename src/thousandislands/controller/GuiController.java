@@ -1,4 +1,4 @@
-package thousandislands.view;
+package thousandislands.controller;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -10,11 +10,14 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import thousandislands.controller.Controller;
 import thousandislands.model.Feld;
 import thousandislands.model.Spieldaten;
+import thousandislands.view.Fenster;
+import thousandislands.view.Landkarte;
+import thousandislands.view.RechteSpalte;
+import thousandislands.view.Schatzkarte;
 
-public class GUI extends JFrame implements ActionListener{
+public class GuiController implements ActionListener {
 	private Landkarte spielfeld;
 	private RechteSpalte rechteSpalte;
 	private JButton knopfFuerAlles;
@@ -22,25 +25,20 @@ public class GUI extends JFrame implements ActionListener{
 	private JLabel nachrichtenzeile;
 	private Schatzkarte schatzkarte;
 	private Spieldaten daten;
-	
-	public GUI(Spieldaten daten){
-		setSize(new Dimension(1150, 640));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
-		setTitle("Tausend Inseln");
+	private Fenster fenster;
 
+	public GuiController(Spieldaten daten){
 		this.daten = daten;
-		macheStartklar();
-		
-		setVisible(true);
-		setFocusable(true);
-	    requestFocus();
+		erstelleGui();
 	}
 	
-	private void macheStartklar() {
+	private void erstelleGui() {
+		//Fenster erstellen
+		fenster = new Fenster();		
+		
 		//Spielfeld hinzufuegen
 		spielfeld = new Landkarte(daten);
-		add(spielfeld, BorderLayout.CENTER);
+		fenster.add(spielfeld, BorderLayout.CENTER);
 		spielfeld.repaint();
 		
 		//rechte Spalte und Knoepfe hinzufuegen
@@ -58,13 +56,13 @@ public class GUI extends JFrame implements ActionListener{
 		kartenknopf.addActionListener(this);
 		rechteSpalte.add(kartenknopf);
 		
-		add(rechteSpalte, BorderLayout.EAST);
+		fenster.add(rechteSpalte, BorderLayout.EAST);
 		
 		//Nachrichtenzeile hinzufuegen
 		nachrichtenzeile = new JLabel();
-		add(nachrichtenzeile, BorderLayout.SOUTH);
+		fenster.add(nachrichtenzeile, BorderLayout.SOUTH);
 	}
-	
+
 	public void erstelleSchatzkarte(Feld startfeld) {
 		schatzkarte = new Schatzkarte(daten.getFelder(), startfeld);
 	}
@@ -84,8 +82,7 @@ public class GUI extends JFrame implements ActionListener{
 	
 	public void kartenknopfSichtbar(boolean bool) {
 		kartenknopf.setVisible(bool);
-	}
-	
+	}	
 	
 	public void setzeKnopf(String befehl) {
 		knopfFuerAlles.setVisible(true);
@@ -132,12 +129,24 @@ public class GUI extends JFrame implements ActionListener{
 			knopfFuerAlles.setText("Trotzdem mitnehmen");
 			knopfFuerAlles.setActionCommand(befehl);
 			break;
+		case "BAUM_FAELLEN":
+			knopfFuerAlles.setText("Baum fällen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
 		case "SEGEL_MITNEHMEN":
 			knopfFuerAlles.setText("Segel mitnehmen");
 			knopfFuerAlles.setActionCommand(befehl);
 			break;
 		case "FLOSS_BAUEN":
 			knopfFuerAlles.setText("Floß bauen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
+		case "RUINEN_DURCHSUCHEN":
+			knopfFuerAlles.setText("Ruinen durchsuchen");
+			knopfFuerAlles.setActionCommand(befehl);
+			break;
+		case "KOMPASS_MITNEHMEN":
+			knopfFuerAlles.setText("Kompass mitnehmen");
 			knopfFuerAlles.setActionCommand(befehl);
 			break;
 			
@@ -150,14 +159,22 @@ public class GUI extends JFrame implements ActionListener{
 	public void actionListenerHinzufuegen(Controller controller) {
 		knopfFuerAlles.addActionListener(controller);
 	}
+	
+	public void keyListenerHinzufuegen(Controller controller) {
+		fenster.addKeyListener(controller);
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		schatzkarte.setVisible(true);
-		requestFocus();
+		fenster.requestFocus();
 	}
 
 	public void knopfFuerAllesSichtbar(boolean bool) {
 		knopfFuerAlles.setVisible(bool);
+	}
+
+	public void fokusHolen() {
+		fenster.requestFocus();		
 	}
 }

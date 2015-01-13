@@ -1,28 +1,38 @@
 package thousandislands.model;
 
+import thousandislands.model.enums.Fortbewegung;
 import thousandislands.model.enums.Typ;
 
 public class Person {
+	private static final int MAX_WASSER = 100;
+	private static final int MAX_WASSER_KRUG = 200;
+	private static final int MAX_NAHRUNG = 100;
+	private static final int MAX_NAHRUNG_KORB = 200;
+	private static final int TRAGKRAFT_SCHWIMMEND = 1;
+	private static final int TRAGKRAFT_MIT_FLOSS = 10;
+	
 	private int wasser;
 	private int nahrung;
-	private int maxWasser;
-	private int maxNahrung;
 	private Feld aktuellesFeld;
+	private Feld vorigesFeld;
+	private Fortbewegung fortbewegung;
 	private boolean hatSchatzkarte;
 	private boolean hatFloss;
 	private boolean hatKrug;
 	private boolean hatKorb;
+	private boolean hatWaffen;
 	
 	public Person(Feld feld) {
+		vorigesFeld = feld;
 		aktuellesFeld = feld;
 		hatSchatzkarte = false;
 		hatFloss = false;
 		hatKrug = false;
 		hatKorb = false;
+		hatWaffen = false;
+		fortbewegung = Fortbewegung.SCHWIMMEN;
 		wasser = 100;
 		nahrung = 100;
-		maxWasser = 100;
-		maxNahrung = 100;
 	}
 		
 	public int getWasser() {
@@ -42,21 +52,29 @@ public class Person {
 	}
 
 	public int getMaxWasser() {
-		return maxWasser;
-	}
-	
-	public void setMaxWasser(int maxWasser) {
-		this.maxWasser = maxWasser;
+		if (hatKrug()) {
+			return MAX_WASSER_KRUG;
+		} else {
+			return MAX_WASSER;
+		}
 	}
 	
 	public int getMaxNahrung() {
-		return maxNahrung;
+		if (hatKorb()) {
+			return MAX_NAHRUNG_KORB;
+		} else {
+			return MAX_NAHRUNG;
+		}
 	}
 	
-	public void setMaxNahrung(int maxNahrung) {
-		this.maxNahrung = maxNahrung;
+	public int getTragfaehigkeit() {
+		if (hatFloss) {
+			return TRAGKRAFT_MIT_FLOSS;
+		} else {
+			return TRAGKRAFT_SCHWIMMEND;
+		}
 	}
-
+	
 	public boolean bewegeNachO() {
 		Feld neuesFeld = aktuellesFeld.getNachbarO();		
 		return setzePersonWeiter(neuesFeld);
@@ -89,6 +107,10 @@ public class Person {
 		return aktuellesFeld;
 	}
 	
+	public Feld getVorigesFeld() {
+		return vorigesFeld;
+	}
+
 	private boolean setzePersonWeiter(Feld neuesFeld) {
 		
 		if (neuesFeld == null) {
@@ -103,6 +125,7 @@ public class Person {
 		
 		aktuellesFeld.setPersonDa(false);
 		neuesFeld.setPersonDa(true);
+		vorigesFeld = aktuellesFeld;
 		aktuellesFeld = neuesFeld;
 		return true;
 	}
@@ -137,6 +160,22 @@ public class Person {
 
 	public void setKorb(boolean hatKorb) {
 		this.hatKorb = hatKorb;
+	}
+
+	public boolean hatWaffen() {
+		return hatWaffen;
+	}
+
+	public void setWaffen(boolean hatWaffen) {
+		this.hatWaffen = hatWaffen;
+	}
+
+	public Fortbewegung getFortbewegung() {
+		return fortbewegung;
+	}
+
+	public void setFortbewegung(Fortbewegung fortbewegung) {
+		this.fortbewegung = fortbewegung;
 	}
 
 }

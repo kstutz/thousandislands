@@ -50,7 +50,7 @@ public class Schatzkarte extends JDialog{
 			case MEER: return Color.LIGHT_GRAY;
 			case STRAND: return Color.GRAY;	
 			case DSCHUNGEL: return Color.DARK_GRAY;
-//			case ZWECK: return Color.BLACK;
+			case ZWECK: return Color.BLACK;
 			case SCHATZ: return Color.RED;
 			default: return Color.DARK_GRAY;
 			}

@@ -18,7 +18,7 @@ public class RechteSpalte extends JPanel {
 	private JLabel nahrung = new JLabel();
 	private List<JLabel> labelListe = new ArrayList<>();
 	
-	RechteSpalte() {
+	public RechteSpalte() {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 		
