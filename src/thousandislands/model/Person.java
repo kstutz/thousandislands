@@ -1,6 +1,5 @@
 package thousandislands.model;
 
-import thousandislands.model.enums.Fortbewegung;
 import thousandislands.model.enums.Richtung;
 import thousandislands.model.enums.Typ;
 
@@ -16,7 +15,6 @@ public class Person {
 	private int nahrung;
 	private Feld aktuellesFeld;
 	private Feld vorigesFeld;
-	private Fortbewegung fortbewegung;
 	private boolean hatSchatzkarte;
 	private boolean hatFloss;
 	private boolean hatKrug;
@@ -31,7 +29,6 @@ public class Person {
 		hatKrug = false;
 		hatKorb = false;
 		hatWaffen = false;
-		fortbewegung = Fortbewegung.SCHWIMMEN;
 		wasser = 100;
 		nahrung = 100;
 	}
@@ -123,6 +120,13 @@ public class Person {
 			return false;
 		}
 		
+		//Floss mitbewegen
+		if (aktuellesFeld.istFlossDa() && neuesFeld.getTyp() == Typ.MEER) {
+			aktuellesFeld.setFlossDa(false);
+			neuesFeld.setFlossDa(true);
+		}
+		
+		//Person bewegen
 		aktuellesFeld.setPersonDa(false);
 		neuesFeld.setPersonDa(true);
 		vorigesFeld = aktuellesFeld;
@@ -169,13 +173,4 @@ public class Person {
 	public void setWaffen(boolean hatWaffen) {
 		this.hatWaffen = hatWaffen;
 	}
-
-	public Fortbewegung getFortbewegung() {
-		return fortbewegung;
-	}
-
-	public void setFortbewegung(Fortbewegung fortbewegung) {
-		this.fortbewegung = fortbewegung;
-	}
-
 }

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -13,6 +14,7 @@ import javax.swing.JLabel;
 import thousandislands.model.Feld;
 import thousandislands.model.Spieldaten;
 import thousandislands.model.enums.Aktion;
+import thousandislands.model.enums.Teile;
 import thousandislands.view.Fenster;
 import thousandislands.view.Landkarte;
 import thousandislands.view.RechteSpalte;
@@ -135,7 +137,12 @@ public class GuiController implements ActionListener {
 		case KOMPASS_MITNEHMEN:
 			knopfFuerAlles.setText("Kompass mitnehmen");
 			break;
-			
+		case WRACK_DURCHSUCHEN:
+			knopfFuerAlles.setText("Wrack durchsuchen");
+			break;
+		case WERKZEUG_MITNEHMEN:
+			knopfFuerAlles.setText("Werkzeug mitnehmen");
+			break;
 		default:
 			break;
 		
@@ -162,13 +169,9 @@ public class GuiController implements ActionListener {
 		knopfFuerAlles.setVisible(bool);
 	}
 	
-	public void setzeTeileliste(int level) {
-		if (level == 1) {
-			rechteSpalte.flossteileHinzufuegen();
-		} else {
-			rechteSpalte.schiffsteileHinzufuegen();
-		}
-	}	
+	public void setzeTeileliste(Set<Teile> teile) {
+		rechteSpalte.teileHinzufuegen(teile);
+	}
 
 	public void fokusHolen() {
 		fenster.requestFocus();		

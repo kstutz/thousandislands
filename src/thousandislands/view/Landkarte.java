@@ -161,25 +161,18 @@ public class Landkarte extends JPanel{
 	}
 
 	private String findeBildFuerPerson(Person person, Feld feld) {
-		String dateiname = "";
-		
-		switch (person.getFortbewegung()) {
-		case SCHWIMMEN:
-			dateiname = "schwimmer.png";
-			break;
-		case LAUFEN:
-			if (feld.getTyp() == Typ.STRAND) {
-				dateiname = "mann_strand.png";
+		if (feld.getTyp() == Typ.MEER) {
+			if (feld.istFlossDa()) {
+				return "floss.png";
 			} else {
-				dateiname = "mann_dschungel.png";				
+				return "schwimmer1.png";				
 			}
-			break;
-		case FLOSSFAHREN:
-			//TODO: Bildchen fuer Mann auf Floss erstellen
-			dateiname = "floss.png";
-			break;
+		} else {
+			if (feld.getTyp() == Typ.STRAND) {
+				return "mann_strand.png";
+			} else {
+				return "mann_dschungel.png";				
+			}
 		}
-		
-		return dateiname;
 	}
 }

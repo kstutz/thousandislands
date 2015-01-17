@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -11,13 +12,12 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import thousandislands.model.enums.Flossteile;
-import thousandislands.model.enums.Schiffsteile;
+import thousandislands.model.enums.Teile;
 
 public class RechteSpalte extends JPanel {
 	private JLabel wasser = new JLabel();
 	private JLabel nahrung = new JLabel();
-	private List<JLabel> labelListe = new ArrayList<>();
+	private List<JLabel> labelliste = new ArrayList<>();
 	
 	public RechteSpalte() {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -40,32 +40,29 @@ public class RechteSpalte extends JPanel {
 	}
 	
 	public void teilAlsGefundenMarkieren(String teil) {
-		for (JLabel label : labelListe) {
+		for (JLabel label : labelliste) {
 			if (label.getText().equals(teil)) {
 				label.setForeground(Color.BLACK);
 			}
 		}
 	}
 	
-	public void flossteileHinzufuegen () {
-		for (Flossteile teil : Flossteile.values()) {
-			JLabel label = new JLabel(teil.toString());
-			label.setForeground(Color.GRAY);
-			add(label);
-			labelListe.add(label);
+	public void teileHinzufuegen(Set<Teile> teile) {
+		
+		//ggf. Teile aus erstem Level loeschen
+		if (!labelliste.isEmpty()) {
+			for (JLabel label : labelliste) {
+				remove(label);
+			}
+			labelliste.clear();
 		}
-	}
 
-	public void schiffsteileHinzufuegen() {
-		for (JLabel label: labelListe) {
-			remove(label);
-		}
-		labelListe.clear();
-		for (Schiffsteile teil : Schiffsteile.values()) {
+		//neue Teile hinzufuegen
+		for (Teile teil : teile) {
 			JLabel label = new JLabel(teil.toString());
 			label.setForeground(Color.GRAY);
 			add(label);
-			labelListe.add(label);
+			labelliste.add(label);
 		}
 	}
 }
