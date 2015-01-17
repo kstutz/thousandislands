@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 
 import thousandislands.model.Feld;
 import thousandislands.model.Spieldaten;
+import thousandislands.model.enums.Aktion;
 import thousandislands.view.Fenster;
 import thousandislands.view.Landkarte;
 import thousandislands.view.RechteSpalte;
@@ -84,76 +85,63 @@ public class GuiController implements ActionListener {
 		kartenknopf.setVisible(bool);
 	}	
 	
-	public void setzeKnopf(String befehl) {
+	public void setzeKnopf(Aktion aktion) {
 		knopfFuerAlles.setVisible(true);
 		
-		switch(befehl) {
+		switch(aktion) {
 		
-		case "HOLZ_MITNEHMEN":
+		case HOLZ_MITNEHMEN:
 			knopfFuerAlles.setText("Holz mitnehmen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "LIANEN_MITNEHMEN":
+		case LIANEN_MITNEHMEN:
 			knopfFuerAlles.setText("Lianen mitnehmen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "KRUG_FUELLEN":
+		case KRUG_FUELLEN:
 			knopfFuerAlles.setText("Krug fuellen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "KORB_FUELLEN":
+		case KORB_FUELLEN:
 			knopfFuerAlles.setText("Korb fuellen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "KRUG_FORMEN":
+		case KRUG_FORMEN:
 			knopfFuerAlles.setText("Krug formen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;			
-		case "FEUER_MACHEN":
+		case FEUER_MACHEN:
 			knopfFuerAlles.setText("Feuer machen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "KRUG_BRENNEN":
+		case KRUG_BRENNEN:
 			knopfFuerAlles.setText("Krug brennen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "KORB_FLECHTEN":
+		case KORB_FLECHTEN:
 			knopfFuerAlles.setText("Korb flechten");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "PAPAYA_MITNEHMEN":
+		case PAPAYA_MITNEHMEN:
 			knopfFuerAlles.setText("Papaya mitnehmen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "TROTZDEM_MITNEHMEN":
+		case TROTZDEM_MITNEHMEN:
 			knopfFuerAlles.setText("Trotzdem mitnehmen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "BAUM_FAELLEN":
+		case BAUM_FAELLEN:
 			knopfFuerAlles.setText("Baum fällen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "SEGEL_MITNEHMEN":
+		case SEGEL_MITNEHMEN:
 			knopfFuerAlles.setText("Segel mitnehmen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "FLOSS_BAUEN":
+		case FLOSS_BAUEN:
 			knopfFuerAlles.setText("Floß bauen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "RUINEN_DURCHSUCHEN":
+		case RUINEN_DURCHSUCHEN:
 			knopfFuerAlles.setText("Ruinen durchsuchen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
-		case "KOMPASS_MITNEHMEN":
+		case KOMPASS_MITNEHMEN:
 			knopfFuerAlles.setText("Kompass mitnehmen");
-			knopfFuerAlles.setActionCommand(befehl);
 			break;
 			
 		default:
 			break;
 		
 		}
+		knopfFuerAlles.setActionCommand(aktion.toString());
+
 	}
 
 	public void actionListenerHinzufuegen(Controller controller) {
@@ -173,8 +161,20 @@ public class GuiController implements ActionListener {
 	public void knopfFuerAllesSichtbar(boolean bool) {
 		knopfFuerAlles.setVisible(bool);
 	}
+	
+	public void setzeTeileliste(int level) {
+		if (level == 1) {
+			rechteSpalte.flossteileHinzufuegen();
+		} else {
+			rechteSpalte.schiffsteileHinzufuegen();
+		}
+	}	
 
 	public void fokusHolen() {
 		fenster.requestFocus();		
+	}
+
+	public void markiereTeil(String teil) {
+		rechteSpalte.teilAlsGefundenMarkieren(teil);
 	}
 }

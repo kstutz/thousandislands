@@ -27,4 +27,8 @@ public class Inventar {
 	public boolean enthaelt(Ladung ladung) {
 		return liste.contains(ladung);
 	}
+	
+	public void leeren() {
+		liste.clear();
+	}
 }

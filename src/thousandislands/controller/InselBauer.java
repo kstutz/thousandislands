@@ -30,9 +30,9 @@ public class InselBauer {
 	
 	public void erstelleInsel(){		
 		int zufall = rand.nextInt(3);
-		if (zufall == 0 || zweck == Zweck.WASSER) {
+		if (zufall == 0) {
 			fuelleArrayKlein();
-		} else if (zufall == 1 || zweck == Zweck.NAHRUNG) {
+		} else if (zufall == 1) {
 			fuelleArrayMittel();
 		} else {
 			fuelleArrayGross();
@@ -266,6 +266,16 @@ public class InselBauer {
 			schatzfeld = inselfelder.get(zufall);			
 		} while (schatzfeld.getTyp() != Typ.DSCHUNGEL);
 		schatzfeld.setTyp(Typ.SCHATZ);
+	}
+
+
+	public Feld findeStartpunkt() {
+		for (Feld feld: inselfelder) {
+			if (feld.getTyp() == Typ.STRAND) {
+				return feld;
+			}
+		}
+		return null;
 	}
 	
 }

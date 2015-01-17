@@ -1,6 +1,8 @@
 package thousandislands.model.enums;
 
-public enum Schiffsteile {
+public enum Teile {
+	HOLZ, LIANE, KRUG, KORB,
+
 	RUMPF,
 	MAST,
 	KOMPASS,
@@ -9,4 +11,6 @@ public enum Schiffsteile {
 	SEILE,
 	SEGEL,
 	WERKZEUG;
+
+
 }

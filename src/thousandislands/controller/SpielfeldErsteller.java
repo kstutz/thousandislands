@@ -1,29 +1,20 @@
 package thousandislands.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
 
 import thousandislands.model.Feld;
-import thousandislands.model.Insel;
 import thousandislands.model.enums.Typ;
 import thousandislands.model.enums.Zweck;
 
 public class SpielfeldErsteller {
 	
-//	private static final int SPIELFELDBREITE_PX = 1200;
-//	private static final int SPIELFELDHOEHE_PX = 800;
-//	private static final int FELDBREITE_PX = 10;
-//	private static final int FELDHOEHE_PX = 10;
 	private static final int FELDANZAHL_WAAGERECHT = 100;
 	private static final int FELDANZAHL_SENKRECHT = 60;
 	private static final int INSELBREITE = 12;
 	private static final int ANZAHL_INSELN = 15;
 
 	private Feld [][] felder = new Feld[FELDANZAHL_WAAGERECHT][FELDANZAHL_SENKRECHT];
-	private List<Insel> inseln = new ArrayList<Insel>();
+	private Feld anfangsfeld;
 	private Feld schatzkartenanfang;
 	private Random rand = new Random();
 	
@@ -91,26 +82,14 @@ public class SpielfeldErsteller {
 		InselBauer inselbauer;
 		Feld startpunkt;
 		int inselanzahl = 0;
-		List<Zweck> zwecke = new LinkedList<>(Arrays.asList(
-				Zweck.HOLZ, Zweck.LIANEN, Zweck.TON, Zweck.FEUER, 
-				Zweck.GROSSER_BAUM, Zweck.SCHILF,
-				Zweck.HUETTE, Zweck.PAPAYA, Zweck.RUINE,
-				Zweck.WASSER, Zweck.NAHRUNG,
-				Zweck.LEER, Zweck.LEER));
 
-		//erste Insel erstellen mit Wasser
-		startpunkt = findeStartpunkt(0, 0, 30, 30);
-		inselbauer = new InselBauer(startpunkt, felder, Zweck.WASSER);
+		//erste Insel erstellen mit Huette
+		startpunkt = findeStartpunkt(0, 0, 20, 20);
+		inselbauer = new InselBauer(startpunkt, felder, Zweck.HUETTE);
+		anfangsfeld = inselbauer.findeStartpunkt();
 		inselanzahl++;
 
-		//zweite Insel erstellen mit Nahrung
-		do {
-			startpunkt = findeStartpunkt(0, 0, 30, 30);
-		} while (!istUmgebungFrei(startpunkt));
-		inselbauer = new InselBauer(startpunkt, felder, Zweck.NAHRUNG);
-		inselanzahl++;
-
-		//dritte Insel erstellen als Schiffbauinsel
+		//zweite Insel erstellen als Schiffbauinsel
 		do {
 			startpunkt = findeStartpunkt(80, 20, 20, 20);
 		} while (!istUmgebungFrei(startpunkt));
@@ -123,8 +102,7 @@ public class SpielfeldErsteller {
 				continue;
 			}
 			
-     		inselbauer = new InselBauer(startpunkt, felder, zwecke.get(0));				
-			zwecke.remove(0);				
+     		inselbauer = new InselBauer(startpunkt, felder, Zweck.OFFEN);
 			
 			if (inselanzahl == 4) {
 				schatzkartenanfang = startpunkt;
@@ -135,10 +113,6 @@ public class SpielfeldErsteller {
 		}
 	}
 	
-	public Feld getSchatzkartenanfang() {
-		return schatzkartenanfang;
-	}
-
 	private Feld findeStartpunkt(int x, int y, int breite, int hoehe) {
 		int a;
 		int b;
@@ -166,4 +140,21 @@ public class SpielfeldErsteller {
 		return true;
 	}
 	
+	public Feld getSchatzkartenanfang() {
+		return schatzkartenanfang;
+	}
+	
+	public Feld getSpielanfang() {
+		return anfangsfeld;
+	}
+	
+	public void versteckeWrack() {
+		int a;
+		int b;
+		do {
+			a = rand.nextInt(FELDANZAHL_WAAGERECHT);
+			b = rand.nextInt(FELDANZAHL_SENKRECHT);
+		} while (felder[a][b].getTyp() != Typ.MEER);
+		felder[a][b].setTyp(Typ.WRACK);
+	}
 }

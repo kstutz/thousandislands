@@ -1,6 +1,7 @@
 package thousandislands.model;
 
 import thousandislands.model.enums.Fortbewegung;
+import thousandislands.model.enums.Richtung;
 import thousandislands.model.enums.Typ;
 
 public class Person {
@@ -75,26 +76,25 @@ public class Person {
 		}
 	}
 	
-	public boolean bewegeNachO() {
-		Feld neuesFeld = aktuellesFeld.getNachbarO();		
-		return setzePersonWeiter(neuesFeld);
+	public boolean bewegeNach(Richtung richtung) {
+		Feld neuesFeld = null;
+		switch(richtung) {
+		case NORDEN:
+			neuesFeld = aktuellesFeld.getNachbarN();
+			break;
+		case OSTEN:
+			neuesFeld = aktuellesFeld.getNachbarO();		
+			break;
+		case SUEDEN:
+			neuesFeld = aktuellesFeld.getNachbarS();		
+			break;
+		case WESTEN:
+			neuesFeld = aktuellesFeld.getNachbarW();		
+			break;
+		}
+		return setzePersonWeiter(neuesFeld);		
 	}
-
-	public boolean bewegeNachW() {
-		Feld neuesFeld = aktuellesFeld.getNachbarW();
-		return setzePersonWeiter(neuesFeld);
-	}
-
-	public boolean bewegeNachN() {
-		Feld neuesFeld = aktuellesFeld.getNachbarN();
-		return setzePersonWeiter(neuesFeld);
-	}
-
-	public boolean bewegeNachS() {
-		Feld neuesFeld = aktuellesFeld.getNachbarS();
-		return setzePersonWeiter(neuesFeld);
-	}
-
+	
 	public void wasserAbziehen() {
 		wasser--;		
 	}

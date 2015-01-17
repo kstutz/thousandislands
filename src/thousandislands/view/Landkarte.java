@@ -76,6 +76,7 @@ public class Landkarte extends JPanel{
 		case DSCHUNGEL: return Color.GREEN;
 		case SCHATZ: return Color.GREEN;
 		case ZWECK: return Color.BLACK;
+		case WRACK: return Color.RED;
 		case ROT: return Color.RED;
 		default: return Color.GRAY;
 		}
@@ -149,7 +150,10 @@ public class Landkarte extends JPanel{
 		case RUINE: 
 			dateiname = "ruine.png";
 			break;
-		default: 
+		case OFFEN:
+			dateiname = "fragezeichen.png";
+			break;			
+		default:
 			dateiname = "leer.png";
 			break;
 		}			

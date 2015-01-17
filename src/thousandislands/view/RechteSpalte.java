@@ -11,6 +11,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import thousandislands.model.enums.Flossteile;
 import thousandislands.model.enums.Schiffsteile;
 
 public class RechteSpalte extends JPanel {
@@ -27,9 +28,6 @@ public class RechteSpalte extends JPanel {
 		add(Box.createRigidArea(new Dimension(0,10)));
 		add(new JLabel("Nahrung"));
 		add(nahrung);
-		add(Box.createRigidArea(new Dimension(0,10)));
-		
-		schiffsteileErstellen();
 		add(Box.createRigidArea(new Dimension(0,10)));		
 	}
 
@@ -40,16 +38,29 @@ public class RechteSpalte extends JPanel {
 	public void setzeNahrungsanzeige(String s) {
 		nahrung.setText(s);
 	}
-
-	public void schiffsteilHinzufuegen(Schiffsteile teil) {
+	
+	public void teilAlsGefundenMarkieren(String teil) {
 		for (JLabel label : labelListe) {
-			if (label.getText().equals(teil.toString())) {
+			if (label.getText().equals(teil)) {
 				label.setForeground(Color.BLACK);
 			}
 		}
 	}
+	
+	public void flossteileHinzufuegen () {
+		for (Flossteile teil : Flossteile.values()) {
+			JLabel label = new JLabel(teil.toString());
+			label.setForeground(Color.GRAY);
+			add(label);
+			labelListe.add(label);
+		}
+	}
 
-	private void schiffsteileErstellen() {
+	public void schiffsteileHinzufuegen() {
+		for (JLabel label: labelListe) {
+			remove(label);
+		}
+		labelListe.clear();
 		for (Schiffsteile teil : Schiffsteile.values()) {
 			JLabel label = new JLabel(teil.toString());
 			label.setForeground(Color.GRAY);
