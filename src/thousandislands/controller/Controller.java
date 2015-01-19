@@ -4,7 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import thousandislands.model.Feld;
@@ -56,8 +59,8 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.keyListenerHinzufuegen(this);
 		gui.actionListenerHinzufuegen(this);
 		gui.erstelleSchatzkarte(ersteller.getSchatzkartenanfang());
-		gui.zeigeNachricht("Hallo!");
-	}	
+		gui.zeigeNachricht("Ich sollte erstmal diese Insel, wo ich gestrandet bin, erkunden.");
+	}
 	
 	@Override
 	public void keyReleased(KeyEvent event) {
@@ -85,21 +88,25 @@ public class Controller extends KeyAdapter implements ActionListener {
 	
 	private void bewegungBearbeiten() {
 		schrittzaehler++;
-		person.wasserAbziehen();
-		person.nahrungAbziehen();
+
+		Feld aktuellesFeld = person.getAktuellesFeld();
+		if (!aktuellesFeld.istFlossDa() || schrittzaehler % 2 != 1) {
+			person.wasserAbziehen();
+			person.nahrungAbziehen();			
+		}
 		gui.aktualisiere();
 
 		//TODO: Nachricht, dass man nur ueber Strand auf Insel kommt?
 		//-> Person->setzePersonWeiter() muesste dazu entsprechende Exception werfen
 
-		
+		//TODO: wenn Level 0, dann sollte es nicht weitergehen, wenn man nicht bei Eingeborenen war
+				
 		//Flaschenpost erscheinen und verschwinden lassen
 		if (!person.hatSchatzkarte() && level == 2) {
 			flaschenpostZeigen();
 		}
 		
 		//Flaschenpost aufnehmen -> Schatzkarte kriegen
-		Feld aktuellesFeld = person.getAktuellesFeld();
 		if (aktuellesFeld.hatFlaschenpost()) {
 			aktuellesFeld.setFlaschenpost(false);
 			person.kriegtSchatzkarte();
@@ -134,19 +141,11 @@ public class Controller extends KeyAdapter implements ActionListener {
 			gui.setzeKnopf(Aktion.FLOSS_BAUEN);
 		}
 		
-		//TODO: Floss muss am Strand bleiben, waehrend Maennchen rumlaeuft!
-		//TODO: Fortbewegungsarten!
-//		Feld vorigesFeld = person.getVorigesFeld();
-//		if (person.getFortbewegung() == Fortbewegung.FLOSSFAHREN && aktuellesFeld.getTyp() == Typ.STRAND 
-//				&& vorigesFeld.getTyp() == Typ.MEER) {
-//			//Floss am Strand lassen
-//			aktuellesFeld.setFlossDa(true);
-//			person.setFortbewegung(Fortbewegung.LAUFEN);
-//		} else if (person.getFortbewegung() == Fortbewegung.LAUFEN && aktuellesFeld.istFlossDa() == true) {
-//			aktuellesFeld.setFlossDa(false);
-//			person.setFortbewegung(Fortbewegung.FLOSSFAHREN);			
-//		}		
-		
+		//Schiffbaustrand
+		//TODO: man muss was zum Abladen haben!
+		if (level == 2 && aktuellesFeld.getTyp() == Typ.SCHIFFBAUSTRAND) {
+			gui.setzeKnopf(Aktion.ABLADEN);
+		}
 	}
 	
 	private void flaschenpostZeigen() {
@@ -261,9 +260,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		
 		case SCHILF:
 			//wenn schon Korb auf Floss oder auf Schiffbauinsel, dann braucht man keinen mehr
-			if (inventar.enthaelt(Ladung.KORB_LEER) 
-					|| inventar.enthaelt(Ladung.KORB_VOLL)
-					|| !teile.contains(Teile.NAHRUNG)) {
+			if (!teile.contains(Teile.KORB)) {
 				gui.zeigeNachricht("Ich habe schon einen Korb für meinen Proviant!");
 			} else {
 				gui.zeigeNachricht("Schilf! Daraus kann ich mir einen Korb für die Früchte flechten.");
@@ -273,9 +270,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		
 		case FEUER:
 			//im Inventar oder auf Schiffbau-Insel schon Krug vorhanden
-			if (inventar.enthaelt(Ladung.KRUG_LEER)
-					|| inventar.enthaelt(Ladung.KRUG_VOLL)
-					|| !teile.contains(Teile.WASSER)) {
+			if (!teile.contains(Teile.KRUG)) {
 				gui.zeigeNachricht("Ich muss nicht noch mehr Tongefäße brennen!");
 			} else {  //kann noch Krug gebrauchen
 				gui.zeigeNachricht("Hier gibt's Feuersteine! Mit denen und den Stöcken, die es hier gibt, "
@@ -291,8 +286,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 				gui.zeigeNachricht("Hier steht ein großer Baum.");
 			} else {
 				//im Inventar oder auf Schiffbau-Insel schon Mast vorhanden
-				if (inventar.enthaelt(Ladung.MAST)
-						|| !teile.contains(Teile.MAST)) {
+				if (!teile.contains(Teile.MAST)) {
 					gui.zeigeNachricht("Ich brauche nicht noch einen Mast fuer mein Schiff, einer reicht.");
 				} else { //wir brauchen Mast
 					gui.zeigeNachricht("Hey, der große Baum hier kann ein super Mast fuer mein Schiff werden!");
@@ -320,9 +314,8 @@ public class Controller extends KeyAdapter implements ActionListener {
 			if (level < 2) {
 				gui.zeigeNachricht("Hier steht ein alter Tempel mitten im Dschungel.");		
 			} else {
-				//im Inventar oder auf Schiffbau-Insel schon Kompass vorhanden
-				if (inventar.enthaelt(Ladung.KOMPASS)
-						|| !teile.contains(Teile.KOMPASS)) {
+				//Kompass schon vorhanden
+				if (!teile.contains(Teile.KOMPASS)) {
 					gui.zeigeNachricht("Ich habe mir hier schon alles angeschaut. "
 							+ "Hier ist nichts Brauchbares mehr zu finden.");
 				} else { //wir brauchen Kompass
@@ -407,7 +400,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 						<= person.getTragfaehigkeit()) {
 					inventar.ladungHinzufuegen(Ladung.HOLZ);
 					teile.remove(Teile.RUMPF);
-					gui.markiereTeil(Ladung.HOLZ.toString());
+					gui.markiereTeil(Teile.RUMPF.toString());
 					gui.zeigeNachricht("Aus diesem Holz kann ich den Rumpf für mein Schiff bauen.");
 				} else { //zuviel Gewicht
 					gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
@@ -433,7 +426,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 						<= person.getTragfaehigkeit()) {
 					inventar.ladungHinzufuegen(Ladung.LIANE);
 					teile.remove(Teile.SEILE);
-					gui.markiereTeil(Ladung.LIANE.toString());
+					gui.markiereTeil(Teile.SEILE.toString());
 					gui.zeigeNachricht("Diese Lianen kann ich gut als Taue für mein Schiff benutzen.");
 				} else { //zuviel Gewicht
 					gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
@@ -446,6 +439,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 			gui.zeigeNachricht("Nun habe ich Wasser fuer die Ueberfahrt zum Festland");
 			inventar.ladungEntfernen(Ladung.KRUG_LEER);
 			inventar.ladungHinzufuegen(Ladung.KRUG_VOLL);
+			gui.markiereTeil(Teile.WASSER.toString());
 			teile.remove(Teile.WASSER);
 			break;
 		
@@ -453,19 +447,19 @@ public class Controller extends KeyAdapter implements ActionListener {
 			gui.zeigeNachricht("Nun habe ich Proviant fuer die Ueberfahrt zum Festland");
 			inventar.ladungEntfernen(Ladung.KORB_LEER);
 			inventar.ladungHinzufuegen(Ladung.KORB_VOLL);
+			gui.markiereTeil(Teile.NAHRUNG.toString());
 			teile.remove(Teile.NAHRUNG);
 			break;
 		
 		case "KRUG_FORMEN":
-			//TODO: haut das noch hin?
 			if (!person.hatFloss()) {
 				gui.zeigeNachricht("Wie soll ich einen Krug beim Schwimmen mitnehmen? "
 						+ "Ich brauche erstmal ein Floß!");
 			} else {  //hat Floss
-				if (!person.hatKrug()) {
+				if (level == 1) {
 					gui.zeigeNachricht("Toll, ich habe einen Krug! Aber ich muss ihn noch brennen...");
-					inventar.ladungHinzufuegen(Ladung.TON);
-				} else { //hat schon Krug fuer Floss, braucht aber noch einen fuers Schiff
+					inventar.ladungHinzufuegen(Ladung.TON);					
+				} else { //level == 2
 					// Gewicht okay
 					if (inventar.getGesamtgewicht() + Ladung.TON.getGewicht() 
 							<= person.getTragfaehigkeit()) {
@@ -475,33 +469,33 @@ public class Controller extends KeyAdapter implements ActionListener {
 					} else { //zuviel Gewicht
 						gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 								+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
-					}
+					}					
 				}
 			}
 			break;
 		
 		case "KORB_FLECHTEN":
-			//TODO: haut das noch hin?
 			if (!person.hatFloss()) {
-				gui.zeigeNachricht("Wie soll ich den Korb beim Schwimmen mitnehmen? "
+				gui.zeigeNachricht("Wie soll ich einen Korb beim Schwimmen mitnehmen? "
 						+ "Ich brauche erstmal ein Floß!");
 			} else {  //hat Floss
-				if (!person.hatKorb()) {
+				if (level == 1) {
 					gui.zeigeNachricht("Super, jetzt kann ich mehr Früchte mitnehmen!");
 					gui.markiereTeil(Teile.KORB.toString());
 					teile.remove(Teile.KORB);
-					person.setKorb(true);
-				} else { //hat schon Korb fuer Floss, braucht aber noch einen fuers Schiff
+					person.setKorb(true);					
+				} else { //level == 2
 					// Gewicht okay
 					if (inventar.getGesamtgewicht() + Ladung.KORB_LEER.getGewicht() 
 							<= person.getTragfaehigkeit()) {
 						gui.zeigeNachricht("Jetzt kann ich Proviant fuer die Fahrt zum Festland mitnehmen.");
 						inventar.ladungHinzufuegen(Ladung.KORB_LEER);
+						gui.markiereTeil(Teile.KORB.toString());
 						teile.remove(Teile.KORB);
 					} else { //zuviel Gewicht
 						gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 								+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
-					}
+					}					
 				}
 			}
 			break;
@@ -519,11 +513,13 @@ public class Controller extends KeyAdapter implements ActionListener {
 			if (!person.hatKrug()) {
 				gui.zeigeNachricht("Super, jetzt kann ich Wasser mitnehmen!");
 				inventar.ladungEntfernen(Ladung.TON);
+				gui.markiereTeil(Teile.KRUG.toString());
 				teile.remove(Teile.KRUG);
 				person.setKrug(true);
 			} else {
 				inventar.ladungEntfernen(Ladung.TON);
 				inventar.ladungHinzufuegen(Ladung.KRUG_LEER);
+				gui.markiereTeil(Teile.KRUG.toString());
 				teile.remove(Teile.KRUG);
 				gui.zeigeNachricht("Jetzt kann ich Wasser fuer die Ueberfahrt zum Festland mitnehmen!");
 			}			
@@ -533,7 +529,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 			// Gewicht okay
 			if (inventar.getGesamtgewicht()  + Ladung.PAPAYA.getGewicht() 
 					<= person.getTragfaehigkeit()) {
-				gui.zeigeNachricht("Ich hasse Papaya.");
+				gui.zeigeNachricht("Ich HASSE Papaya.");
 				gui.setzeKnopf(Aktion.TROTZDEM_MITNEHMEN);
 			} else { //zuviel Gewicht
 				gui.zeigeNachricht("Oh, mein Floß ist zu schwer beladen. "
@@ -553,6 +549,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 					<= person.getTragfaehigkeit()) {
 				gui.zeigeNachricht("Jetzt habe ich einen Mast fuer mein Schiff!");
 				inventar.ladungHinzufuegen(Ladung.MAST);
+				gui.markiereTeil(Teile.MAST.toString());
 				teile.remove(Teile.MAST);
 			} else { //zuviel Gewicht
 				gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
@@ -587,6 +584,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 					<= person.getTragfaehigkeit()) {
 				gui.zeigeNachricht("Jetzt habe ich einen Kompass für mein Schiff!");
 				inventar.ladungHinzufuegen(Ladung.KOMPASS);
+				gui.markiereTeil(Teile.KOMPASS.toString());
 				teile.remove(Teile.KOMPASS);
 			} else { //zuviel Gewicht
 				gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
@@ -597,8 +595,10 @@ public class Controller extends KeyAdapter implements ActionListener {
 		case "SEGEL_MITNEHMEN":
 			gui.zeigeNachricht("Jetzt habe ich ein Segel für mein Schiff!");
 			inventar.ladungHinzufuegen(Ladung.SEGEL);
+			gui.markiereTeil(Teile.SEGEL.toString());
 			teile.remove(Teile.SEGEL);
-			//Gewicht ignoriert, da Feldtyp-Aendern gerade zu kompliziert
+			//TODO: Gewicht beachten 
+			//person.getAktuellesFeld().setTyp = Typ.ZWECK; -> Zweck.SEGEL
 			break;
 
 		case "WRACK_DURCHSUCHEN":
@@ -613,6 +613,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 					<= person.getTragfaehigkeit()) {
 				gui.zeigeNachricht("Jetzt habe ich Werkzeug für den Schiffbau!");
 				inventar.ladungHinzufuegen(Ladung.WERKZEUG);
+				gui.markiereTeil(Teile.WERKZEUG.toString());
 				teile.remove(Teile.WERKZEUG);
 			} else { //zuviel Gewicht
 				gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
@@ -621,9 +622,19 @@ public class Controller extends KeyAdapter implements ActionListener {
 			break;
 
 		case "ABLADEN":
-			//TODO: auf Schiffbauinsel
-			// alles einzeln listen?
-			// oder alles auf einmal abladen?
+			StringBuilder text = new StringBuilder("Du hast abgeladen: ");
+			List<Ladung> fracht = new ArrayList<>(Arrays.asList(
+					Ladung.HOLZ, Ladung.KOMPASS, Ladung.KORB_VOLL, Ladung.KRUG_VOLL,
+					Ladung.LIANE, Ladung.MAST, Ladung.SEGEL, Ladung.WERKZEUG));
+			
+			for (Ladung einzelteil: fracht) {
+				if (inventar.enthaelt(einzelteil)) {
+					inventar.ladungEntfernen(einzelteil);
+					text.append(einzelteil.toString() + ", ");
+				}
+			}
+			gui.zeigeNachricht(text.toString());
+			break;
 			
 		default:
 			break;

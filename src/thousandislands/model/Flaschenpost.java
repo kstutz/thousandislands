@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import thousandislands.model.enums.Richtung;
 import thousandislands.model.enums.Typ;
 
 public class Flaschenpost {
-	private List<String> richtungen = new ArrayList<>();
+	private List<Richtung> richtungen = new ArrayList<>();
 	private Feld aktuellesFeld;
 	private Feld[][] spielfeld;
 	private Random wuerfel = new Random();
@@ -26,17 +27,17 @@ public class Flaschenpost {
 
 		int zufall = wuerfel.nextInt(3);
 		switch (richtungen.get(zufall)) {
-		case "N": 
-			naechstesFeld = aktuellesFeld.getNachbarN();
+		case NORDEN: 
+			naechstesFeld = aktuellesFeld.getNachbar(Richtung.NORDEN);
 			break;
-		case "O": 
-			naechstesFeld = aktuellesFeld.getNachbarO();
+		case OSTEN: 
+			naechstesFeld = aktuellesFeld.getNachbar(Richtung.OSTEN);
 			break;
-		case "S": 
-			naechstesFeld = aktuellesFeld.getNachbarS();
+		case SUEDEN: 
+			naechstesFeld = aktuellesFeld.getNachbar(Richtung.SUEDEN);
 			break;
 		default: 
-			naechstesFeld = aktuellesFeld.getNachbarW();
+			naechstesFeld = aktuellesFeld.getNachbar(Richtung.WESTEN);
 			break;
 		}
 		
@@ -65,13 +66,13 @@ public class Flaschenpost {
 		for (int i=0; i<3; i++) {
 			int zufall = wuerfel.nextInt(4);
 			if (zufall == 0) {
-				richtungen.add("N");
+				richtungen.add(Richtung.NORDEN);
 			} else if (zufall == 1) {
-				richtungen.add("O");
+				richtungen.add(Richtung.OSTEN);
 			} else if (zufall == 2) {
-				richtungen.add("S");
+				richtungen.add(Richtung.SUEDEN);
 			} else {
-				richtungen.add("W");
+				richtungen.add(Richtung.WESTEN);
 			}
 		}
 	}

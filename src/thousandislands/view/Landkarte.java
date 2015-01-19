@@ -72,7 +72,8 @@ public class Landkarte extends JPanel{
 
 		switch (feld.getTyp()) {
 		case MEER: return Color.BLUE;
-		case STRAND: return Color.YELLOW;	
+		case STRAND: return Color.YELLOW;
+		case SCHIFFBAUSTRAND: return Color.YELLOW;		
 		case DSCHUNGEL: return Color.GREEN;
 		case SCHATZ: return Color.GREEN;
 		case ZWECK: return Color.BLACK;
@@ -94,11 +95,16 @@ public class Landkarte extends JPanel{
 		} else if (feld.getTyp() == Typ.ZWECK) {
 			dateiname = findeBildFuerZweck(feld);			
 		} else if (feld.istFlossDa()) {
-			dateiname = "floss.png";
+			if (feld.getTyp() == Typ.STRAND) {
+				dateiname = "floss_strand.png";
+			} else {
+				dateiname = "floss.png";
+			}
 		} else if (feld.hatFlaschenpost()) {
 			dateiname = "flasche1.png";
-		}
-		
+		} else if (feld.getTyp() == Typ.WRACK) {
+			dateiname = "wrack.png";
+		}		
 		
 		if (!dateiname.isEmpty()) {
 	    	datei = getClass().getClassLoader().getResource(dateiname);
@@ -163,13 +169,15 @@ public class Landkarte extends JPanel{
 	private String findeBildFuerPerson(Person person, Feld feld) {
 		if (feld.getTyp() == Typ.MEER) {
 			if (feld.istFlossDa()) {
-				return "floss.png";
+				return "mann_floss.png";
 			} else {
 				return "schwimmer1.png";				
 			}
 		} else {
-			if (feld.getTyp() == Typ.STRAND) {
+			if (feld.getTyp() == Typ.STRAND || feld.getTyp() == Typ.SCHIFFBAUSTRAND) {
 				return "mann_strand.png";
+			} else if (feld.getTyp() == Typ.WRACK){
+				return "schwimmer1.png";		
 			} else {
 				return "mann_dschungel.png";				
 			}

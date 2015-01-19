@@ -3,6 +3,7 @@ package thousandislands.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import thousandislands.model.enums.Richtung;
 import thousandislands.model.enums.Status;
 import thousandislands.model.enums.Typ;
 import thousandislands.model.enums.Zweck;
@@ -82,37 +83,35 @@ public class Feld {
 	public void setFlossDa(boolean flossDa) {
 		this.flossDa = flossDa;
 	}
-
-	public Feld getNachbarO() {
-		return nachbarO;
-	}
-
-	public void setNachbarO(Feld feld) {
-		this.nachbarO = feld;
-	}
-
-	public Feld getNachbarW() {
-		return nachbarW;
-	}
-
-	public void setNachbarW(Feld feld) {
-		this.nachbarW = feld;
-	}
-
-	public Feld getNachbarN() {
-		return nachbarN;
+	
+	public Feld getNachbar(Richtung richtung) {
+		switch (richtung) {
+		case NORDEN:
+			return nachbarN;
+		case OSTEN:
+			return nachbarO;
+		case SUEDEN:
+			return nachbarS;
+		default:
+			return nachbarW;
+		}
 	}
 	
-	public void setNachbarN(Feld feld) {
-		this.nachbarN = feld;
-	}
-
-	public Feld getNachbarS() {
-		return nachbarS;
-	}
-
-	public void setNachbarS(Feld feld) {
-		this.nachbarS = feld;
+	public void setNachbar(Feld feld, Richtung richtung) {
+		switch (richtung) {
+		case NORDEN:
+			this.nachbarN = feld;
+			break;
+		case OSTEN:
+			this.nachbarO = feld;
+			break;
+		case SUEDEN:
+			this.nachbarS = feld;
+			break;
+		default:
+			this.nachbarW = feld;
+			break;
+		}
 	}
 
 	public boolean hatFlaschenpost() {

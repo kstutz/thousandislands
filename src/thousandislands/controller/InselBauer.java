@@ -39,10 +39,11 @@ public class InselBauer {
 		}
 		
 		if (zweck == Zweck.SCHIFFBAU) {
-		    fuelleArraySchiffbau();	
+		    fuelleArraySchiffbau();
 			wuerfele();
 			entferneSeen();
-			erstelleZweckfeld();			
+			erstelleSchiffbaustrand();
+			erstelleZweckfeld();
 		} else {
 			wuerfele();
 			entferneSeen();
@@ -51,6 +52,15 @@ public class InselBauer {
 		}
 	}
 	
+
+	private void erstelleSchiffbaustrand() {
+		for (Feld feld : inselfelder) {
+			if (feld.getTyp() == Typ.STRAND) {
+				feld.setTyp(Typ.SCHIFFBAUSTRAND);
+			}
+		}
+	}
+
 
 	private void fuelleArrayGross() {
 		int muster[][] = { 	{0,0,0,0,0,0,0,0,0,0,0,0},
@@ -130,6 +140,7 @@ public class InselBauer {
 					spielfeld[i+xDazu][j+yDazu].setTyp(Typ.MEER);
 				} else if (spielfeldteil[i][j] < 0) {
 					spielfeld[i+xDazu][j+yDazu].setTyp(Typ.STRAND);
+					inselfelder.add(spielfeld[i+xDazu][j+yDazu]);
 				} else {
 					spielfeld[i+xDazu][j+yDazu].setTyp(Typ.DSCHUNGEL);
 					inselfelder.add(spielfeld[i+xDazu][j+yDazu]);
@@ -188,7 +199,6 @@ public class InselBauer {
 				feld.setTyp(Typ.STRAND);
 			}
 		}
-		
 	}
 	
 	private boolean koennteStrandSein(Feld feld) {

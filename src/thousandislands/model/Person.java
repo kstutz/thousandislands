@@ -77,16 +77,16 @@ public class Person {
 		Feld neuesFeld = null;
 		switch(richtung) {
 		case NORDEN:
-			neuesFeld = aktuellesFeld.getNachbarN();
+			neuesFeld = aktuellesFeld.getNachbar(Richtung.NORDEN);
 			break;
 		case OSTEN:
-			neuesFeld = aktuellesFeld.getNachbarO();		
+			neuesFeld = aktuellesFeld.getNachbar(Richtung.OSTEN);
 			break;
 		case SUEDEN:
-			neuesFeld = aktuellesFeld.getNachbarS();		
+			neuesFeld = aktuellesFeld.getNachbar(Richtung.SUEDEN);
 			break;
 		case WESTEN:
-			neuesFeld = aktuellesFeld.getNachbarW();		
+			neuesFeld = aktuellesFeld.getNachbar(Richtung.WESTEN);		
 			break;
 		}
 		return setzePersonWeiter(neuesFeld);		

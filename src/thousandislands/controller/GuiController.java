@@ -143,12 +143,14 @@ public class GuiController implements ActionListener {
 		case WERKZEUG_MITNEHMEN:
 			knopfFuerAlles.setText("Werkzeug mitnehmen");
 			break;
+		case ABLADEN:
+			knopfFuerAlles.setText("Abladen");
+			break;
 		default:
 			break;
 		
 		}
 		knopfFuerAlles.setActionCommand(aktion.toString());
-
 	}
 
 	public void actionListenerHinzufuegen(Controller controller) {

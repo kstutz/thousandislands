@@ -3,6 +3,7 @@ package thousandislands.controller;
 import java.util.Random;
 
 import thousandislands.model.Feld;
+import thousandislands.model.enums.Richtung;
 import thousandislands.model.enums.Typ;
 import thousandislands.model.enums.Zweck;
 
@@ -44,7 +45,7 @@ public class SpielfeldErsteller {
 				if (i > 0) {
 					felder[i][j].setNachbar(felder[i-1][j]);
 					felder[i][j].setDirekterNachbar(felder[i-1][j]);
-					felder[i][j].setNachbarW(felder[i-1][j]);
+					felder[i][j].setNachbar(felder[i-1][j], Richtung.WESTEN);
 					if (j > 0) {
 						felder[i][j].setNachbar(felder[i-1][j-1]);
 					}
@@ -55,7 +56,7 @@ public class SpielfeldErsteller {
 				if (i < FELDANZAHL_WAAGERECHT-1) { 
 					felder[i][j].setNachbar(felder[i+1][j]);
 					felder[i][j].setDirekterNachbar(felder[i+1][j]);
-					felder[i][j].setNachbarO(felder[i+1][j]);
+					felder[i][j].setNachbar(felder[i+1][j], Richtung.OSTEN);
 					if (j > 0) {
 						felder[i][j].setNachbar(felder[i+1][j-1]);
 					}
@@ -66,12 +67,12 @@ public class SpielfeldErsteller {
 				if (j > 0) {
 					felder[i][j].setNachbar(felder[i][j-1]);
 					felder[i][j].setDirekterNachbar(felder[i][j-1]);
-					felder[i][j].setNachbarN(felder[i][j-1]);
+					felder[i][j].setNachbar(felder[i][j-1], Richtung.NORDEN);
 				}
 				if (j < FELDANZAHL_SENKRECHT-1) {
 					felder[i][j].setNachbar(felder[i][j+1]);
 					felder[i][j].setDirekterNachbar(felder[i][j+1]);
-					felder[i][j].setNachbarS(felder[i][j+1]);
+					felder[i][j].setNachbar(felder[i][j+1], Richtung.SUEDEN);
 				}
 			}
 		}		
