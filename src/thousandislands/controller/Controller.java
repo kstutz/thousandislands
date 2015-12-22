@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.Timer;
+
 import thousandislands.model.Feld;
 import thousandislands.model.Flaschenpost;
 import thousandislands.model.Inventar;
@@ -25,7 +27,8 @@ import thousandislands.model.enums.Zweck;
 
 public class Controller extends KeyAdapter implements ActionListener {
 	private static final int FLASCHENPOST_LAENGE = 50;
-	private static final int FLASCHENPOST_ABSTAND = 50;	
+	private static final int FLASCHENPOST_ABSTAND = 50;
+	private static final int ZEITTAKT_IN_MS = 200;
 	private GuiController gui;
 	private Person person;
 	private Inventar inventar;
@@ -35,6 +38,8 @@ public class Controller extends KeyAdapter implements ActionListener {
 	private boolean flaschenpostSichtbar;
 	private Flaschenpost flaschenpost;
 	private Zweckverteiler zweckverteiler;
+	private int gedrueckteTaste;
+	private Timer timer;
 	
 	public static void main (String[] args) {
 		new Controller();
@@ -54,6 +59,9 @@ public class Controller extends KeyAdapter implements ActionListener {
 		teile = new HashSet<>();
 		zweckverteiler = new Zweckverteiler();
 		
+		timer = new Timer(ZEITTAKT_IN_MS, this);
+		timer.setInitialDelay(0);
+		timer.setActionCommand("TIMER");
 		gui = new GuiController(spieldaten);
 		gui.aktualisiere();
 		gui.keyListenerHinzufuegen(this);
@@ -63,10 +71,21 @@ public class Controller extends KeyAdapter implements ActionListener {
 	}
 	
 	@Override
+	public void keyPressed(KeyEvent event) {
+		gedrueckteTaste = event.getKeyCode();
+		timer.start();
+	}
+ 	
+	@Override
 	public void keyReleased(KeyEvent event) {
+		timer.stop();
+		gedrueckteTaste = 0;
+	}
+	
+	private void tastendruckAuswerten(){
 		boolean bewegt = false;
 		
-		switch (event.getKeyCode()) {
+		switch (gedrueckteTaste) {
 		case KeyEvent.VK_LEFT: 
 			bewegt = person.bewegeNach(Richtung.WESTEN);
 			break;
@@ -83,7 +102,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		
 		if (bewegt) {
 			bewegungBearbeiten();
-		}
+		}		
 	}
 	
 	private void bewegungBearbeiten() {
@@ -381,6 +400,11 @@ public class Controller extends KeyAdapter implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		
+		if (event.getActionCommand().equals("TIMER")) {
+			tastendruckAuswerten();
+			return;
+		}
 		
 		switch(event.getActionCommand()) {
 		case "HOLZ_MITNEHMEN":
