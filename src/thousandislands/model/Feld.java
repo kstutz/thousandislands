@@ -1,8 +1,11 @@
 package thousandislands.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import thousandislands.model.enums.Ladung;
 import thousandislands.model.enums.Richtung;
 import thousandislands.model.enums.Status;
 import thousandislands.model.enums.Typ;
@@ -23,6 +26,7 @@ public class Feld {
 	private Feld nachbarW;
 	private Feld nachbarN;
 	private Feld nachbarS;
+	private Set<Ladung> ladungshaufen = new HashSet<>();
 	
 	public Feld (int x, int y) {
 		status = Status.ENTDECKT;
@@ -129,4 +133,12 @@ public class Feld {
 	public void setZweck(Zweck zweck) {
 		this.zweck = zweck;
 	}
+	
+	public void ladeTeilAb(Ladung teil) {
+		ladungshaufen.add(teil);
+	}
+	
+	public Set<Ladung> getLadung() {
+		return ladungshaufen;
+	}	
 }

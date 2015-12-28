@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 public class Fenster extends JFrame {
 	
 	public Fenster(){
-		setSize(new Dimension(1150, 640));
+		setSize(new Dimension(1200, 665));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setTitle("Tausend Inseln");

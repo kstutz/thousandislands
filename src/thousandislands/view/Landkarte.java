@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import thousandislands.model.Feld;
 import thousandislands.model.Person;
 import thousandislands.model.Spieldaten;
+import thousandislands.model.enums.Ladung;
 import thousandislands.model.enums.Typ;
 import thousandislands.model.enums.Zweck;
 
@@ -104,16 +105,19 @@ public class Landkarte extends JPanel{
 			dateiname = "flasche1.png";
 		} else if (feld.getTyp() == Typ.WRACK) {
 			dateiname = "wrack.png";
-		}		
+		} else if (feld.getTyp() == Typ.SCHIFFBAUSTRAND 
+				&& !feld.getLadung().isEmpty()) {
+			dateiname = "haufen.jpg";
+		}
 		
 		if (!dateiname.isEmpty()) {
-	    	datei = getClass().getClassLoader().getResource(dateiname);
+	    	datei = getClass().getClassLoader().getResource("img/"+dateiname);
 	    	
 			try {
 			    bild = ImageIO.read(datei);
 			} catch (IOException e) {
 				System.out.println(e);
-			}			
+			}
 		}
 		
 		return bild;
@@ -124,7 +128,7 @@ public class Landkarte extends JPanel{
 		
     	switch(feld.getZweck()) {
 		case WASSER: 
-			dateiname = "quelle4.png";
+			dateiname = "quelle.png";
 			break;
 		case NAHRUNG: 
 			dateiname = "nahrung.png";
@@ -144,8 +148,11 @@ public class Landkarte extends JPanel{
 		case SCHILF: 
 			dateiname = "schilf.png";
 			break;
-		case GROSSER_BAUM: 
-			dateiname = "grosserbaum.png";
+		case GROSSER_BAUM:
+			dateiname = "grosserbaum.png";				
+			break;
+		case BAUMSTUMPF:
+			dateiname = "baumstumpf2.png";
 			break;
 		case HUETTE: 
 			dateiname = "huette.png";

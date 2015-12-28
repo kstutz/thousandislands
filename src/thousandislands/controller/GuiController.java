@@ -2,19 +2,23 @@ package thousandislands.controller;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import thousandislands.model.Feld;
 import thousandislands.model.Spieldaten;
 import thousandislands.model.enums.Aktion;
-import thousandislands.model.enums.Teile;
+import thousandislands.model.enums.Ladung;
+import thousandislands.model.enums.Zweck;
 import thousandislands.view.Fenster;
 import thousandislands.view.Landkarte;
 import thousandislands.view.RechteSpalte;
@@ -25,7 +29,9 @@ public class GuiController implements ActionListener {
 	private RechteSpalte rechteSpalte;
 	private JButton knopfFuerAlles;
 	private JButton kartenknopf;
-	private JLabel nachrichtenzeile;
+	private JButton speicherknopf;
+	private JButton ladeknopf;
+	private JPanel knopfzeile;
 	private Schatzkarte schatzkarte;
 	private Spieldaten daten;
 	private Fenster fenster;
@@ -46,24 +52,35 @@ public class GuiController implements ActionListener {
 		
 		//rechte Spalte und Knoepfe hinzufuegen
 		rechteSpalte = new RechteSpalte();
+		GridBagConstraints c = new GridBagConstraints();
 
 		knopfFuerAlles = new JButton();
-//		knopfFuerAlles.setVisible(false);
-		rechteSpalte.add(knopfFuerAlles);
+		c.gridy = 7;
+		c.insets = new Insets(5,0,5,0);
+		rechteSpalte.add(knopfFuerAlles, c);
 
-		rechteSpalte.add(Box.createRigidArea(new Dimension(0,10)));
-
-		kartenknopf = new JButton("Schatzkarte");
+		
+		kartenknopf = new JButton("<html>Schatzkarte<br />anschauen</html>");
 		kartenknopf.setVisible(false);
 		kartenknopf.setActionCommand("KARTE");
 		kartenknopf.addActionListener(this);
-		rechteSpalte.add(kartenknopf);
+		c.gridy = 8;
+		c.insets = new Insets(5,0,5,0);
+		rechteSpalte.add(kartenknopf, c);
 		
 		fenster.add(rechteSpalte, BorderLayout.EAST);
 		
-		//Nachrichtenzeile hinzufuegen
-		nachrichtenzeile = new JLabel();
-		fenster.add(nachrichtenzeile, BorderLayout.SOUTH);
+		speicherknopf = new JButton("Speichern");
+		speicherknopf.setActionCommand("SPEICHERN");
+
+		ladeknopf = new JButton("Laden");
+		ladeknopf.setActionCommand("LADEN");
+		
+		knopfzeile = new JPanel();
+		knopfzeile.add(speicherknopf);
+		knopfzeile.add(ladeknopf);
+		
+		fenster.add(knopfzeile, BorderLayout.NORTH);
 	}
 
 	public void erstelleSchatzkarte(Feld startfeld) {
@@ -74,13 +91,14 @@ public class GuiController implements ActionListener {
 		spielfeld.repaint();
 		rechteSpalte.setzeWasseranzeige(daten.getWasser());
 		rechteSpalte.setzeNahrungsanzeige(daten.getNahrung());
-		nachrichtenzeile.setText(" ");
+		rechteSpalte.setzeFlossBeladung(daten.getInventar().getGesamtgewicht(), daten.getPerson().getTragfaehigkeit());
+		rechteSpalte.zeigeNachricht(" ");
 //		knopfFuerAlles.setText(" ");
 		knopfFuerAlles.setVisible(false);
 	}
 	
 	public void zeigeNachricht(String s) {
-		nachrichtenzeile.setText(s);
+		rechteSpalte.zeigeNachricht(s);
 	}
 	
 	public void kartenknopfSichtbar(boolean bool) {
@@ -146,6 +164,9 @@ public class GuiController implements ActionListener {
 		case ABLADEN:
 			knopfFuerAlles.setText("Abladen");
 			break;
+		case SCHIFF_BAUEN:
+			knopfFuerAlles.setText("Schiff bauen");
+			break;
 		default:
 			break;
 		
@@ -155,6 +176,8 @@ public class GuiController implements ActionListener {
 
 	public void actionListenerHinzufuegen(Controller controller) {
 		knopfFuerAlles.addActionListener(controller);
+		speicherknopf.addActionListener(controller);
+		ladeknopf.addActionListener(controller);
 	}
 	
 	public void keyListenerHinzufuegen(Controller controller) {
@@ -171,15 +194,36 @@ public class GuiController implements ActionListener {
 		knopfFuerAlles.setVisible(bool);
 	}
 	
-	public void setzeTeileliste(Set<Teile> teile) {
-		rechteSpalte.teileHinzufuegen(teile);
+	public void setzeTeileliste(Set<Ladung> noetigeTeile) {
+		rechteSpalte.teileHinzufuegen(noetigeTeile);
 	}
-
+	
+	public void hosentascheHinzufuegen(Ladung teil) {
+		rechteSpalte.inventarHinzufügen(teil);
+	}
+	
+	public void hosentascheEntfernen(Ladung teil) {
+		rechteSpalte.inventarEntfernen(teil);
+	}
+	
 	public void fokusHolen() {
 		fenster.requestFocus();		
 	}
 
 	public void markiereTeil(String teil) {
 		rechteSpalte.teilAlsGefundenMarkieren(teil);
+	}
+	
+	public void setzeBaumstumpf() {
+		daten.getPerson().getAktuellesFeld().setZweck(Zweck.BAUMSTUMPF);
+	}
+	
+	public void spielende() {
+		fenster.remove(spielfeld);
+		fenster.remove(rechteSpalte);
+		fenster.remove(knopfzeile);
+		
+		fenster.add(new JLabel("ENDE"), BorderLayout.CENTER);
+		//TODO: Knopf fuer nochmal spielen
 	}
 }

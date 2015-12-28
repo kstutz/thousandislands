@@ -31,4 +31,10 @@ public class Inventar {
 	public void leeren() {
 		liste.clear();
 	}
+	
+	public void listeAusgeben() {
+		for (Ladung teil : liste) {
+			System.out.println(teil.toString() + " - " + teil.getGewicht());
+		}
+	}
 }

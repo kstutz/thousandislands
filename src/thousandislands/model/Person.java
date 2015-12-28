@@ -8,7 +8,6 @@ public class Person {
 	private static final int MAX_WASSER_KRUG = 200;
 	private static final int MAX_NAHRUNG = 100;
 	private static final int MAX_NAHRUNG_KORB = 200;
-	private static final int TRAGKRAFT_SCHWIMMEND = 1;
 	private static final int TRAGKRAFT_MIT_FLOSS = 10;
 	
 	private int wasser;
@@ -19,7 +18,7 @@ public class Person {
 	private boolean hatFloss;
 	private boolean hatKrug;
 	private boolean hatKorb;
-	private boolean hatWaffen;
+	private boolean hatSpeer;
 	
 	public Person(Feld feld) {
 		vorigesFeld = feld;
@@ -28,7 +27,7 @@ public class Person {
 		hatFloss = false;
 		hatKrug = false;
 		hatKorb = false;
-		hatWaffen = false;
+		hatSpeer = false;
 		wasser = 100;
 		nahrung = 100;
 	}
@@ -66,11 +65,7 @@ public class Person {
 	}
 	
 	public int getTragfaehigkeit() {
-		if (hatFloss) {
-			return TRAGKRAFT_MIT_FLOSS;
-		} else {
-			return TRAGKRAFT_SCHWIMMEND;
-		}
+		return TRAGKRAFT_MIT_FLOSS;
 	}
 	
 	public boolean bewegeNach(Richtung richtung) {
@@ -166,11 +161,11 @@ public class Person {
 		this.hatKorb = hatKorb;
 	}
 
-	public boolean hatWaffen() {
-		return hatWaffen;
+	public boolean hatSpeer() {
+		return hatSpeer;
 	}
 
-	public void setWaffen(boolean hatWaffen) {
-		this.hatWaffen = hatWaffen;
+	public void setSpeer(boolean hatSpeer) {
+		this.hatSpeer = hatSpeer;
 	}
 }
