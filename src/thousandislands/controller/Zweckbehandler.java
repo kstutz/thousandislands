@@ -21,7 +21,7 @@ public class Zweckbehandler {
 		this.noetigeTeile = noetigeTeile;
 	}
 		
-	public void behandleZweckfeld(Zweck zweck, int level) {
+	public void behandleZweckfeld(Zweck zweck) {
 
 		switch (zweck) {
 		case WASSER:
@@ -31,13 +31,13 @@ public class Zweckbehandler {
 			behandleZweckNahrung();
 			break;
 		case HOLZ:
-			behandleZweckHolz(level);
+			behandleZweckHolz();
 			break;
 		case LIANEN:
-			lianenGefunden(level);
+			lianenGefunden();
 			break;	
 		case TON:
-			tonGefunden(level);
+			tonGefunden();
 			break;
 		case SCHILF:
 			schilfGefunden();
@@ -46,13 +46,13 @@ public class Zweckbehandler {
 			feuerGefunden();
 			break;
 		case GROSSER_BAUM:
-			baumGefunden(level);
+			baumGefunden();
 			break;
 		case PAPAYA:
-			papayaGefunden(level);
+			papayaGefunden();
 			break;
 		case RUINE:
-			ruineGefunden(level);
+			ruineGefunden();
 			break;
 		case LEER:
 			gui.zeigeNachricht("Auf dieser Insel scheint es gar nichts Interessantes zu geben!");
@@ -70,9 +70,14 @@ public class Zweckbehandler {
 			gui.zeigeNachricht("Wenn ich einen Krug haette, koennte ich Wasser mitnehmen...");
 		}
 		
-		if (inventar.enthaelt(Ladung.KRUG)) {
-			gui.zeigeNachricht("Ich kann jetzt die Wasservorräte für mein Schiff auffüllen.");
-			gui.setzeKnopf(Aktion.KRUG_FUELLEN);
+		if (person.getLevel() == 2) {
+			if (noetigeTeile.contains(Ladung.KRUG)) {
+				gui.zeigeNachricht("Wenn ich einen Krug haette, koennte ich Wasser " +
+						"fuer die Ueberfahrt zum Festland mitnehmen.");
+			} else if (noetigeTeile.contains(Ladung.WASSER)){
+				gui.zeigeNachricht("Ich kann jetzt die Wasservorräte für mein Schiff auffüllen.");
+				gui.setzeKnopf(Aktion.KRUG_FUELLEN);
+			}
 		}		
 	}
 
@@ -83,19 +88,24 @@ public class Zweckbehandler {
 		if (person.hatFloss() && !person.hatKorb()) {
 			gui.zeigeNachricht("Wenn ich einen Korb haette, koennte ich Fruechte mitnehmen...");
 		}
-
-		if (inventar.enthaelt(Ladung.KORB)) {
-			gui.zeigeNachricht("Ich kann jetzt die Nahrungsvorräte für mein Schiff auffüllen.");
-			gui.setzeKnopf(Aktion.KORB_FUELLEN);
-		}
+		
+		if (person.getLevel() == 2) {
+			if (noetigeTeile.contains(Ladung.KORB)) {
+				gui.zeigeNachricht("Wenn ich einen Korb haette, koennte ich Fruechte " +
+						"fuer die Ueberfahrt zum Festland mitnehmen.");				
+			} else if (noetigeTeile.contains(Ladung.NAHRUNG)){
+				gui.zeigeNachricht("Ich kann jetzt die Nahrungsvorräte für mein Schiff auffüllen.");
+				gui.setzeKnopf(Aktion.KORB_FUELLEN);				
+			}
+		}		
 	}
 
-	private void behandleZweckHolz(int level) {
+	private void behandleZweckHolz() {
 		//Level 1: Holz vorhanden
-		if (level == 1 && !noetigeTeile.contains(Ladung.HOLZ)) {
+		if (person.getLevel() == 1 && !noetigeTeile.contains(Ladung.HOLZ)) {
 			gui.zeigeNachricht("Ich habe schon genug Holz.");				
 		//Level 2: Holz vorhanden
-		} else if (level == 2  && !noetigeTeile.contains(Ladung.RUMPF)) {
+		} else if (person.getLevel() == 2  && !noetigeTeile.contains(Ladung.RUMPF)) {
 			gui.zeigeNachricht("Ich habe schon genug Holz für den Schiffsrumpf.");
 		} else { //man braucht noch Holz
 			gui.zeigeNachricht("Hier gibt es jede Menge Holz! Und Holz schwimmt gut...");
@@ -103,12 +113,12 @@ public class Zweckbehandler {
 		}		
 	}
 	
-	private void lianenGefunden(int level) {
+	private void lianenGefunden() {
 		//Level 1: Lianen vorhanden
-		if (level == 1 && !noetigeTeile.contains(Ladung.LIANE)) {
+		if (person.getLevel() == 1 && !noetigeTeile.contains(Ladung.LIANE)) {
 			gui.zeigeNachricht("Ich habe schon genug Lianen.");
 		//Level 2: Lianen vorhanden
-		} else if (level == 2 && !noetigeTeile.contains(Ladung.SEILE)) {
+		} else if (person.getLevel() == 2 && !noetigeTeile.contains(Ladung.SEILE)) {
 			gui.zeigeNachricht("Ich habe schon genug Seile.");
 		} else { //man braucht noch Lianen
 			gui.zeigeNachricht("Lianen! Die kann ich gut als Seile verwenden.");
@@ -116,7 +126,7 @@ public class Zweckbehandler {
 		}		
 	}
 	
-	private void tonGefunden(int level) {
+	private void tonGefunden() {
 		//wenn schon Ton vorhanden, dann braucht man keinen mehr
 		if (inventar.enthaelt(Ladung.KRUG_UNGEBRANNT)
 				|| !noetigeTeile.contains(Ladung.KRUG)) {
@@ -148,24 +158,20 @@ public class Zweckbehandler {
 		}		
 	}
 	
-	private void baumGefunden(int level) {
+	private void baumGefunden() {
 		//TODO: abhängig von Werkzeug?
+		//Problem: dann muss man Werkzeug dabeihaben, kann es nicht abladen
 		
-		if (level < 2) {
+		if (person.getLevel() < 2) {
 			gui.zeigeNachricht("Hier steht ein großer Baum.");
 		} else {
-			//im Inventar oder auf Schiffbau-Insel schon Mast vorhanden
-			if (!noetigeTeile.contains(Ladung.MAST)) {
-				gui.zeigeNachricht("Ich brauche nicht noch einen Mast fuer mein Schiff, einer reicht.");
-			} else { //wir brauchen Mast
-				gui.zeigeNachricht("Hey, der große Baum hier kann ein super Mast fuer mein Schiff werden!");
-				gui.setzeKnopf(Aktion.BAUM_FAELLEN);
-			}				
+			gui.zeigeNachricht("Hey, der große Baum hier kann ein super Mast fuer mein Schiff werden!");
+			gui.setzeKnopf(Aktion.BAUM_FAELLEN);
 		}			
 	}
 	
-	private void papayaGefunden(int level) {
-		if (level < 2) {
+	private void papayaGefunden() {
+		if (person.getLevel() < 2) {
 			gui.zeigeNachricht("Hier wachsen jede Menge Papaya. Igitt.");				
 		} else {
 			if (inventar.enthaelt(Ladung.PAPAYA)
@@ -179,8 +185,8 @@ public class Zweckbehandler {
 		}
 	}
 	
-	private void ruineGefunden(int level) {
-		if (level < 2) {
+	private void ruineGefunden() {
+		if (person.getLevel() < 2) {
 			gui.zeigeNachricht("Hier steht ein alter Tempel mitten im Dschungel.");		
 		} else {
 			//Kompass schon vorhanden

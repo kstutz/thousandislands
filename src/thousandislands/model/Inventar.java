@@ -28,6 +28,10 @@ public class Inventar {
 		return liste.contains(ladung);
 	}
 	
+	public boolean istLeer() {
+		return liste.isEmpty();
+	}
+	
 	public void leeren() {
 		liste.clear();
 	}

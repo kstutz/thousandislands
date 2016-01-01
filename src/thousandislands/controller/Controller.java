@@ -36,7 +36,6 @@ public class Controller extends KeyAdapter implements ActionListener {
 	private Inventar inventar;
 	private Set<Ladung> noetigeTeile;
 	private int schrittzaehler = 0;
-	private int level = 0;
 	private boolean flaschenpostSichtbar;
 	private Flaschenpost flaschenpost;
 	private Zweckverteiler zweckverteiler;
@@ -51,6 +50,10 @@ public class Controller extends KeyAdapter implements ActionListener {
 	}
 	
 	Controller() {
+		spielInitialisieren();
+	}
+	
+	private void spielInitialisieren() {
 		SpielfeldErsteller ersteller = new SpielfeldErsteller();
 		spielfeld = ersteller.getSpielfeld();
 		Feld anfangsfeld = ersteller.getSpielanfang();
@@ -75,7 +78,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.zeigeNachricht("Ich sollte erstmal diese Insel, wo ich gestrandet bin, erkunden.");
 		
 		zweckbehandler = new Zweckbehandler(gui, person, inventar, noetigeTeile);
-		knopfauswerter = new Knopfauswerter(gui, person, inventar, noetigeTeile);
+		knopfauswerter = new Knopfauswerter(gui, person, inventar, noetigeTeile);		
 	}
 	
 	@Override
@@ -115,6 +118,8 @@ public class Controller extends KeyAdapter implements ActionListener {
 	
 	private void bewegungBearbeiten() {
 		schrittzaehler++;
+		gui.loescheNachrichten();
+		gui.knopfFuerAllesSichtbar(false);
 
 		Feld aktuellesFeld = person.getAktuellesFeld();
 		if (!aktuellesFeld.istFlossDa() || schrittzaehler % 2 != 1) {
@@ -145,14 +150,13 @@ public class Controller extends KeyAdapter implements ActionListener {
 		}
 
 		//Flaschenpost erscheinen und verschwinden lassen
-		if (!person.hatSchatzkarte() && level == 2) {
+		if (!person.hatSchatzkarte() && person.getLevel() == 2) {
 			flaschenpostZeigen();
 		}
 		
 		//Schatz heben
 		if (person.hatSchatzkarte() 
 				&& aktuellesFeld.getTyp() == Typ.SCHATZ 
-				&& !inventar.enthaelt(Ladung.SEGEL)
 				&& noetigeTeile.contains(Ladung.SEGEL)) {
 			behandleSchatzfund();
 		}
@@ -165,7 +169,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 			if (aktuellesFeld.getZweck() == Zweck.HUETTE) {
 				redeMitEingeborenen();
 			} else {
-				zweckbehandler.behandleZweckfeld(aktuellesFeld.getZweck(), level);				
+				zweckbehandler.behandleZweckfeld(aktuellesFeld.getZweck());
 			}
 		}
 		
@@ -181,29 +185,35 @@ public class Controller extends KeyAdapter implements ActionListener {
 		}
 		
 		//Schiffbaustrand
-		//TODO: man muss was zum Abladen haben!
-		if (level == 2 && aktuellesFeld.getTyp() == Typ.SCHIFFBAUSTRAND) {
+		if (person.getLevel() == 2 && aktuellesFeld.getTyp() == Typ.SCHIFFBAUSTRAND
+				&& !inventar.istLeer()) {
 			gui.setzeKnopf(Aktion.ABLADEN);
 		}
 		
-		//TODO: Wenn man alles von erster Liste hat, sollte Text kommen, dass zurueck zu Eingeborenen
+		if (person.getLevel() == 1 && person.hatFloss() 
+				&& person.hatKrug() && person.hatKorb()) {
+			gui.zeigeNachricht("Ich habe ein Floss, einen Korb und einen Krug! \n" +
+					"Ich sollte zu den Eingeborenen zurueckkehren.");
+		}
+		
+		gui.aktualisiere();
 	}
 	
 	private void redeMitEingeborenen() {
 		//TODO: richtige Dialoge und Pop-up
 		
-		if (level == 0) {
+		if (person.getLevel() == 0) {
 			//erste Begegnung: man bekommt Liste mit Flossteilen
-			level = 1;
+			person.setLevel(1);
 			gui.zeigeNachricht("Hier ist die Liste, was Du brauchst.");
 			fuelleTeileliste(1);
 			gui.setzeTeileliste(noetigeTeile);
-		} else if (level == 1) {
+		} else if (person.getLevel() == 1) {
 			if (!noetigeTeile.isEmpty()) {
 				//Tipps, was man noch braucht
 			} else { //man hat schon alle Teile fuers Floss
 				//man bekommt Liste mit Schiffsteilen
-				level = 2;
+				person.setLevel(2);
 				gui.zeigeNachricht("Hier ist die Liste, was Du brauchst, um ein Schiff zu bauen.");
 				inventar.leeren();
 				fuelleTeileliste(2);
@@ -267,7 +277,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 	
 	private void behandleWrackfund() {
 		//noch im ersten Spielteil
-		if (level < 2) {
+		if (person.getLevel() < 2) {
 			gui.zeigeNachricht("Hier liegt ein Schiffswrack im Wasser! "
 					+ "Vielleicht kann mir das später noch nützen.");
 		} else { //im zweiten Spielteil
@@ -284,32 +294,63 @@ public class Controller extends KeyAdapter implements ActionListener {
 	}
 	
 	private void spielSpeichern() {
-		
 		StringBuilder textbauer = new StringBuilder();
 		
-		for (int i = 0; i<100; i++) {
+		for (int i=0; i<100; i++) {
 			for (int j=0; j<60; j++) {
-				//???
-				//Typ, Zweck, entdeckt, hat floss, hat flaschenpost speichern
-				
-				
+				textbauer.append(
+						spielfeld[i][j].getTyp() + "," +
+						spielfeld[i][j].getZweck() + "," +
+						spielfeld[i][j].getStatus() + "," +
+						spielfeld[i][j].hatFlaschenpost() + "," +
+						spielfeld[i][j].istFlossDa() + "," +
+						spielfeld[i][j].istPersonDa());
+				if (!spielfeld[i][j].getLadung().isEmpty()) {
+					for (Ladung ladung : spielfeld[i][j].getLadung()) {
+						textbauer.append(ladung.toString() + ",");
+					}
+				}
+				textbauer.append("\n");
 			}
 		}
 		
-		//person -> inventar, hosentasche
+		textbauer.append(
+				person.getMaxWasser() + "," +
+				person.getMaxNahrung() + "," +
+				person.getWasser() + "," +
+				person.getNahrung() + "," +
+				person.getTragfaehigkeit() + "," +
+				person.getAktuellesFeld() + "," +
+				person.hatFloss() + "," +
+				person.hatKrug() + "," +
+				person.hatKorb() + "," +
+				person.hatSchatzkarte() + "," +
+				person.hatSpeer() + "\n");
+		
+		//TODO: inventar, hosentasche, noetige Teile
+		//TODO: level, schrittzahl, flaschenpost sichtbar
 		
 		String spielstand = "";
 		
-		Path target = Paths.get("spielstand.txt");
-		Path file;
+		//TODO: mit Auswahl, unter welchem Namen man speichern moechte
+		//TODO: Warnung, wenn Datei unter diesem Namen schon existiert
+		//TODO: automatisch Ordner fuer die Spielstaende anlegen?
+		Path dateipfad = Paths.get("spielstand.txt");
+		Path datei;
 		try {
-			file = Files.createFile(target);
-			Files.write(file, spielstand.getBytes(), StandardOpenOption.WRITE);
+			datei = Files.createFile(dateipfad);
+			Files.write(datei, spielstand.getBytes(), StandardOpenOption.WRITE);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		gui.fokusHolen();
 	}
 	
+	private void spielLaden() {
+		//TODO: wie soll das gehen???
+	}
+		
 	@Override
 	public void actionPerformed(ActionEvent event) {
 
@@ -317,8 +358,12 @@ public class Controller extends KeyAdapter implements ActionListener {
 			tastendruckAuswerten();
 		} else if (event.getActionCommand().equals("SPEICHERN")) {
 			spielSpeichern();
+		} else if (event.getActionCommand().equals("LADEN")) {
+			spielLaden();
+		} else if (event.getActionCommand().equals("NOCHMAL")) {
+			spielInitialisieren();
 		} else {
-			knopfauswerter.knopfGedrueckt(event.getActionCommand(), level);
+			knopfauswerter.knopfGedrueckt(event.getActionCommand());
 		}
 	}	
 }

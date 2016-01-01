@@ -9,7 +9,8 @@ public class Person {
 	private static final int MAX_NAHRUNG = 100;
 	private static final int MAX_NAHRUNG_KORB = 200;
 	private static final int TRAGKRAFT_MIT_FLOSS = 10;
-	
+
+	private int level;
 	private int wasser;
 	private int nahrung;
 	private Feld aktuellesFeld;
@@ -30,6 +31,15 @@ public class Person {
 		hatSpeer = false;
 		wasser = 100;
 		nahrung = 100;
+		level = 0;
+	}
+	
+	public int getLevel() {
+		return level;
+	}
+	
+	public void setLevel(int level) {
+		this.level = level;
 	}
 		
 	public int getWasser() {

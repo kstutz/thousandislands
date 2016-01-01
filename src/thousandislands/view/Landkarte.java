@@ -89,7 +89,6 @@ public class Landkarte extends JPanel{
 		BufferedImage bild = null;
 		URL datei;
 		String dateiname = "";
-//		Person person = spieldaten.getPerson();
 
 		if (feld.istPersonDa()) {
 			dateiname = findeBildFuerPerson(spieldaten.getPerson(), feld);
@@ -107,7 +106,9 @@ public class Landkarte extends JPanel{
 			dateiname = "wrack.png";
 		} else if (feld.getTyp() == Typ.SCHIFFBAUSTRAND 
 				&& !feld.getLadung().isEmpty()) {
-			dateiname = "haufen.jpg";
+			dateiname = "haufen.png";
+		} else if (feld.getTyp() == Typ.SCHATZ_GEFUNDEN) {
+			dateiname = "schatz.png";
 		}
 		
 		if (!dateiname.isEmpty()) {

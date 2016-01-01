@@ -31,6 +31,7 @@ public class GuiController implements ActionListener {
 	private JButton kartenknopf;
 	private JButton speicherknopf;
 	private JButton ladeknopf;
+	private JButton nochmalknopf;
 	private JPanel knopfzeile;
 	private Schatzkarte schatzkarte;
 	private Spieldaten daten;
@@ -55,11 +56,11 @@ public class GuiController implements ActionListener {
 		GridBagConstraints c = new GridBagConstraints();
 
 		knopfFuerAlles = new JButton();
+		knopfFuerAlles.setVisible(false);
 		c.gridy = 7;
 		c.insets = new Insets(5,0,5,0);
 		rechteSpalte.add(knopfFuerAlles, c);
 
-		
 		kartenknopf = new JButton("<html>Schatzkarte<br />anschauen</html>");
 		kartenknopf.setVisible(false);
 		kartenknopf.setActionCommand("KARTE");
@@ -76,6 +77,9 @@ public class GuiController implements ActionListener {
 		ladeknopf = new JButton("Laden");
 		ladeknopf.setActionCommand("LADEN");
 		
+		nochmalknopf = new JButton("Nochmal spielen!");
+		nochmalknopf.setActionCommand("NOCHMAL");
+
 		knopfzeile = new JPanel();
 		knopfzeile.add(speicherknopf);
 		knopfzeile.add(ladeknopf);
@@ -92,13 +96,14 @@ public class GuiController implements ActionListener {
 		rechteSpalte.setzeWasseranzeige(daten.getWasser());
 		rechteSpalte.setzeNahrungsanzeige(daten.getNahrung());
 		rechteSpalte.setzeFlossBeladung(daten.getInventar().getGesamtgewicht(), daten.getPerson().getTragfaehigkeit());
-		rechteSpalte.zeigeNachricht(" ");
-//		knopfFuerAlles.setText(" ");
-		knopfFuerAlles.setVisible(false);
 	}
 	
 	public void zeigeNachricht(String s) {
 		rechteSpalte.zeigeNachricht(s);
+	}
+	
+	public void loescheNachrichten() {
+		rechteSpalte.zeigeNachricht(" ");		
 	}
 	
 	public void kartenknopfSichtbar(boolean bool) {
@@ -138,7 +143,7 @@ public class GuiController implements ActionListener {
 			knopfFuerAlles.setText("Papaya mitnehmen");
 			break;
 		case TROTZDEM_MITNEHMEN:
-			knopfFuerAlles.setText("Trotzdem mitnehmen");
+			knopfFuerAlles.setText("<html>Trotzdem<br/>mitnehmen</html>");
 			break;
 		case BAUM_FAELLEN:
 			knopfFuerAlles.setText("Baum fällen");
@@ -159,7 +164,7 @@ public class GuiController implements ActionListener {
 			knopfFuerAlles.setText("Wrack durchsuchen");
 			break;
 		case WERKZEUG_MITNEHMEN:
-			knopfFuerAlles.setText("Werkzeug mitnehmen");
+			knopfFuerAlles.setText("<html>Werkzeug<br/>mitnehmen</html>");
 			break;
 		case ABLADEN:
 			knopfFuerAlles.setText("Abladen");
@@ -178,6 +183,7 @@ public class GuiController implements ActionListener {
 		knopfFuerAlles.addActionListener(controller);
 		speicherknopf.addActionListener(controller);
 		ladeknopf.addActionListener(controller);
+		nochmalknopf.addActionListener(controller);
 	}
 	
 	public void keyListenerHinzufuegen(Controller controller) {
@@ -199,11 +205,11 @@ public class GuiController implements ActionListener {
 	}
 	
 	public void hosentascheHinzufuegen(Ladung teil) {
-		rechteSpalte.inventarHinzufügen(teil);
+		rechteSpalte.zuHosentascheHinzufügen(teil);
 	}
 	
 	public void hosentascheEntfernen(Ladung teil) {
-		rechteSpalte.inventarEntfernen(teil);
+		rechteSpalte.ausHosentascheEntfernen(teil);
 	}
 	
 	public void fokusHolen() {
@@ -223,7 +229,8 @@ public class GuiController implements ActionListener {
 		fenster.remove(rechteSpalte);
 		fenster.remove(knopfzeile);
 		
-		fenster.add(new JLabel("ENDE"), BorderLayout.CENTER);
-		//TODO: Knopf fuer nochmal spielen
+		//TODO: huebscher machen
+		fenster.add(new JLabel("ENDE"));
+		fenster.add(nochmalknopf);
 	}
 }
