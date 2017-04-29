@@ -83,12 +83,12 @@ public class RechteSpalte extends JPanel {
 		add(hosentaschenpanel, c);		
 	}
 
-	public void setzeWasseranzeige(String s) {
-		wasser.setText(s);
+	public void setzeWasseranzeige(int i) {
+		wasser.setText(String.valueOf(i));
 	}
 
-	public void setzeNahrungsanzeige(String s) {
-		nahrung.setText(s);
+	public void setzeNahrungsanzeige(int i) {
+		nahrung.setText(String.valueOf(i));
 	}
 	
 	public void zeigeNachricht(String s) {

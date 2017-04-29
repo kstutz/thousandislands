@@ -4,6 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.print.Book;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,12 +17,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.Timer;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
-import thousandislands.model.Feld;
-import thousandislands.model.Flaschenpost;
-import thousandislands.model.Inventar;
-import thousandislands.model.Person;
-import thousandislands.model.Spieldaten;
+import thousandislands.model.*;
 import thousandislands.model.enums.Aktion;
 import thousandislands.model.enums.Ladung;
 import thousandislands.model.enums.Richtung;
@@ -31,7 +35,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 	private static final int FLASCHENPOST_ABSTAND = 50;
 	private static final int ZEITTAKT_IN_MS = 200;
 	private GuiController gui;
-	private Feld[][] spielfeld;
+	private Spielfeld spielfeld;
 	private Person person;
 	private Inventar inventar;
 	private Set<Ladung> noetigeTeile;
@@ -44,7 +48,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 	private Zweckbehandler zweckbehandler;
 	private Knopfauswerter knopfauswerter;
 	private Spieldaten spieldaten;
-	
+
 	public static void main (String[] args) {
 		new Controller();
 	}
@@ -60,17 +64,18 @@ public class Controller extends KeyAdapter implements ActionListener {
 		ersteller.versteckeWrack();
 		person = new Person(anfangsfeld);
 		anfangsfeld.setPersonDa(true);
+		spielfeld.setAktuellesFeldPerson(anfangsfeld);
 		flaschenpost = new Flaschenpost(spielfeld);
 
 		inventar = new Inventar();
 		noetigeTeile = new HashSet<>();
-		spieldaten = new Spieldaten(spielfeld, person, inventar, noetigeTeile);		
+		spieldaten = new Spieldaten(spielfeld, person, inventar, noetigeTeile);
 		zweckverteiler = new Zweckverteiler();
 				
 		timer = new Timer(ZEITTAKT_IN_MS, this);
 		timer.setInitialDelay(0);
 		timer.setActionCommand("TIMER");
-		gui = new GuiController(spieldaten);
+		gui = new GuiController(spielfeld, person, inventar);
 		gui.aktualisiere();
 		gui.keyListenerHinzufuegen(this);
 		gui.actionListenerHinzufuegen(this);
@@ -78,7 +83,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.zeigeNachricht("Ich sollte erstmal diese Insel, wo ich gestrandet bin, erkunden.");
 		
 		zweckbehandler = new Zweckbehandler(gui, person, inventar, noetigeTeile);
-		knopfauswerter = new Knopfauswerter(gui, person, inventar, noetigeTeile);		
+		knopfauswerter = new Knopfauswerter(gui, person, inventar, noetigeTeile, spielfeld);
 	}
 	
 	@Override
@@ -98,16 +103,16 @@ public class Controller extends KeyAdapter implements ActionListener {
 		
 		switch (gedrueckteTaste) {
 		case KeyEvent.VK_LEFT: 
-			bewegt = person.bewegeNach(Richtung.WESTEN);
+			bewegt = spielfeld.setzePersonWeiter(Richtung.WESTEN);
 			break;
 		case KeyEvent.VK_RIGHT:
-			bewegt = person.bewegeNach(Richtung.OSTEN);
+			bewegt = spielfeld.setzePersonWeiter(Richtung.OSTEN);
 			break;
 		case KeyEvent.VK_UP:
-			bewegt = person.bewegeNach(Richtung.NORDEN);
+			bewegt = spielfeld.setzePersonWeiter(Richtung.NORDEN);
 			break;
 		case KeyEvent.VK_DOWN:
-			bewegt = person.bewegeNach(Richtung.SUEDEN);
+			bewegt = spielfeld.setzePersonWeiter(Richtung.SUEDEN);
 			break;
 		}
 		
@@ -121,7 +126,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.loescheNachrichten();
 		gui.knopfFuerAllesSichtbar(false);
 
-		Feld aktuellesFeld = person.getAktuellesFeld();
+		Feld aktuellesFeld = spielfeld.getAktuellesFeldPerson();
 		if (!aktuellesFeld.istFlossDa() || schrittzaehler % 2 != 1) {
 			person.wasserAbziehen();
 			person.nahrungAbziehen();			
@@ -292,63 +297,62 @@ public class Controller extends KeyAdapter implements ActionListener {
 			}			
 		}
 	}
-	
+
 	private void spielSpeichern() {
-		StringBuilder textbauer = new StringBuilder();
-		
-		for (int i=0; i<100; i++) {
-			for (int j=0; j<60; j++) {
-				textbauer.append(
-						spielfeld[i][j].getTyp() + "," +
-						spielfeld[i][j].getZweck() + "," +
-						spielfeld[i][j].getStatus() + "," +
-						spielfeld[i][j].hatFlaschenpost() + "," +
-						spielfeld[i][j].istFlossDa() + "," +
-						spielfeld[i][j].istPersonDa());
-				if (!spielfeld[i][j].getLadung().isEmpty()) {
-					for (Ladung ladung : spielfeld[i][j].getLadung()) {
-						textbauer.append(ladung.toString() + ",");
-					}
-				}
-				textbauer.append("\n");
-			}
-		}
-		
-		textbauer.append(
-				person.getMaxWasser() + "," +
-				person.getMaxNahrung() + "," +
-				person.getWasser() + "," +
-				person.getNahrung() + "," +
-				person.getTragfaehigkeit() + "," +
-				person.getAktuellesFeld() + "," +
-				person.hatFloss() + "," +
-				person.hatKrug() + "," +
-				person.hatKorb() + "," +
-				person.hatSchatzkarte() + "," +
-				person.hatSpeer() + "\n");
-		
+		//TODO: JAXB verwenden
+		//TODO: spielfeld, person
 		//TODO: inventar, hosentasche, noetige Teile
 		//TODO: level, schrittzahl, flaschenpost sichtbar
-		
-		String spielstand = "";
-		
+
+		//TODO: Problem, weil Feld auf Nachbarfelder verweist
+		//-> man muesste Spielfeld vielleicht mal umbauen
+		//-> Spielfeld sollte Nachbarfelder on the fly berechnen
+		//-> dann braucht jedes Feld nur x und y, die ja gegeben sind
+		//dann braucht man doch eigene Spielfeldklasse, die Array hat und Nachbarn liefert, oder?
+		//koennte die nicht auch Feld von Person und Floss speichern?
+
+		// create JAXB context and instantiate marshaller
+
+		JAXBContext context = null;
+		try {
+			context = JAXBContext.newInstance(Spieldaten.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			m.marshal(spieldaten, System.out);
+			m.marshal(spieldaten, new File("spielstand.xml"));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+
+
+
 		//TODO: mit Auswahl, unter welchem Namen man speichern moechte
 		//TODO: Warnung, wenn Datei unter diesem Namen schon existiert
 		//TODO: automatisch Ordner fuer die Spielstaende anlegen?
-		Path dateipfad = Paths.get("spielstand.txt");
-		Path datei;
-		try {
-			datei = Files.createFile(dateipfad);
-			Files.write(datei, spielstand.getBytes(), StandardOpenOption.WRITE);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+//		Path dateipfad = Paths.get("spielstand.txt");
+//		Path datei;
+//		try {
+//			datei = Files.createFile(dateipfad);
+//			Files.write(datei, spielstand.getBytes(), StandardOpenOption.WRITE);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+
 		gui.fokusHolen();
 	}
-	
+
+
 	private void spielLaden() {
-		//TODO: wie soll das gehen???
+		JAXBContext context = null;
+		Unmarshaller um = null;
+		try {
+			um = context.createUnmarshaller();
+			Spieldaten spieldaten = (Spieldaten) um.unmarshal(new FileReader("spielstand.xml"));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e2) {
+			e2.printStackTrace();
+		}
 	}
 		
 	@Override

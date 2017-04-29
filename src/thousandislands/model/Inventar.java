@@ -5,7 +5,10 @@ import java.util.Set;
 
 import thousandislands.model.enums.Ladung;
 
+import javax.xml.bind.annotation.XmlElement;
+
 public class Inventar {
+	@XmlElement
 	private Set<Ladung> liste = new HashSet<>();
 	
 	public int getGesamtgewicht() {

@@ -3,6 +3,7 @@ package thousandislands.controller;
 import java.util.Random;
 
 import thousandislands.model.Feld;
+import thousandislands.model.Spielfeld;
 import thousandislands.model.enums.Richtung;
 import thousandislands.model.enums.Typ;
 import thousandislands.model.enums.Zweck;
@@ -22,14 +23,17 @@ public class SpielfeldErsteller {
 	
 	public SpielfeldErsteller(){
 		erzeugeFelder();
-		verbindeFelder();
+//		verbindeFelder();
 		erstelleInseln();
 	}
 	
-	public Feld[][] getSpielfeld() {
-		return felder;
+//	public Feld[][] getSpielfeld() {
+//		return felder;
+//	}
+
+	public Spielfeld getSpielfeld() {
+		return new Spielfeld(felder);
 	}
-	
 
 	private void erzeugeFelder() {
 		for (int i = 0; i<FELDANZAHL_WAAGERECHT; i++) {
@@ -39,44 +43,44 @@ public class SpielfeldErsteller {
 		}
 	}
 	
-	private void verbindeFelder() {
-		for (int i = 0; i<FELDANZAHL_WAAGERECHT; i++) {
-			for (int j=0; j<FELDANZAHL_SENKRECHT; j++) {
-				if (i > 0) {
-					felder[i][j].setNachbar(felder[i-1][j]);
-					felder[i][j].setDirekterNachbar(felder[i-1][j]);
-					felder[i][j].setNachbar(felder[i-1][j], Richtung.WESTEN);
-					if (j > 0) {
-						felder[i][j].setNachbar(felder[i-1][j-1]);
-					}
-				    if (j < FELDANZAHL_SENKRECHT-1) {
-					    felder[i][j].setNachbar(felder[i-1][j+1]);
-				    }
-				}
-				if (i < FELDANZAHL_WAAGERECHT-1) { 
-					felder[i][j].setNachbar(felder[i+1][j]);
-					felder[i][j].setDirekterNachbar(felder[i+1][j]);
-					felder[i][j].setNachbar(felder[i+1][j], Richtung.OSTEN);
-					if (j > 0) {
-						felder[i][j].setNachbar(felder[i+1][j-1]);
-					}
-				    if (j < FELDANZAHL_SENKRECHT-1) {
-					    felder[i][j].setNachbar(felder[i+1][j+1]);
-				    }
-				}
-				if (j > 0) {
-					felder[i][j].setNachbar(felder[i][j-1]);
-					felder[i][j].setDirekterNachbar(felder[i][j-1]);
-					felder[i][j].setNachbar(felder[i][j-1], Richtung.NORDEN);
-				}
-				if (j < FELDANZAHL_SENKRECHT-1) {
-					felder[i][j].setNachbar(felder[i][j+1]);
-					felder[i][j].setDirekterNachbar(felder[i][j+1]);
-					felder[i][j].setNachbar(felder[i][j+1], Richtung.SUEDEN);
-				}
-			}
-		}		
-	}
+//	private void verbindeFelder() {
+//		for (int i = 0; i<FELDANZAHL_WAAGERECHT; i++) {
+//			for (int j=0; j<FELDANZAHL_SENKRECHT; j++) {
+//				if (i > 0) {
+////					felder[i][j].setNachbar(felder[i-1][j]);
+//					felder[i][j].setDirekterNachbar(felder[i-1][j]);
+////					felder[i][j].setNachbar(felder[i-1][j], Richtung.WESTEN);
+//					if (j > 0) {
+////						felder[i][j].setNachbar(felder[i-1][j-1]);
+//					}
+//				    if (j < FELDANZAHL_SENKRECHT-1) {
+////					    felder[i][j].setNachbar(felder[i-1][j+1]);
+//				    }
+//				}
+//				if (i < FELDANZAHL_WAAGERECHT-1) {
+////					felder[i][j].setNachbar(felder[i+1][j]);
+//					felder[i][j].setDirekterNachbar(felder[i+1][j]);
+////					felder[i][j].setNachbar(felder[i+1][j], Richtung.OSTEN);
+//					if (j > 0) {
+////						felder[i][j].setNachbar(felder[i+1][j-1]);
+//					}
+//				    if (j < FELDANZAHL_SENKRECHT-1) {
+////					    felder[i][j].setNachbar(felder[i+1][j+1]);
+//				    }
+//				}
+//				if (j > 0) {
+////					felder[i][j].setNachbar(felder[i][j-1]);
+//					felder[i][j].setDirekterNachbar(felder[i][j-1]);
+////					felder[i][j].setNachbar(felder[i][j-1], Richtung.NORDEN);
+//				}
+//				if (j < FELDANZAHL_SENKRECHT-1) {
+////					felder[i][j].setNachbar(felder[i][j+1]);
+//					felder[i][j].setDirekterNachbar(felder[i][j+1]);
+////					felder[i][j].setNachbar(felder[i][j+1], Richtung.SUEDEN);
+//				}
+//			}
+//		}
+//	}
 	
 	
 	public void erstelleInseln() {

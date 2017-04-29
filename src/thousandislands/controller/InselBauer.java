@@ -163,7 +163,7 @@ public class InselBauer {
 	}
 
 	private boolean liegtAmMeer(Feld feld) {
-		List<Feld> nachbarn = feld.getDirekteNachbarn();
+		List<Feld> nachbarn = getDirekteNachbarn(feld);
 		for (Feld nachbar : nachbarn) {
 			if (nachbar.getTyp() == Typ.MEER) {
 				return true;
@@ -186,7 +186,7 @@ public class InselBauer {
 			
 			feld.setTyp(Typ.STRAND);
 			
-			List<Feld> nachbarn = feld.getDirekteNachbarn();
+			List<Feld> nachbarn = getDirekteNachbarn(feld);
 			for (Feld nachbar : nachbarn) {
 				if (koennteStrandSein(nachbar)) {
 					nachbar.setTyp(Typ.STRAND);
@@ -210,7 +210,7 @@ public class InselBauer {
 	}
 	
 	private boolean istInselchen(Feld feld) {
-		List<Feld> nachbarn = feld.getDirekteNachbarn();
+		List<Feld> nachbarn = getDirekteNachbarn(feld);
 		if (feld.getTyp() != Typ.DSCHUNGEL) {
 			return false;
 		}
@@ -225,7 +225,7 @@ public class InselBauer {
 	private boolean sollteStrandSein(Feld feld) {
 		boolean strandNachbar = false;
 		
-		for (Feld nachbar : feld.getDirekteNachbarn()) {
+		for (Feld nachbar : getDirekteNachbarn(feld)) {
 			if (nachbar.getTyp() == Typ.DSCHUNGEL) {
 				return false;
 			}
@@ -256,7 +256,7 @@ public class InselBauer {
 	}
 	
 	private boolean koennteZweckfeldSein(Feld feld) {
-		for (Feld nachbar : feld.getDirekteNachbarn()) {
+		for (Feld nachbar : getDirekteNachbarn(feld)) {
 			if (nachbar.getTyp() == Typ.MEER) {
 				return false;
 			}
@@ -286,6 +286,26 @@ public class InselBauer {
 			}
 		}
 		return null;
+	}
+
+	private List<Feld> getDirekteNachbarn(Feld feld) {
+		List<Feld> nachbarn = new ArrayList<>();
+		int x = feld.getX();
+		int y = feld.getY();
+
+		if (x > 0) {
+			nachbarn.add(spielfeld[x-1][y]);
+		}
+		if (x < spielfeld.length-1) {
+			nachbarn.add(spielfeld[x+1][y]);
+		}
+		if (y > 0) {
+			nachbarn.add(spielfeld[x][y-1]);
+		}
+		if (y < spielfeld[0].length-1) {
+			nachbarn.add(spielfeld[x][y+1]);
+		}
+		return nachbarn;
 	}
 	
 }

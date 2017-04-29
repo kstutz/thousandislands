@@ -11,21 +11,24 @@ import thousandislands.model.enums.Status;
 import thousandislands.model.enums.Typ;
 import thousandislands.model.enums.Zweck;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Feld {
+	@XmlElement
 	private Status status;
 	private Typ typ;
 	private Zweck zweck;
-	private List<Feld> nachbarn = new ArrayList<Feld>();
-	private List<Feld> direkteNachbarn = new ArrayList<Feld>();
 	private boolean personDa = false;
 	private boolean flossDa = false;
 	private boolean hatFlaschenpost = false;
+	@XmlElement
 	private int x;
+	@XmlElement
 	private int y;
-	private Feld nachbarO;
-	private Feld nachbarW;
-	private Feld nachbarN;
-	private Feld nachbarS;
+	@XmlElement
 	private Set<Ladung> ladungshaufen = new HashSet<>();
 	
 	public Feld (int x, int y) {
@@ -35,6 +38,9 @@ public class Feld {
 		this.x = x;
 		this.y = y;
 	}
+
+	//noetig fuer JAXB
+	public Feld() {}
 	
 	public Status getStatus() {
 		return status;
@@ -47,22 +53,6 @@ public class Feld {
 	public void setTyp(Typ typ) {
 		this.typ = typ;
 	}
-	
-	public List<Feld> getNachbarn() {
-		return nachbarn;
-	}
-	
-	public void setNachbar(Feld feld) {
-		nachbarn.add(feld);
-	}
-
-	public List<Feld> getDirekteNachbarn() {
-		return direkteNachbarn;
-	}
-	
-	public void setDirekterNachbar(Feld feld) {
-		direkteNachbarn.add(feld);
-	}
 
 	public int getX() {
 		return x;
@@ -70,6 +60,14 @@ public class Feld {
 	
 	public int getY() {
 		return y;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
 	}
 
 	public boolean istPersonDa() {
@@ -86,36 +84,6 @@ public class Feld {
 
 	public void setFlossDa(boolean flossDa) {
 		this.flossDa = flossDa;
-	}
-	
-	public Feld getNachbar(Richtung richtung) {
-		switch (richtung) {
-		case NORDEN:
-			return nachbarN;
-		case OSTEN:
-			return nachbarO;
-		case SUEDEN:
-			return nachbarS;
-		default:
-			return nachbarW;
-		}
-	}
-	
-	public void setNachbar(Feld feld, Richtung richtung) {
-		switch (richtung) {
-		case NORDEN:
-			this.nachbarN = feld;
-			break;
-		case OSTEN:
-			this.nachbarO = feld;
-			break;
-		case SUEDEN:
-			this.nachbarS = feld;
-			break;
-		default:
-			this.nachbarW = feld;
-			break;
-		}
 	}
 
 	public boolean hatFlaschenpost() {

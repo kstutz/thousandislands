@@ -1,21 +1,17 @@
 package thousandislands.controller;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Set;
 
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
-import thousandislands.model.Feld;
-import thousandislands.model.Spieldaten;
+import thousandislands.model.*;
 import thousandislands.model.enums.Aktion;
 import thousandislands.model.enums.Ladung;
 import thousandislands.model.enums.Zweck;
@@ -25,7 +21,7 @@ import thousandislands.view.RechteSpalte;
 import thousandislands.view.Schatzkarte;
 
 public class GuiController implements ActionListener {
-	private Landkarte spielfeld;
+	private Landkarte landkarte;
 	private RechteSpalte rechteSpalte;
 	private JButton knopfFuerAlles;
 	private JButton kartenknopf;
@@ -34,11 +30,16 @@ public class GuiController implements ActionListener {
 	private JButton nochmalknopf;
 	private JPanel knopfzeile;
 	private Schatzkarte schatzkarte;
-	private Spieldaten daten;
+	private Spielfeld spielfeld;
+	private Person person;
+	private Inventar inventar;
 	private Fenster fenster;
 
-	public GuiController(Spieldaten daten){
-		this.daten = daten;
+	public GuiController(Spielfeld spielfeld, Person person, Inventar inventar){
+		this.spielfeld = spielfeld;
+		this.person = person;
+		this.inventar = inventar;
+
 		erstelleGui();
 	}
 	
@@ -47,9 +48,9 @@ public class GuiController implements ActionListener {
 		fenster = new Fenster();		
 		
 		//Spielfeld hinzufuegen
-		spielfeld = new Landkarte(daten);
-		fenster.add(spielfeld, BorderLayout.CENTER);
-		spielfeld.repaint();
+		landkarte = new Landkarte(spielfeld, person);
+		fenster.add(landkarte, BorderLayout.CENTER);
+		landkarte.repaint();
 		
 		//rechte Spalte und Knoepfe hinzufuegen
 		rechteSpalte = new RechteSpalte();
@@ -88,14 +89,14 @@ public class GuiController implements ActionListener {
 	}
 
 	public void erstelleSchatzkarte(Feld startfeld) {
-		schatzkarte = new Schatzkarte(daten.getFelder(), startfeld);
+		schatzkarte = new Schatzkarte(spielfeld.getFelder(), startfeld);
 	}
 	
 	public void aktualisiere() {
-		spielfeld.repaint();
-		rechteSpalte.setzeWasseranzeige(daten.getWasser());
-		rechteSpalte.setzeNahrungsanzeige(daten.getNahrung());
-		rechteSpalte.setzeFlossBeladung(daten.getInventar().getGesamtgewicht(), daten.getPerson().getTragfaehigkeit());
+		landkarte.repaint();
+		rechteSpalte.setzeWasseranzeige(person.getWasser());
+		rechteSpalte.setzeNahrungsanzeige(person.getNahrung());
+		rechteSpalte.setzeFlossBeladung(inventar.getGesamtgewicht(), person.getTragfaehigkeit());
 	}
 	
 	public void zeigeNachricht(String s) {
@@ -221,11 +222,11 @@ public class GuiController implements ActionListener {
 	}
 	
 	public void setzeBaumstumpf() {
-		daten.getPerson().getAktuellesFeld().setZweck(Zweck.BAUMSTUMPF);
+		spielfeld.getAktuellesFeldPerson().setZweck(Zweck.BAUMSTUMPF);
 	}
 	
 	public void spielende() {
-		fenster.remove(spielfeld);
+		fenster.remove(landkarte);
 		fenster.remove(rechteSpalte);
 		fenster.remove(knopfzeile);
 		

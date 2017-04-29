@@ -7,6 +7,7 @@ import java.util.Set;
 
 import thousandislands.model.Inventar;
 import thousandislands.model.Person;
+import thousandislands.model.Spielfeld;
 import thousandislands.model.enums.Aktion;
 import thousandislands.model.enums.Ladung;
 import thousandislands.model.enums.Typ;
@@ -16,12 +17,14 @@ public class Knopfauswerter {
 	private Person person;
 	private Inventar inventar;
 	private Set<Ladung> noetigeTeile;
+	private Spielfeld spielfeld;
 
-	Knopfauswerter(GuiController gui, Person person, Inventar inventar, Set<Ladung> noetigeTeile) {
+	Knopfauswerter(GuiController gui, Person person, Inventar inventar, Set<Ladung> noetigeTeile, Spielfeld spielfeld) {
 		this.gui = gui;
 		this.person = person;
 		this.inventar = inventar;
-		this.noetigeTeile = noetigeTeile;		
+		this.noetigeTeile = noetigeTeile;
+		this.spielfeld = spielfeld;
 	}
 	
 	public void knopfGedrueckt(String aktion) {
@@ -286,7 +289,7 @@ public class Knopfauswerter {
 				+ "und mehr Dinge transportieren kann.");
 		inventar.ladungEntfernen(Ladung.HOLZ);
 		inventar.ladungEntfernen(Ladung.LIANE);
-		person.getAktuellesFeld().setFlossDa(true);
+		spielfeld.getAktuellesFeldPerson().setFlossDa(true);
 		gui.knopfFuerAllesSichtbar(false);			
 	}
 
@@ -329,7 +332,7 @@ public class Knopfauswerter {
 			gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 					+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
 		}
-		person.getAktuellesFeld().setTyp(Typ.SCHATZ_GEFUNDEN);
+		spielfeld.getAktuellesFeldPerson().setTyp(Typ.SCHATZ_GEFUNDEN);
 		gui.knopfFuerAllesSichtbar(false);			
 	}
 
@@ -389,7 +392,7 @@ public class Knopfauswerter {
 					continue;
 				}
 				inventar.ladungEntfernen(einzelteil);
-				person.getAktuellesFeld().ladeTeilAb(einzelteil);
+				spielfeld.getAktuellesFeldPerson().ladeTeilAb(einzelteil);
 				abladeliste.add(einzelteil.toString());
 			}
 		}

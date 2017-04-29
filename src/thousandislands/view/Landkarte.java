@@ -16,17 +16,19 @@ import javax.swing.JPanel;
 import thousandislands.model.Feld;
 import thousandislands.model.Person;
 import thousandislands.model.Spieldaten;
+import thousandislands.model.Spielfeld;
 import thousandislands.model.enums.Ladung;
 import thousandislands.model.enums.Typ;
 import thousandislands.model.enums.Zweck;
 
 public class Landkarte extends JPanel{
 	Feld[][] felder;
-	Spieldaten spieldaten;
-	
-	public Landkarte(Spieldaten spieldaten) {
-		this.felder = spieldaten.getFelder();
-		this.spieldaten = spieldaten;
+	Spielfeld spielfeld;
+	Person person;
+
+	public Landkarte(Spielfeld spielfeld, Person person) {
+		this.felder = spielfeld.getFelder();
+		this.person = person;
 	}
 	
 	protected void paintComponent(Graphics g) {
@@ -60,7 +62,7 @@ public class Landkarte extends JPanel{
 	private Color getFarbe(Feld feld) {
 
 		if (feld.istPersonDa()) {
-			if (spieldaten.hatFloss()) {
+			if (person.hatFloss()) {
 				return Color.ORANGE;
 			} else {
 				return Color.MAGENTA;				
@@ -91,7 +93,7 @@ public class Landkarte extends JPanel{
 		String dateiname = "";
 
 		if (feld.istPersonDa()) {
-			dateiname = findeBildFuerPerson(spieldaten.getPerson(), feld);
+			dateiname = findeBildFuerPerson(feld);
 		} else if (feld.getTyp() == Typ.ZWECK) {
 			dateiname = findeBildFuerZweck(feld);			
 		} else if (feld.istFlossDa()) {
@@ -174,7 +176,7 @@ public class Landkarte extends JPanel{
 		return dateiname;
 	}
 
-	private String findeBildFuerPerson(Person person, Feld feld) {
+	private String findeBildFuerPerson(Feld feld) {
 		if (feld.getTyp() == Typ.MEER) {
 			if (feld.istFlossDa()) {
 				return "mann_floss.png";
