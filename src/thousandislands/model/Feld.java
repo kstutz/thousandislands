@@ -21,8 +21,6 @@ public class Feld {
 	private Status status;
 	private Typ typ;
 	private Zweck zweck;
-	private boolean personDa = false;
-	private boolean flossDa = false;
 	private boolean hatFlaschenpost = false;
 	@XmlElement
 	private int x;
@@ -62,30 +60,6 @@ public class Feld {
 		return y;
 	}
 
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public void setY(int y) {
-		this.y = y;
-	}
-
-	public boolean istPersonDa() {
-		return personDa;
-	}
-
-	public void setPersonDa(boolean personDa) {
-		this.personDa = personDa;
-	}
-
-	public boolean istFlossDa() {
-		return flossDa;
-	}
-
-	public void setFlossDa(boolean flossDa) {
-		this.flossDa = flossDa;
-	}
-
 	public boolean hatFlaschenpost() {
 		return hatFlaschenpost;
 	}
@@ -108,5 +82,9 @@ public class Feld {
 	
 	public Set<Ladung> getLadung() {
 		return ladungshaufen;
-	}	
+	}
+
+	public boolean equals(Feld anderesFeld) {
+		return anderesFeld != null && x == anderesFeld.getX() && y == anderesFeld.getY();
+	}
 }

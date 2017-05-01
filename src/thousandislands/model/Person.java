@@ -15,19 +15,13 @@ public class Person {
 	private int level;
 	private int wasser;
 	private int nahrung;
-	@XmlElement
-	private Feld aktuellesFeld;
-//	@XmlElement
-//	private Feld vorigesFeld;
 	private boolean hatSchatzkarte;
 	private boolean hatFloss;
 	private boolean hatKrug;
 	private boolean hatKorb;
 	private boolean hatSpeer;
 	
-	public Person(Feld feld) {
-//		vorigesFeld = feld;
-		aktuellesFeld = feld;
+	public Person() {
 		hatSchatzkarte = false;
 		hatFloss = false;
 		hatKrug = false;
@@ -38,9 +32,9 @@ public class Person {
 		level = 0;
 	}
 
-	//noetig fuer JAXB
-	public Person() {}
-	
+//	//noetig fuer JAXB
+//	public Person() {}
+
 	public int getLevel() {
 		return level;
 	}
@@ -85,25 +79,7 @@ public class Person {
 		return TRAGKRAFT_MIT_FLOSS;
 	}
 	
-//	public boolean bewegeNach(Richtung richtung) {
-//		Feld neuesFeld = null;
-//		switch(richtung) {
-//		case NORDEN:
-//			neuesFeld = spielfeld.getNachbar(aktuellesFeld, Richtung.NORDEN);
-//			break;
-//		case OSTEN:
-//			neuesFeld = aktuellesFeld.getNachbar(Richtung.OSTEN);
-//			break;
-//		case SUEDEN:
-//			neuesFeld = aktuellesFeld.getNachbar(Richtung.SUEDEN);
-//			break;
-//		case WESTEN:
-//			neuesFeld = aktuellesFeld.getNachbar(Richtung.WESTEN);
-//			break;
-//		}
-//		return setzePersonWeiter(getFeldinRichtung());
-//	}
-	
+
 	public void wasserAbziehen() {
 		wasser--;		
 	}
@@ -111,42 +87,6 @@ public class Person {
 	public void nahrungAbziehen() {
 		nahrung--;
 	}
-
-//	public Feld getAktuellesFeld() {
-//		return aktuellesFeld;
-//	}
-	
-//	public Feld getVorigesFeld() {
-//		return vorigesFeld;
-//	}
-
-//	public boolean setzePersonWeiter(Richtung richtung) {
-//
-//		Feld neuesFeld = spielfeld.getFeldInRichtung(aktuellesFeld, richtung);
-//
-//		if (neuesFeld == null) {
-//			return false;
-//		}
-//		if (aktuellesFeld.getTyp() == Typ.MEER && neuesFeld.getTyp() == Typ.DSCHUNGEL) {
-//			return false;
-//		}
-//		if (aktuellesFeld.getTyp() == Typ.DSCHUNGEL && neuesFeld.getTyp() == Typ.MEER) {
-//			return false;
-//		}
-//
-//		//Floss mitbewegen
-//		if (aktuellesFeld.istFlossDa() && neuesFeld.getTyp() == Typ.MEER) {
-//			aktuellesFeld.setFlossDa(false);
-//			neuesFeld.setFlossDa(true);
-//		}
-//
-//		//Person bewegen
-//		aktuellesFeld.setPersonDa(false);
-//		neuesFeld.setPersonDa(true);
-//		vorigesFeld = aktuellesFeld;
-//		aktuellesFeld = neuesFeld;
-//		return true;
-//	}
 
 	public boolean hatSchatzkarte() {
 		return hatSchatzkarte;

@@ -3,32 +3,24 @@ package thousandislands.view;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import thousandislands.model.Feld;
-import thousandislands.model.Person;
-import thousandislands.model.Spieldaten;
 import thousandislands.model.Spielfeld;
-import thousandislands.model.enums.Ladung;
 import thousandislands.model.enums.Typ;
-import thousandislands.model.enums.Zweck;
 
 public class Landkarte extends JPanel{
 	Feld[][] felder;
 	Spielfeld spielfeld;
-	Person person;
 
-	public Landkarte(Spielfeld spielfeld, Person person) {
-		this.felder = spielfeld.getFelder();
-		this.person = person;
+	public Landkarte(Spielfeld spielfeld) {
+		this.spielfeld = spielfeld;
+		felder = spielfeld.getFelder();
 	}
 	
 	protected void paintComponent(Graphics g) {
@@ -58,17 +50,17 @@ public class Landkarte extends JPanel{
 			}
 		}
 	}
-	
+
 	private Color getFarbe(Feld feld) {
 
-		if (feld.istPersonDa()) {
-			if (person.hatFloss()) {
+		if (spielfeld.getAktuellesFeldPerson().equals(feld)) {
+			if (feld.equals(spielfeld.getFlossFeld())) {
 				return Color.ORANGE;
 			} else {
-				return Color.MAGENTA;				
+				return Color.MAGENTA;
 			}
 		}
-		
+
 		if (feld.hatFlaschenpost()) {
 			return Color.CYAN;
 		}
@@ -76,7 +68,7 @@ public class Landkarte extends JPanel{
 		switch (feld.getTyp()) {
 		case MEER: return Color.BLUE;
 		case STRAND: return Color.YELLOW;
-		case SCHIFFBAUSTRAND: return Color.YELLOW;		
+		case SCHIFFBAUSTRAND: return Color.YELLOW;
 		case DSCHUNGEL: return Color.GREEN;
 		case SCHATZ: return Color.GREEN;
 		case ZWECK: return Color.BLACK;
@@ -84,19 +76,18 @@ public class Landkarte extends JPanel{
 		case ROT: return Color.RED;
 		default: return Color.GRAY;
 		}
-		
 	}
-	
+
 	private BufferedImage getBildchen(Feld feld) {
 		BufferedImage bild = null;
 		URL datei;
 		String dateiname = "";
 
-		if (feld.istPersonDa()) {
+		if (spielfeld.getAktuellesFeldPerson().equals(feld)) {
 			dateiname = findeBildFuerPerson(feld);
 		} else if (feld.getTyp() == Typ.ZWECK) {
-			dateiname = findeBildFuerZweck(feld);			
-		} else if (feld.istFlossDa()) {
+			dateiname = findeBildFuerZweck(feld);
+		} else if (spielfeld.getFlossFeld() != null && spielfeld.getFlossFeld().equals(feld)) {
 			if (feld.getTyp() == Typ.STRAND) {
 				dateiname = "floss_strand.png";
 			} else {
@@ -178,7 +169,7 @@ public class Landkarte extends JPanel{
 
 	private String findeBildFuerPerson(Feld feld) {
 		if (feld.getTyp() == Typ.MEER) {
-			if (feld.istFlossDa()) {
+			if (spielfeld.getAktuellesFeldPerson().equals(spielfeld.getFlossFeld())) {
 				return "mann_floss.png";
 			} else {
 				return "schwimmer1.png";				

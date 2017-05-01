@@ -16,7 +16,8 @@ public class Spielfeld {
     private Feld[][] felder;
 
     private Feld aktuellesFeldPerson;
-    private Random wuerfel = new Random();
+    private Feld flossFeld;
+    private Feld flaschenpostFeld;
 
     public Spielfeld() {}
 
@@ -58,6 +59,7 @@ public class Spielfeld {
     }
 
     public Feld getStartfeldFuerFlaschenpost() {
+        Random wuerfel = new Random();
         while(true) {
             int x = wuerfel.nextInt(felder.length);
             int y = wuerfel.nextInt(felder[0].length);
@@ -82,15 +84,11 @@ public class Spielfeld {
         }
 
         //Floss mitbewegen
-        if (aktuellesFeldPerson.istFlossDa() && neuesFeld.getTyp() == Typ.MEER) {
-            aktuellesFeldPerson.setFlossDa(false);
-            neuesFeld.setFlossDa(true);
+        if (aktuellesFeldPerson.equals(flossFeld) && neuesFeld.getTyp() == Typ.MEER) {
+            flossFeld = neuesFeld;
         }
 
         //Person bewegen
-        aktuellesFeldPerson.setPersonDa(false);
-        neuesFeld.setPersonDa(true);
-//        vorigesFeld = aktuellesFeldPerson;
         aktuellesFeldPerson = neuesFeld;
         return true;
     }
@@ -101,5 +99,21 @@ public class Spielfeld {
 
     public void setAktuellesFeldPerson(Feld aktuellesFeldPerson) {
         this.aktuellesFeldPerson = aktuellesFeldPerson;
+    }
+
+    public Feld getFlossFeld() {
+        return flossFeld;
+    }
+
+    public void setFlossFeld(Feld feld) {
+        flossFeld = feld;
+    }
+
+    public Feld getFlaschenpostFeld() {
+        return flaschenpostFeld;
+    }
+
+    public void setFlaschenpostFeld(Feld feld) {
+        flaschenpostFeld = feld;
     }
 }

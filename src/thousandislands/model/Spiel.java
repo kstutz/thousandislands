@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Spieldaten {
+public class Spiel {
 	@XmlElement
 	private Spielfeld spielfeld;
 	@XmlElement
@@ -22,7 +22,7 @@ public class Spieldaten {
 	@XmlElement
 	private Set<Ladung> noetigeTeile;
 
-	public Spieldaten(Spielfeld spielfeld, Person person, Inventar inventar, Set<Ladung> noetigeTeile) {
+	public Spiel(Spielfeld spielfeld, Person person, Inventar inventar, Set<Ladung> noetigeTeile) {
 		this.spielfeld = spielfeld;
 		this.person = person;
 		level = 0;
@@ -31,7 +31,7 @@ public class Spieldaten {
 	}
 
 	//noetig fuer JAXB
-	public Spieldaten() {}
+	public Spiel() {}
 
 	public int getLevel() {
 		return level;

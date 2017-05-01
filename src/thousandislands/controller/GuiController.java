@@ -48,7 +48,7 @@ public class GuiController implements ActionListener {
 		fenster = new Fenster();		
 		
 		//Spielfeld hinzufuegen
-		landkarte = new Landkarte(spielfeld, person);
+		landkarte = new Landkarte(spielfeld);
 		fenster.add(landkarte, BorderLayout.CENTER);
 		landkarte.repaint();
 		

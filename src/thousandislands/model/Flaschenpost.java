@@ -52,16 +52,6 @@ public class Flaschenpost {
 		aktuellesFeld.setFlaschenpost(false);
 	}
 
-//	private Feld startfeldWuerfeln() {
-//		while(true) {
-//			int x = wuerfel.nextInt(spielfeld.length);
-//			int y = wuerfel.nextInt(spielfeld[0].length);
-//			if (spielfeld[x][y].getTyp() == Typ.MEER) {
-//				return spielfeld[x][y];
-//			}
-//		}
-//	}
-
 	private void richtungenWuerfeln() {		
 		for (int i=0; i<3; i++) {
 			int zufall = wuerfel.nextInt(4);

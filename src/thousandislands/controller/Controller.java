@@ -4,15 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.print.Book;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,7 +41,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 	private Timer timer;
 	private Zweckbehandler zweckbehandler;
 	private Knopfauswerter knopfauswerter;
-	private Spieldaten spieldaten;
+	private Spiel spiel;
 
 	public static void main (String[] args) {
 		new Controller();
@@ -60,16 +54,14 @@ public class Controller extends KeyAdapter implements ActionListener {
 	private void spielInitialisieren() {
 		SpielfeldErsteller ersteller = new SpielfeldErsteller();
 		spielfeld = ersteller.getSpielfeld();
-		Feld anfangsfeld = ersteller.getSpielanfang();
 		ersteller.versteckeWrack();
-		person = new Person(anfangsfeld);
-		anfangsfeld.setPersonDa(true);
-		spielfeld.setAktuellesFeldPerson(anfangsfeld);
+		person = new Person();
+		spielfeld.setAktuellesFeldPerson(ersteller.getSpielanfang());
 		flaschenpost = new Flaschenpost(spielfeld);
 
 		inventar = new Inventar();
 		noetigeTeile = new HashSet<>();
-		spieldaten = new Spieldaten(spielfeld, person, inventar, noetigeTeile);
+		spiel = new Spiel(spielfeld, person, inventar, noetigeTeile);
 		zweckverteiler = new Zweckverteiler();
 				
 		timer = new Timer(ZEITTAKT_IN_MS, this);
@@ -127,7 +119,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.knopfFuerAllesSichtbar(false);
 
 		Feld aktuellesFeld = spielfeld.getAktuellesFeldPerson();
-		if (!aktuellesFeld.istFlossDa() || schrittzaehler % 2 != 1) {
+		if (!aktuellesFeld.equals(spielfeld.getFlossFeld()) || schrittzaehler % 2 != 1) {
 			person.wasserAbziehen();
 			person.nahrungAbziehen();			
 		}
@@ -299,31 +291,21 @@ public class Controller extends KeyAdapter implements ActionListener {
 	}
 
 	private void spielSpeichern() {
-		//TODO: JAXB verwenden
-		//TODO: spielfeld, person
 		//TODO: inventar, hosentasche, noetige Teile
 		//TODO: level, schrittzahl, flaschenpost sichtbar
-
-		//TODO: Problem, weil Feld auf Nachbarfelder verweist
-		//-> man muesste Spielfeld vielleicht mal umbauen
-		//-> Spielfeld sollte Nachbarfelder on the fly berechnen
-		//-> dann braucht jedes Feld nur x und y, die ja gegeben sind
-		//dann braucht man doch eigene Spielfeldklasse, die Array hat und Nachbarn liefert, oder?
-		//koennte die nicht auch Feld von Person und Floss speichern?
+		//TODO: Spielfeld sollte Feld von Floss (und Flaschenpost?) speichern, oder?
 
 		// create JAXB context and instantiate marshaller
-
 		JAXBContext context = null;
 		try {
-			context = JAXBContext.newInstance(Spieldaten.class);
+			context = JAXBContext.newInstance(Spiel.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.marshal(spieldaten, System.out);
-			m.marshal(spieldaten, new File("spielstand.xml"));
+			m.marshal(spiel, System.out);
+			m.marshal(spiel, new File("spielstand.xml"));
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-
 
 
 		//TODO: mit Auswahl, unter welchem Namen man speichern moechte
@@ -347,7 +329,10 @@ public class Controller extends KeyAdapter implements ActionListener {
 		Unmarshaller um = null;
 		try {
 			um = context.createUnmarshaller();
-			Spieldaten spieldaten = (Spieldaten) um.unmarshal(new FileReader("spielstand.xml"));
+			spiel = (Spiel) um.unmarshal(new FileReader("spielstand.xml"));
+			person = spiel.getPerson();
+
+
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e2) {

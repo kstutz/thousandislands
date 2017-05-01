@@ -289,8 +289,8 @@ public class Knopfauswerter {
 				+ "und mehr Dinge transportieren kann.");
 		inventar.ladungEntfernen(Ladung.HOLZ);
 		inventar.ladungEntfernen(Ladung.LIANE);
-		spielfeld.getAktuellesFeldPerson().setFlossDa(true);
-		gui.knopfFuerAllesSichtbar(false);			
+		spielfeld.setFlossFeld(spielfeld.getAktuellesFeldPerson());
+		gui.knopfFuerAllesSichtbar(false);
 	}
 
 	private void ruinenDurchsuchen() {
