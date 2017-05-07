@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.Timer;
@@ -25,8 +26,6 @@ import thousandislands.model.enums.Zweck;
 
 
 public class Controller extends KeyAdapter implements ActionListener {
-	private static final int FLASCHENPOST_LAENGE = 50;
-	private static final int FLASCHENPOST_ABSTAND = 50;
 	private static final int ZEITTAKT_IN_MS = 200;
 	private GuiController gui;
 	private Spielfeld spielfeld;
@@ -34,9 +33,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 	private Inventar inventar;
 	private Set<Ladung> noetigeTeile;
 	private int schrittzaehler = 0;
-	private boolean flaschenpostSichtbar;
 	private Flaschenpost flaschenpost;
-	private Zweckverteiler zweckverteiler;
 	private int gedrueckteTaste;
 	private Timer timer;
 	private Zweckbehandler zweckbehandler;
@@ -54,26 +51,36 @@ public class Controller extends KeyAdapter implements ActionListener {
 	private void spielInitialisieren() {
 		SpielfeldErsteller ersteller = new SpielfeldErsteller();
 		spielfeld = ersteller.getSpielfeld();
-		ersteller.versteckeWrack();
 		person = new Person();
 		spielfeld.setAktuellesFeldPerson(ersteller.getSpielanfang());
 		flaschenpost = new Flaschenpost(spielfeld);
 
 		inventar = new Inventar();
 		noetigeTeile = new HashSet<>();
-		spiel = new Spiel(spielfeld, person, inventar, noetigeTeile);
-		zweckverteiler = new Zweckverteiler();
-				
+		spiel = new Spiel(spielfeld, person, inventar, noetigeTeile, flaschenpost);
+
 		timer = new Timer(ZEITTAKT_IN_MS, this);
 		timer.setInitialDelay(0);
 		timer.setActionCommand("TIMER");
+
+		initialisieren(spielfeld, person, inventar, noetigeTeile);
+	}
+
+	private void initialisieren(Spielfeld spielfeld, Person person, Inventar inventar, Set<Ladung> noetigeTeile) {
 		gui = new GuiController(spielfeld, person, inventar);
+
+
 		gui.aktualisiere();
+
 		gui.keyListenerHinzufuegen(this);
 		gui.actionListenerHinzufuegen(this);
-		gui.erstelleSchatzkarte(ersteller.getSchatzkartenanfang());
+		gui.erstelleSchatzkarte(spielfeld.getSchatzkartenanfang());
 		gui.zeigeNachricht("Ich sollte erstmal diese Insel, wo ich gestrandet bin, erkunden.");
-		
+
+		if (noetigeTeile == null) {
+			noetigeTeile = new HashSet<>();
+		}
+
 		zweckbehandler = new Zweckbehandler(gui, person, inventar, noetigeTeile);
 		knopfauswerter = new Knopfauswerter(gui, person, inventar, noetigeTeile, spielfeld);
 	}
@@ -139,8 +146,8 @@ public class Controller extends KeyAdapter implements ActionListener {
 		//TODO: wenn Level 0, dann sollte es nicht weitergehen, wenn man nicht bei Eingeborenen war
 		
 		//Flaschenpost aufnehmen -> Schatzkarte kriegen
-		if (aktuellesFeld.hatFlaschenpost()) {
-			aktuellesFeld.setFlaschenpost(false);
+		if (aktuellesFeld.equals(spielfeld.getFlaschenpostFeld())) {
+			spielfeld.setFlaschenpostFeld(null);
 			person.kriegtSchatzkarte();
 			gui.kartenknopfSichtbar(true);
 			gui.zeigeNachricht("Ich habe die Flaschenpost endlich erwischt!");
@@ -148,7 +155,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 
 		//Flaschenpost erscheinen und verschwinden lassen
 		if (!person.hatSchatzkarte() && person.getLevel() == 2) {
-			flaschenpostZeigen();
+			flaschenpost.aktualisieren(schrittzaehler);
 		}
 		
 		//Schatz heben
@@ -161,7 +168,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		//Zweckfelder behandeln
 		if (aktuellesFeld.getTyp() == Typ.ZWECK) {
 			if (aktuellesFeld.getZweck() == Zweck.OFFEN) {
-				zweckverteiler.setzeNächstenZweck(aktuellesFeld);
+				aktuellesFeld.setZweck(spielfeld.getNaechsterZweck());
 			}
 			if (aktuellesFeld.getZweck() == Zweck.HUETTE) {
 				redeMitEingeborenen();
@@ -217,7 +224,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 				gui.setzeTeileliste(noetigeTeile);
 			}					
 		} else { //level == 2
-			//Papaya gegen Speer tauchen
+			//Papaya gegen Speer tauschen
 			if (inventar.enthaelt(Ladung.PAPAYA)) {
 				inventar.ladungEntfernen(Ladung.PAPAYA);
 				person.setSpeer(true);
@@ -246,22 +253,6 @@ public class Controller extends KeyAdapter implements ActionListener {
 			noetigeTeile.add(Ladung.SEILE);
 			noetigeTeile.add(Ladung.SEGEL);
 			noetigeTeile.add(Ladung.WERKZEUG);
-		}
-	}
-	
-	private void flaschenpostZeigen() {
-		if ( !flaschenpostSichtbar ) {
-			if (schrittzaehler % FLASCHENPOST_ABSTAND == 0) {
-				flaschenpost.erzeugen();
-				flaschenpostSichtbar = true;
-			}
-		} else {
-			if (schrittzaehler % FLASCHENPOST_LAENGE == 0) {
-				flaschenpost.entfernen();
-				flaschenpostSichtbar = false;
-			} else {
-			    flaschenpost.bewegen();	
-			}
 		}
 	}
 
@@ -328,11 +319,11 @@ public class Controller extends KeyAdapter implements ActionListener {
 		JAXBContext context = null;
 		Unmarshaller um = null;
 		try {
+			context = JAXBContext.newInstance(Spiel.class);
 			um = context.createUnmarshaller();
 			spiel = (Spiel) um.unmarshal(new FileReader("spielstand.xml"));
-			person = spiel.getPerson();
-
-
+			initialisieren(spiel.getSpielfeld(), spiel.getPerson(),
+					spiel.getInventar(), spiel.getNoetigeTeile());
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e2) {

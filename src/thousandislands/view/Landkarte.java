@@ -61,7 +61,7 @@ public class Landkarte extends JPanel{
 			}
 		}
 
-		if (feld.hatFlaschenpost()) {
+		if (feld.equals(spielfeld.getFlaschenpostFeld())) {
 			return Color.CYAN;
 		}
 
@@ -93,7 +93,7 @@ public class Landkarte extends JPanel{
 			} else {
 				dateiname = "floss.png";
 			}
-		} else if (feld.hatFlaschenpost()) {
+		} else if (feld.equals(spielfeld.getFlaschenpostFeld())) {
 			dateiname = "flasche1.png";
 		} else if (feld.getTyp() == Typ.WRACK) {
 			dateiname = "wrack.png";

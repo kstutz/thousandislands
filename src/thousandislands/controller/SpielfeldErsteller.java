@@ -24,10 +24,11 @@ public class SpielfeldErsteller {
 	public SpielfeldErsteller(){
 		erzeugeFelder();
 		erstelleInseln();
+		versteckeWrack();
 	}
 
 	public Spielfeld getSpielfeld() {
-		return new Spielfeld(felder);
+		return new Spielfeld(felder, schatzkartenanfang, new Zweckverteiler().getZweckliste());
 	}
 
 	private void erzeugeFelder() {
@@ -53,7 +54,7 @@ public class SpielfeldErsteller {
 		do {
 			startpunkt = findeStartpunkt(80, 20, 20, 20);
 		} while (!istUmgebungFrei(startpunkt));
-		inselbauer = new InselBauer(startpunkt, felder, Zweck.SCHIFFBAU);
+		new InselBauer(startpunkt, felder, Zweck.SCHIFFBAU);
 		inselanzahl++;
 		
 		while (inselanzahl < ANZAHL_INSELN) {
@@ -79,7 +80,6 @@ public class SpielfeldErsteller {
 		do {
 			a = rand.nextInt(breite - INSELBREITE) + x;
 			b = rand.nextInt(hoehe - INSELBREITE) + y;
-			System.out.print("o");
 		} while (felder[a][b].getTyp() != Typ.MEER);
 		System.out.println();
 		return felder[a][b];
@@ -100,15 +100,11 @@ public class SpielfeldErsteller {
 		return true;
 	}
 	
-	public Feld getSchatzkartenanfang() {
-		return schatzkartenanfang;
-	}
-	
 	public Feld getSpielanfang() {
 		return anfangsfeld;
 	}
 	
-	public void versteckeWrack() {
+	private void versteckeWrack() {
 		int a;
 		int b;
 		do {

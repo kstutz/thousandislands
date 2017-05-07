@@ -263,11 +263,7 @@ public class InselBauer {
 		}
 		return true;
 	}
-	
-	public Feld getZweckfeld() {
-		return zweckfeld;
-	}
-	
+
 	public void versteckeSchatz() {
 		int zufall;
 		Feld schatzfeld;

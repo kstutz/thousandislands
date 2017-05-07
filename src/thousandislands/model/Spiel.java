@@ -16,30 +16,23 @@ public class Spiel {
 	private Spielfeld spielfeld;
 	@XmlElement
 	private Person person;
-	private int level;
 	@XmlElement
 	private Inventar inventar;
 	@XmlElement
 	private Set<Ladung> noetigeTeile;
+	private Flaschenpost flaschenpost;
 
-	public Spiel(Spielfeld spielfeld, Person person, Inventar inventar, Set<Ladung> noetigeTeile) {
+
+	public Spiel(Spielfeld spielfeld, Person person, Inventar inventar, Set<Ladung> noetigeTeile, Flaschenpost flaschenpost) {
 		this.spielfeld = spielfeld;
 		this.person = person;
-		level = 0;
 		this.inventar = inventar;
 		this.noetigeTeile = noetigeTeile;
+		this.flaschenpost = flaschenpost;
 	}
 
 	//noetig fuer JAXB
 	public Spiel() {}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
-	}
 
 	public Person getPerson() {
 		return person;

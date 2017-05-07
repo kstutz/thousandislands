@@ -2,11 +2,13 @@ package thousandislands.model;
 
 import thousandislands.model.enums.Richtung;
 import thousandislands.model.enums.Typ;
+import thousandislands.model.enums.Zweck;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 import java.util.Random;
 
 @XmlRootElement
@@ -18,11 +20,16 @@ public class Spielfeld {
     private Feld aktuellesFeldPerson;
     private Feld flossFeld;
     private Feld flaschenpostFeld;
+    private Feld SCHATZKARTENANFANG;
+
+    private List<Zweck> zweckliste;
 
     public Spielfeld() {}
 
-    public Spielfeld(Feld[][] felder) {
+    public Spielfeld(Feld[][] felder, Feld schatzkartenAnfang, List<Zweck> zweckliste) {
         this.felder = felder;
+        SCHATZKARTENANFANG = schatzkartenAnfang;
+        this.zweckliste = zweckliste;
     }
 
     public Feld[][] getFelder() {
@@ -58,7 +65,7 @@ public class Spielfeld {
         return nachbarFeld;
     }
 
-    public Feld getStartfeldFuerFlaschenpost() {
+    public Feld getZufaelligesMeerfeld() {
         Random wuerfel = new Random();
         while(true) {
             int x = wuerfel.nextInt(felder.length);
@@ -115,5 +122,13 @@ public class Spielfeld {
 
     public void setFlaschenpostFeld(Feld feld) {
         flaschenpostFeld = feld;
+    }
+
+    public Feld getSchatzkartenanfang() {
+        return SCHATZKARTENANFANG;
+    }
+
+    public Zweck getNaechsterZweck() {
+        return zweckliste.remove(0);
     }
 }

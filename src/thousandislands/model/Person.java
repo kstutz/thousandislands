@@ -1,16 +1,12 @@
 package thousandislands.model;
 
+import thousandislands.controller.Konfiguration;
 import thousandislands.model.enums.Richtung;
 import thousandislands.model.enums.Typ;
 
 import javax.xml.bind.annotation.XmlElement;
 
 public class Person {
-	private static final int MAX_WASSER = 100;
-	private static final int MAX_WASSER_KRUG = 200;
-	private static final int MAX_NAHRUNG = 100;
-	private static final int MAX_NAHRUNG_KORB = 200;
-	private static final int TRAGKRAFT_MIT_FLOSS = 10;
 
 	private int level;
 	private int wasser;
@@ -61,22 +57,22 @@ public class Person {
 
 	public int getMaxWasser() {
 		if (hatKrug()) {
-			return MAX_WASSER_KRUG;
+			return Konfiguration.MAX_WASSER_KRUG;
 		} else {
-			return MAX_WASSER;
+			return Konfiguration.MAX_WASSER;
 		}
 	}
 	
 	public int getMaxNahrung() {
 		if (hatKorb()) {
-			return MAX_NAHRUNG_KORB;
+			return Konfiguration.MAX_NAHRUNG_KORB;
 		} else {
-			return MAX_NAHRUNG;
+			return Konfiguration.MAX_NAHRUNG;
 		}
 	}
 	
 	public int getTragfaehigkeit() {
-		return TRAGKRAFT_MIT_FLOSS;
+		return Konfiguration.TRAGKRAFT_MIT_FLOSS;
 	}
 	
 

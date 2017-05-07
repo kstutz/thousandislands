@@ -42,6 +42,18 @@ public class GuiController implements ActionListener {
 
 		erstelleGui();
 	}
+
+	public void setSpielfeld(Spielfeld spielfeld) {
+		this.spielfeld = spielfeld;
+	}
+
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+
+	public void setInventar(Inventar inventar) {
+		this.inventar = inventar;
+	}
 	
 	private void erstelleGui() {
 		//Fenster erstellen

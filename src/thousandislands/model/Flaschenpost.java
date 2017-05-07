@@ -4,26 +4,51 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import thousandislands.controller.Konfiguration;
 import thousandislands.model.enums.Richtung;
 import thousandislands.model.enums.Typ;
 
 public class Flaschenpost {
 	private List<Richtung> richtungen = new ArrayList<>();
-	private Feld aktuellesFeld;
 	private Spielfeld spielfeld;
 	private Random wuerfel = new Random();
 	
 	public Flaschenpost(Spielfeld spielfeld) {
 		this.spielfeld = spielfeld;
 	}
-	
-	public void erzeugen() {
-		aktuellesFeld = spielfeld.getStartfeldFuerFlaschenpost();
+
+	//fuer JAXB
+	public Flaschenpost() {}
+
+	public void aktualisieren(int schrittzahl) {
+		int intervall = Konfiguration.FLASCHENPOST_LAENGE + Konfiguration.FLASCHENPOST_ABSTAND;
+
+		if (schrittzahl % intervall == 0) {
+			erscheinenLassen();
+		}
+
+		if (schrittzahl % (Konfiguration.FLASCHENPOST_LAENGE + Konfiguration.FLASCHENPOST_ABSTAND) < Konfiguration.FLASCHENPOST_LAENGE) {
+			if (spielfeld.getFlaschenpostFeld() == null) { erscheinenLassen(); }
+			bewegen();
+		}
+
+		if (schrittzahl % intervall == Konfiguration.FLASCHENPOST_LAENGE) {
+			verschwindenLassen();
+		}
+	}
+
+	private void erscheinenLassen() {
+		spielfeld.setFlaschenpostFeld(spielfeld.getZufaelligesMeerfeld());
 		richtungenWuerfeln();
 	}
-	
-	public void bewegen() {
+
+	private void verschwindenLassen() {
+		spielfeld.setFlaschenpostFeld(null);
+	}
+
+	private void bewegen() {
 		Feld naechstesFeld;
+		Feld aktuellesFeld = spielfeld.getFlaschenpostFeld();
 
 		int zufall = wuerfel.nextInt(3);
 		switch (richtungen.get(zufall)) {
@@ -42,14 +67,8 @@ public class Flaschenpost {
 		}
 		
 		if (naechstesFeld != null && naechstesFeld.getTyp() == Typ.MEER) {
-			aktuellesFeld.setFlaschenpost(false);
-			naechstesFeld.setFlaschenpost(true);
-			aktuellesFeld = naechstesFeld;
+			spielfeld.setFlaschenpostFeld(naechstesFeld);
 		}
-	}
-	
-	public void entfernen() {
-		aktuellesFeld.setFlaschenpost(false);
 	}
 
 	private void richtungenWuerfeln() {		

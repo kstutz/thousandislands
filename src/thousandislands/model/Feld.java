@@ -21,7 +21,6 @@ public class Feld {
 	private Status status;
 	private Typ typ;
 	private Zweck zweck;
-	private boolean hatFlaschenpost = false;
 	@XmlElement
 	private int x;
 	@XmlElement
@@ -58,14 +57,6 @@ public class Feld {
 	
 	public int getY() {
 		return y;
-	}
-
-	public boolean hatFlaschenpost() {
-		return hatFlaschenpost;
-	}
-	
-	public void setFlaschenpost(boolean bool) {
-		hatFlaschenpost = bool;
 	}
 
 	public Zweck getZweck() {

@@ -21,10 +21,14 @@ public class Zweckverteiler {
 	private List<Zweck> zweckliste = new ArrayList<>();
 
 	Zweckverteiler() {
-		mischeZwecke();
+		erstelleZweckliste();
 	}
-	
-	private void mischeZwecke() {
+
+	public List<Zweck> getZweckliste() {
+		return zweckliste;
+	}
+
+	private void erstelleZweckliste() {
 		zweckliste.addAll(ersteZwecke);
 		Random rand = new Random();
 		int zufallszahl;
@@ -33,9 +37,5 @@ public class Zweckverteiler {
 			zufallszahl = rand.nextInt(restlicheZwecke.size());
 			zweckliste.add(restlicheZwecke.remove(zufallszahl));
 		}
-	}
-	
-	public void setzeNächstenZweck(Feld zweckfeld) {
-		zweckfeld.setZweck(zweckliste.remove(0));		
 	}
 }
