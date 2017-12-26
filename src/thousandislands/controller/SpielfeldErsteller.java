@@ -81,7 +81,6 @@ public class SpielfeldErsteller {
 			a = rand.nextInt(breite - INSELBREITE) + x;
 			b = rand.nextInt(hoehe - INSELBREITE) + y;
 		} while (felder[a][b].getTyp() != Typ.MEER);
-		System.out.println();
 		return felder[a][b];
 	}
 	

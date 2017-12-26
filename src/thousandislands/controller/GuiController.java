@@ -27,6 +27,7 @@ public class GuiController implements ActionListener {
 	private JButton kartenknopf;
 	private JButton speicherknopf;
 	private JButton ladeknopf;
+	private JButton neuknopf;
 	private JButton nochmalknopf;
 	private JPanel knopfzeile;
 	private Schatzkarte schatzkarte;
@@ -40,6 +41,7 @@ public class GuiController implements ActionListener {
 		this.person = person;
 		this.inventar = inventar;
 
+		fenster = new Fenster();
 		erstelleGui();
 	}
 
@@ -54,11 +56,17 @@ public class GuiController implements ActionListener {
 	public void setInventar(Inventar inventar) {
 		this.inventar = inventar;
 	}
-	
+
+	public void resetGui(Spielfeld spielfeld, Person person, Inventar inventar) {
+		this.spielfeld = spielfeld;
+		this.person = person;
+		this.inventar = inventar;
+
+		erstelleGui();
+	}
+
 	private void erstelleGui() {
-		//Fenster erstellen
-		fenster = new Fenster();		
-		
+
 		//Spielfeld hinzufuegen
 		landkarte = new Landkarte(spielfeld);
 		fenster.add(landkarte, BorderLayout.CENTER);
@@ -89,13 +97,17 @@ public class GuiController implements ActionListener {
 
 		ladeknopf = new JButton("Laden");
 		ladeknopf.setActionCommand("LADEN");
-		
+
+		neuknopf = new JButton("Neu starten");
+		neuknopf.setActionCommand("NOCHMAL");
+
 		nochmalknopf = new JButton("Nochmal spielen!");
 		nochmalknopf.setActionCommand("NOCHMAL");
 
 		knopfzeile = new JPanel();
 		knopfzeile.add(speicherknopf);
 		knopfzeile.add(ladeknopf);
+		knopfzeile.add(neuknopf);
 		
 		fenster.add(knopfzeile, BorderLayout.NORTH);
 	}
@@ -196,6 +208,7 @@ public class GuiController implements ActionListener {
 		knopfFuerAlles.addActionListener(controller);
 		speicherknopf.addActionListener(controller);
 		ladeknopf.addActionListener(controller);
+		neuknopf.addActionListener(controller);
 		nochmalknopf.addActionListener(controller);
 	}
 	

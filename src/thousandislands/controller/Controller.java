@@ -45,7 +45,13 @@ public class Controller extends KeyAdapter implements ActionListener {
 	}
 	
 	Controller() {
-		spielInitialisieren();
+
+		File gespeichertesSpiel = new File(Konfiguration.DATEINAME);
+		if (gespeichertesSpiel.exists()) {
+			spielstandLaden(gespeichertesSpiel, true);
+		} else {
+			spielInitialisieren();
+		}
 	}
 	
 	private void spielInitialisieren() {
@@ -63,12 +69,11 @@ public class Controller extends KeyAdapter implements ActionListener {
 		timer.setInitialDelay(0);
 		timer.setActionCommand("TIMER");
 
-		initialisieren(spielfeld, person, inventar, noetigeTeile);
-	}
-
-	private void initialisieren(Spielfeld spielfeld, Person person, Inventar inventar, Set<Ladung> noetigeTeile) {
-		gui = new GuiController(spielfeld, person, inventar);
-
+		if (gui == null) {
+			gui = new GuiController(spielfeld, person, inventar);
+		} else {
+			gui.resetGui(spielfeld, person, inventar);
+		}
 
 		gui.aktualisiere();
 
@@ -77,12 +82,39 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.erstelleSchatzkarte(spielfeld.getSchatzkartenanfang());
 		gui.zeigeNachricht("Ich sollte erstmal diese Insel, wo ich gestrandet bin, erkunden.");
 
+		zweckbehandler = new Zweckbehandler(gui, person, inventar, noetigeTeile);
+		knopfauswerter = new Knopfauswerter(gui, person, inventar, noetigeTeile, spielfeld);
+		gui.fokusHolen();
+	}
+
+	private void initialisieren(Spielfeld spielfeld, Person person, Inventar inventar, Set<Ladung> noetigeTeile, boolean fensterErstellen) {
+		this.spielfeld = spielfeld;
+		this.person = person;
+		this.inventar = inventar;
+
+		timer = new Timer(ZEITTAKT_IN_MS, this);
+		timer.setInitialDelay(0);
+		timer.setActionCommand("TIMER");
+
+		if (fensterErstellen) {
+			gui = new GuiController(spielfeld, person, inventar);
+		} else {
+			gui.resetGui(spielfeld, person, inventar);
+		}
+
+		gui.aktualisiere();
+
+		gui.keyListenerHinzufuegen(this);
+		gui.actionListenerHinzufuegen(this);
+		gui.erstelleSchatzkarte(spielfeld.getSchatzkartenanfang());
+
 		if (noetigeTeile == null) {
 			noetigeTeile = new HashSet<>();
 		}
 
 		zweckbehandler = new Zweckbehandler(gui, person, inventar, noetigeTeile);
 		knopfauswerter = new Knopfauswerter(gui, person, inventar, noetigeTeile, spielfeld);
+		gui.fokusHolen();
 	}
 	
 	@Override
@@ -293,7 +325,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.marshal(spiel, System.out);
-			m.marshal(spiel, new File("spielstand.xml"));
+			m.marshal(spiel, new File(Konfiguration.DATEINAME));
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
@@ -315,15 +347,15 @@ public class Controller extends KeyAdapter implements ActionListener {
 	}
 
 
-	private void spielLaden() {
+	private void spielstandLaden(File gespeichertesSpiel, boolean fensterErstellen) {
 		JAXBContext context = null;
 		Unmarshaller um = null;
 		try {
 			context = JAXBContext.newInstance(Spiel.class);
 			um = context.createUnmarshaller();
-			spiel = (Spiel) um.unmarshal(new FileReader("spielstand.xml"));
+			spiel = (Spiel) um.unmarshal(new FileReader(gespeichertesSpiel));
 			initialisieren(spiel.getSpielfeld(), spiel.getPerson(),
-					spiel.getInventar(), spiel.getNoetigeTeile());
+					spiel.getInventar(), spiel.getNoetigeTeile(), fensterErstellen);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e2) {
@@ -339,7 +371,10 @@ public class Controller extends KeyAdapter implements ActionListener {
 		} else if (event.getActionCommand().equals("SPEICHERN")) {
 			spielSpeichern();
 		} else if (event.getActionCommand().equals("LADEN")) {
-			spielLaden();
+			File gespeichertesSpiel = new File(Konfiguration.DATEINAME);
+			if (gespeichertesSpiel.exists()) {
+				spielstandLaden(gespeichertesSpiel, false);
+			}
 		} else if (event.getActionCommand().equals("NOCHMAL")) {
 			spielInitialisieren();
 		} else {
