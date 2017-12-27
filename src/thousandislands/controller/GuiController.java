@@ -227,15 +227,15 @@ public class GuiController implements ActionListener {
 	}
 	
 	public void setzeTeileliste(Set<Ladung> noetigeTeile) {
-		rechteSpalte.teileHinzufuegen(noetigeTeile);
+		rechteSpalte.listenpanelBefuellen(noetigeTeile);
 	}
 	
 	public void hosentascheHinzufuegen(Ladung teil) {
-		rechteSpalte.zuHosentascheHinzufügen(teil);
+		rechteSpalte.zuInventarlisteHinzufügen(teil);
 	}
 	
 	public void hosentascheEntfernen(Ladung teil) {
-		rechteSpalte.ausHosentascheEntfernen(teil);
+		rechteSpalte.ausInventarlisteEntfernen(teil);
 	}
 	
 	public void fokusHolen() {

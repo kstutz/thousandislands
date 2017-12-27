@@ -2,7 +2,7 @@ package thousandislands.model.enums;
 
 public enum Ladung {
 	LIANE (1),
-	SEILE(1),
+	SEILE (1),
 	HOLZ (5),
 	RUMPF (5),
 	KRUG_UNGEBRANNT (2),

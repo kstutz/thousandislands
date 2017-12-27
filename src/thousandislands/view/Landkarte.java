@@ -86,7 +86,7 @@ public class Landkarte extends JPanel{
 		if (spielfeld.getAktuellesFeldPerson().equals(feld)) {
 			dateiname = findeBildFuerPerson(feld);
 		} else if (feld.getTyp() == Typ.ZWECK) {
-			dateiname = findeBildFuerZweck(feld);
+			dateiname = feld.getZweck().getDateiname();
 		} else if (spielfeld.getFlossFeld() != null && spielfeld.getFlossFeld().equals(feld)) {
 			if (feld.getTyp() == Typ.STRAND) {
 				dateiname = "floss_strand.png";
@@ -115,56 +115,6 @@ public class Landkarte extends JPanel{
 		}
 		
 		return bild;
-	}
-
-	private String findeBildFuerZweck(Feld feld) {
-		String dateiname = "";
-		
-    	switch(feld.getZweck()) {
-		case WASSER: 
-			dateiname = "quelle.png";
-			break;
-		case NAHRUNG: 
-			dateiname = "nahrung.png";
-			break;
-		case HOLZ: 
-			dateiname = "holz.png";
-			break;
-		case LIANEN: 
-			dateiname = "lianen.png";
-			break;
-		case TON: 
-			dateiname = "ton.png";
-			break;
-		case FEUER: 
-			dateiname = "feuer.png";
-			break;
-		case SCHILF: 
-			dateiname = "schilf.png";
-			break;
-		case GROSSER_BAUM:
-			dateiname = "grosserbaum.png";				
-			break;
-		case BAUMSTUMPF:
-			dateiname = "baumstumpf2.png";
-			break;
-		case HUETTE: 
-			dateiname = "huette.png";
-			break;
-		case PAPAYA: 
-			dateiname = "papaya.png";
-			break;
-		case RUINE: 
-			dateiname = "ruine.png";
-			break;
-		case OFFEN:
-			dateiname = "fragezeichen.png";
-			break;			
-		default:
-			dateiname = "leer.png";
-			break;
-		}			
-		return dateiname;
 	}
 
 	private String findeBildFuerPerson(Feld feld) {

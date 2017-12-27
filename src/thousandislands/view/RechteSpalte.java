@@ -1,6 +1,5 @@
 package thousandislands.view;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -9,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,11 +19,11 @@ public class RechteSpalte extends JPanel {
 	private JLabel wasser = new JLabel();
 	private JLabel nahrung = new JLabel();
 	private List<JLabel> labelliste = new ArrayList<>();
-	private List<JLabel> hosentaschenliste = new ArrayList<>();
+	private List<JLabel> inventarliste = new ArrayList<>();
 	private JTextArea nachrichtenfeld;
 	private JLabel flossbeladung = new JLabel();
 	private JPanel listenpanel = new JPanel();
-	private JPanel hosentaschenpanel = new JPanel();
+	private JPanel inventarpanel = new JPanel();
 	
 	public RechteSpalte() {		
 		setLayout(new GridBagLayout());
@@ -72,15 +69,20 @@ public class RechteSpalte extends JPanel {
 		c.gridy = 6;
 		c.insets = new Insets(0,0,10,0);
 		add(flossbeladung, c);
-		
-		hosentaschenpanel.setLayout(new BoxLayout(hosentaschenpanel, BoxLayout.PAGE_AXIS));
-		JLabel hosentasche = new JLabel("Hosentasche:");
-		hosentasche.setForeground(Color.GRAY);
-		hosentaschenpanel.add(hosentasche);
+
+		listenpanel.setLayout(new BoxLayout(listenpanel, BoxLayout.PAGE_AXIS));
+		listenpanel.add(new JLabel("Was ich brauche:"));
+		c.gridy = 9;
+		c.insets = new Insets(10,0,10,0);
+		listenpanel.setVisible(false);
+		add(listenpanel, c);
+
+		inventarpanel.setLayout(new BoxLayout(inventarpanel, BoxLayout.PAGE_AXIS));
+		inventarpanel.add(new JLabel("Inventar:"));
 		c.gridy = 10;
 		c.insets = new Insets(10,0,10,0);
-		hosentaschenpanel.setVisible(false);
-		add(hosentaschenpanel, c);		
+		inventarpanel.setVisible(false);
+		add(inventarpanel, c);
 	}
 
 	public void setzeWasseranzeige(int i) {
@@ -103,16 +105,11 @@ public class RechteSpalte extends JPanel {
 		}
 	}
 	
-	public void teileHinzufuegen(Set<Ladung> noetigeTeile) {
+	public void listenpanelBefuellen(Set<Ladung> noetigeTeile) {
 		GridBagConstraints c = new GridBagConstraints();
 		
-		//TODO: gleich im Konstruktor erstellen, dann auf unsichtbar setzen (siehe Hosentasche)
-		if (labelliste.isEmpty()) {
-			listenpanel.setLayout(new BoxLayout(listenpanel, BoxLayout.PAGE_AXIS));
-			c.gridy = 9;
-			c.insets = new Insets(10,0,10,0);
-			add(listenpanel, c);
-		} else { //Teile aus erstem Level loeschen
+		if (!labelliste.isEmpty()) {
+			//Teile aus erstem Level loeschen
 			for (JLabel label : labelliste) {
 				listenpanel.remove(label);
 			}
@@ -127,28 +124,28 @@ public class RechteSpalte extends JPanel {
 		}
 	}
 	
-	public void zuHosentascheHinzufügen(Ladung ladungsteil) {		
+	public void zuInventarlisteHinzufügen(Ladung ladungsteil) {
 		JLabel label = new JLabel(ladungsteil.toString());
-		hosentaschenliste.add(label);
-		hosentaschenpanel.add(label);
-		hosentaschenpanel.setVisible(true);
+		inventarliste.add(label);
+		inventarpanel.add(label);
+		inventarpanel.setVisible(true);
 	}
 	
-	public void ausHosentascheEntfernen(Ladung ladungsteil) {
+	public void ausInventarlisteEntfernen(Ladung ladungsteil) {
 		JLabel sollWeg = new JLabel();	
-		for (JLabel label : hosentaschenliste) {
+		for (JLabel label : inventarliste) {
 			if (label.getText().equals(ladungsteil.toString())) {
 				sollWeg = label;
 			}
 		}
 		
-		hosentaschenliste.remove(sollWeg);
-		hosentaschenpanel.remove(sollWeg);
-		hosentaschenpanel.revalidate();
-		hosentaschenpanel.repaint();			
+		inventarliste.remove(sollWeg);
+		inventarpanel.remove(sollWeg);
+		inventarpanel.revalidate();
+		inventarpanel.repaint();
 		
-		if (hosentaschenliste.isEmpty()) {
-			hosentaschenpanel.setVisible(false);
+		if (inventarliste.isEmpty()) {
+			inventarpanel.setVisible(false);
 		}
 	}
 	
