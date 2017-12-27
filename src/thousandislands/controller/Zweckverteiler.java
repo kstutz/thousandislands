@@ -11,7 +11,7 @@ import thousandislands.model.enums.Zweck;
 
 public class Zweckverteiler {
 	private List<Zweck> ersteZwecke = new LinkedList<>(Arrays.asList(
-			Zweck.WASSER, Zweck.NAHRUNG, Zweck.HOLZ, Zweck.LIANEN));
+			Zweck.WASSER, Zweck.NAHRUNG, Zweck.LIANEN, Zweck.HOLZ));
 	private List<Zweck> restlicheZwecke = new LinkedList<>(Arrays.asList(
 			Zweck.TON, Zweck.FEUER,
 			Zweck.GROSSER_BAUM, Zweck.SCHILF,

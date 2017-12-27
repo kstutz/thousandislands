@@ -195,12 +195,12 @@ public class Knopfauswerter {
 			gui.zeigeNachricht("Wie soll ich einen Korb beim Schwimmen mitnehmen? "
 					+ "Ich brauche erstmal ein Floß!");
 		} else {  //hat Floss
-			if (person.getLevel() == 1) {
-				gui.zeigeNachricht("Super, jetzt kann ich mehr Früchte mitnehmen!");
-				gui.markiereTeil(Ladung.KORB.toString());
-				noetigeTeile.remove(Ladung.KORB);
-				person.setKorb(true);					
-			} else { //level == 2
+//			if (person.getLevel() == 1) {
+//				gui.zeigeNachricht("Super, jetzt kann ich mehr Früchte mitnehmen!");
+//				gui.markiereTeil(Ladung.KORB.toString());
+//				noetigeTeile.remove(Ladung.KORB);
+//				person.setKorb(true);
+//			} else { //level == 2
 				// Gewicht okay
 				if (inventar.getGesamtgewicht() + Ladung.KORB.getGewicht() 
 						<= person.getTragfaehigkeit()) {
@@ -212,7 +212,7 @@ public class Knopfauswerter {
 					gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 							+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
 				}					
-			}
+//			}
 		}
 		gui.knopfFuerAllesSichtbar(false);			
 	}
@@ -228,21 +228,21 @@ public class Knopfauswerter {
 	}
 
 	private void krugBrennen() {
-		if (!person.hatKrug()) {
-			gui.zeigeNachricht("Super, jetzt kann ich Wasser mitnehmen!");
-			inventar.ladungEntfernen(Ladung.KRUG_UNGEBRANNT);
-			gui.hosentascheEntfernen(Ladung.KRUG_UNGEBRANNT);
-			gui.markiereTeil(Ladung.KRUG.toString());
-			noetigeTeile.remove(Ladung.KRUG);
-			person.setKrug(true);
-		} else {
+//		if (!person.hatKrug()) {
+//			gui.zeigeNachricht("Super, jetzt kann ich Wasser mitnehmen!");
+//			inventar.ladungEntfernen(Ladung.KRUG_UNGEBRANNT);
+//			gui.hosentascheEntfernen(Ladung.KRUG_UNGEBRANNT);
+//			gui.markiereTeil(Ladung.KRUG.toString());
+//			noetigeTeile.remove(Ladung.KRUG);
+//			person.setKrug(true);
+//		} else {
 			inventar.ladungEntfernen(Ladung.KRUG_UNGEBRANNT);
 			gui.hosentascheEntfernen(Ladung.KRUG_UNGEBRANNT);
 			inventar.ladungHinzufuegen(Ladung.KRUG);
 			gui.markiereTeil(Ladung.KRUG.toString());
 			noetigeTeile.remove(Ladung.KRUG);
 			gui.zeigeNachricht("Jetzt kann ich Wasser fuer die Ueberfahrt zum Festland mitnehmen!");
-		}
+//		}
 		gui.knopfFuerAllesSichtbar(false);			
 	}
 

@@ -66,10 +66,7 @@ public class Zweckbehandler {
 		person.setWasser(person.getMaxWasser());
 		gui.aktualisiere();
 		gui.zeigeNachricht("Wasser!");
-		if (person.hatFloss() && !person.hatKrug()) {
-			gui.zeigeNachricht("Wenn ich einen Krug haette, koennte ich Wasser mitnehmen...");
-		}
-		
+
 		if (person.getLevel() == 2) {
 			if (noetigeTeile.contains(Ladung.KRUG)) {
 				gui.zeigeNachricht("Wenn ich einen Krug haette, koennte ich Wasser " +
@@ -85,10 +82,7 @@ public class Zweckbehandler {
 		person.setNahrung(person.getMaxNahrung());
 		gui.aktualisiere();
 		gui.zeigeNachricht("Fruechte!");
-		if (person.hatFloss() && !person.hatKorb()) {
-			gui.zeigeNachricht("Wenn ich einen Korb haette, koennte ich Fruechte mitnehmen...");
-		}
-		
+
 		if (person.getLevel() == 2) {
 			if (noetigeTeile.contains(Ladung.KORB)) {
 				gui.zeigeNachricht("Wenn ich einen Korb haette, koennte ich Fruechte " +

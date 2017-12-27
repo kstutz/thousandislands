@@ -13,15 +13,15 @@ public class Person {
 	private int nahrung;
 	private boolean hatSchatzkarte;
 	private boolean hatFloss;
-	private boolean hatKrug;
-	private boolean hatKorb;
+//	private boolean hatKrug;
+//	private boolean hatKorb;
 	private boolean hatSpeer;
 	
 	public Person() {
 		hatSchatzkarte = false;
 		hatFloss = false;
-		hatKrug = false;
-		hatKorb = false;
+//		hatKrug = false;
+//		hatKorb = false;
 		hatSpeer = false;
 		wasser = 100;
 		nahrung = 100;
@@ -56,19 +56,21 @@ public class Person {
 	}
 
 	public int getMaxWasser() {
-		if (hatKrug()) {
-			return Konfiguration.MAX_WASSER_KRUG;
-		} else {
-			return Konfiguration.MAX_WASSER;
-		}
+		return Konfiguration.MAX_WASSER;
+//		if (hatKrug()) {
+//			return Konfiguration.MAX_WASSER_KRUG;
+//		} else {
+//			return Konfiguration.MAX_WASSER;
+//		}
 	}
 	
 	public int getMaxNahrung() {
-		if (hatKorb()) {
-			return Konfiguration.MAX_NAHRUNG_KORB;
-		} else {
-			return Konfiguration.MAX_NAHRUNG;
-		}
+		return Konfiguration.MAX_NAHRUNG;
+//		if (hatKorb()) {
+//			return Konfiguration.MAX_NAHRUNG_KORB;
+//		} else {
+//			return Konfiguration.MAX_NAHRUNG;
+//		}
 	}
 	
 	public int getTragfaehigkeit() {
@@ -100,21 +102,21 @@ public class Person {
 		this.hatFloss = hatFloss;
 	}
 
-	public boolean hatKrug() {
-		return hatKrug;
-	}
-
-	public void setKrug(boolean hatKrug) {
-		this.hatKrug = hatKrug;
-	}
-
-	public boolean hatKorb() {
-		return hatKorb;
-	}
-
-	public void setKorb(boolean hatKorb) {
-		this.hatKorb = hatKorb;
-	}
+//	public boolean hatKrug() {
+//		return hatKrug;
+//	}
+//
+//	public void setKrug(boolean hatKrug) {
+//		this.hatKrug = hatKrug;
+//	}
+//
+//	public boolean hatKorb() {
+//		return hatKorb;
+//	}
+//
+//	public void setKorb(boolean hatKorb) {
+//		this.hatKorb = hatKorb;
+//	}
 
 	public boolean hatSpeer() {
 		return hatSpeer;

@@ -83,6 +83,9 @@ public class Spielfeld {
         if (neuesFeld == null) {
             return false;
         }
+//        if (person.getLevel == 0 && aktuellesFeldPerson.getTyp() == Typ.STRAND && neuesFeld.getTyp() == Typ.MEER) {
+//        }
+
         if (aktuellesFeldPerson.getTyp() == Typ.MEER && neuesFeld.getTyp() == Typ.DSCHUNGEL) {
             return false;
         }

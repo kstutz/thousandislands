@@ -158,7 +158,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.knopfFuerAllesSichtbar(false);
 
 		Feld aktuellesFeld = spielfeld.getAktuellesFeldPerson();
-		if (!aktuellesFeld.equals(spielfeld.getFlossFeld()) || schrittzaehler % 2 != 1) {
+		if (schrittzaehler % 2 != 1) {
 			person.wasserAbziehen();
 			person.nahrungAbziehen();			
 		}
@@ -173,10 +173,11 @@ public class Controller extends KeyAdapter implements ActionListener {
 		}
 
 		//TODO: Nachricht, dass man nur ueber Strand auf Insel kommt?
-		//-> Person->setzePersonWeiter() muesste dazu entsprechende Exception werfen
+		//-> Spielfeld->setzePersonWeiter() muesste dazu entsprechende Exception werfen
 
 		//TODO: wenn Level 0, dann sollte es nicht weitergehen, wenn man nicht bei Eingeborenen war
-		
+		// Problem wie oben?
+
 		//Flaschenpost aufnehmen -> Schatzkarte kriegen
 		if (aktuellesFeld.equals(spielfeld.getFlaschenpostFeld())) {
 			spielfeld.setFlaschenpostFeld(null);
@@ -226,9 +227,8 @@ public class Controller extends KeyAdapter implements ActionListener {
 			gui.setzeKnopf(Aktion.ABLADEN);
 		}
 		
-		if (person.getLevel() == 1 && person.hatFloss() 
-				&& person.hatKrug() && person.hatKorb()) {
-			gui.zeigeNachricht("Ich habe ein Floss, einen Korb und einen Krug! \n" +
+		if (person.getLevel() == 1 && person.hatFloss()) {
+			gui.zeigeNachricht("Ich habe ein Floss gebaut! \n" +
 					"Ich sollte zu den Eingeborenen zurueckkehren.");
 		}
 		
@@ -272,8 +272,8 @@ public class Controller extends KeyAdapter implements ActionListener {
 		if (level == 1) {
 			noetigeTeile.add(Ladung.HOLZ);
 			noetigeTeile.add(Ladung.LIANE);
-			noetigeTeile.add(Ladung.KRUG);
-			noetigeTeile.add(Ladung.KORB);
+//			noetigeTeile.add(Ladung.KRUG);
+//			noetigeTeile.add(Ladung.KORB);
 		} else {
 			noetigeTeile.add(Ladung.RUMPF);
 			noetigeTeile.add(Ladung.MAST);
