@@ -21,8 +21,8 @@ public class Spiel {
 	private Inventar inventar;
 	@XmlElement
 	private Map<Ladung,Boolean> noetigeTeile;
+	@XmlElement
 	private Flaschenpost flaschenpost;
-
 
 	public Spiel(Spielfeld spielfeld, Person person, Inventar inventar, Map<Ladung,Boolean> noetigeTeile, Flaschenpost flaschenpost) {
 		this.spielfeld = spielfeld;
@@ -61,5 +61,9 @@ public class Spiel {
 
 	public Inventar getInventar() {
 		return inventar;
+	}
+
+	public Flaschenpost getFlaschenpost() {
+		return flaschenpost;
 	}
 }

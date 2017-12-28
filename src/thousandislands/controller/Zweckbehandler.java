@@ -1,7 +1,6 @@
 package thousandislands.controller;
 
 import java.util.Map;
-import java.util.Set;
 
 import thousandislands.model.Inventar;
 import thousandislands.model.Person;
@@ -100,7 +99,7 @@ public class Zweckbehandler {
 		if (person.getLevel() == 1 && noetigeTeile.get(Ladung.HOLZ)) {
 			gui.zeigeNachricht("Ich habe schon genug Holz.");				
 		//Level 2: Holz vorhanden
-		} else if (person.getLevel() == 2  && noetigeTeile.get(Ladung.RUMPF)) {
+		} else if (person.getLevel() == 2  && schonVorhanden(Ladung.RUMPF)) {
 			gui.zeigeNachricht("Ich habe schon genug Holz für den Schiffsrumpf.");
 		} else { //man braucht noch Holz
 			gui.zeigeNachricht("Hier gibt es jede Menge Holz! Und Holz schwimmt gut...");
@@ -113,7 +112,7 @@ public class Zweckbehandler {
 		if (person.getLevel() == 1 && noetigeTeile.get(Ladung.LIANE)) {
 			gui.zeigeNachricht("Ich habe schon genug Lianen.");
 		//Level 2: Lianen vorhanden
-		} else if (person.getLevel() == 2 && noetigeTeile.get(Ladung.SEILE)) {
+		} else if (person.getLevel() == 2 && schonVorhanden(Ladung.SEILE)) {
 			gui.zeigeNachricht("Ich habe schon genug Seile.");
 		} else { //man braucht noch Lianen
 			gui.zeigeNachricht("Lianen! Die kann ich gut als Seile verwenden.");
@@ -124,7 +123,7 @@ public class Zweckbehandler {
 	private void tonGefunden() {
 		//wenn schon Ton vorhanden, dann braucht man keinen mehr
 		if (inventar.enthaelt(Ladung.KRUG_UNGEBRANNT)
-				|| noetigeTeile.get(Ladung.KRUG)) {
+				|| schonVorhanden(Ladung.KRUG)) {
 			gui.zeigeNachricht("Ich brauche vorerst nicht noch mehr Ton.");
 		} else {
 			gui.zeigeNachricht("Hier gibt's Ton! Daraus kann ich mir einen Krug fuer mein Wasser formen.");
@@ -133,18 +132,18 @@ public class Zweckbehandler {
 	}
 	
 	private void schilfGefunden() {
-		//wenn schon Korb auf Floss oder auf Schiffbauinsel, dann braucht man keinen mehr
-		if (noetigeTeile.get(Ladung.KORB)) {
+		//wenn schon Korb im Inventar oder auf Schiffbauinsel, dann braucht man keinen mehr
+		if (schonVorhanden(Ladung.KORB)) {
 			gui.zeigeNachricht("Ich habe schon einen Korb für meinen Proviant!");
 		} else {
 			gui.zeigeNachricht("Schilf! Daraus kann ich mir einen Korb für die Früchte flechten.");
-			gui.setzeKnopf(Aktion.KORB_FLECHTEN);			
+			gui.setzeKnopf(Aktion.KORB_FLECHTEN);
 		}
 	}
 	
 	private void feuerGefunden() {
 		//im Inventar oder auf Schiffbau-Insel schon Krug vorhanden
-		if (noetigeTeile.get(Ladung.KRUG)) {
+		if (schonVorhanden(Ladung.KRUG)) {
 			gui.zeigeNachricht("Ich muss nicht noch mehr Tongefäße brennen!");
 		} else {  //kann noch Krug gebrauchen
 			gui.zeigeNachricht("Hier gibt's Feuersteine! Mit denen und den Stöcken, die es hier gibt, "
@@ -164,13 +163,17 @@ public class Zweckbehandler {
 			gui.setzeKnopf(Aktion.BAUM_FAELLEN);
 		}			
 	}
-	
+
+	private boolean schonVorhanden(Ladung ladung) {
+		return noetigeTeile.get(ladung) || inventar.enthaelt(ladung);
+	}
+
 	private void papayaGefunden() {
 		if (person.getLevel() < 2) {
 			gui.zeigeNachricht("Hier wachsen jede Menge Papaya. Igitt.");				
 		} else {
 			if (inventar.enthaelt(Ladung.PAPAYA)
-					|| person.hatSpeer()) {
+					|| inventar.enthaelt(Ladung.SPEER)) {
 				gui.zeigeNachricht("Ich glaube, ich brauche wirklich keine Papaya mehr. "
 						+ "Können wir jetzt bitte wieder gehen?");
 			} else { //wir brauchen Papaya, verdammt
@@ -195,5 +198,4 @@ public class Zweckbehandler {
 			}				
 		}
 	}
-	
 }

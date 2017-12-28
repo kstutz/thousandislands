@@ -30,7 +30,6 @@ public class Controller extends KeyAdapter implements ActionListener {
 	private Person person;
 	private Inventar inventar;
 	private Map<Ladung, Boolean> noetigeTeile;
-	private int schrittzaehler = 0;
 	private Flaschenpost flaschenpost;
 	private int gedrueckteTaste;
 	private Timer timer;
@@ -85,11 +84,14 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.fokusHolen();
 	}
 
-	private void initialisieren(Spielfeld spielfeld, Person person, Inventar inventar, Map<Ladung, Boolean> noetigeTeile, boolean fensterErstellen) {
+	private void initialisieren(Spielfeld spielfeld, Person person, Inventar inventar, Map<Ladung, Boolean> noetigeTeile,
+								Flaschenpost flaschenpost, boolean fensterErstellen) {
 		this.spielfeld = spielfeld;
 		this.person = person;
 		this.inventar = inventar;
 		this.noetigeTeile = noetigeTeile;
+		this.flaschenpost = flaschenpost;
+		flaschenpost.setSpielfeld(spielfeld);
 
 		timer = new Timer(ZEITTAKT_IN_MS, this);
 		timer.setInitialDelay(0);
@@ -152,7 +154,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 	}
 	
 	private void bewegungBearbeiten() {
-		schrittzaehler++;
+		person.erhoeheSchrittzahl();
 		gui.loescheNachrichten();
 		gui.knopfFuerAllesSichtbar(false);
 
@@ -160,7 +162,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		inventar.listeAusgeben();
 
 		Feld aktuellesFeld = spielfeld.getAktuellesFeldPerson();
-		if (schrittzaehler % 2 != 1) {
+		if (person.getSchrittzahl() % 2 != 1) {
 			person.wasserAbziehen();
 			person.nahrungAbziehen();
 		}
@@ -190,7 +192,10 @@ public class Controller extends KeyAdapter implements ActionListener {
 
 		//Flaschenpost erscheinen und verschwinden lassen
 		if (!person.hatSchatzkarte() && person.getLevel() == 2) {
-			flaschenpost.aktualisieren(schrittzaehler);
+			//TODO schrittzaehler wird nicht gespeichert
+			//TODO warum ist beim laden die flaschenpost null?
+			//muss beides woanders hin -> Spiel?
+			flaschenpost.aktualisieren(person.getSchrittzahl());
 		}
 		
 		//Schatz heben
@@ -258,7 +263,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 			//Papaya gegen Speer tauschen
 			if (inventar.enthaelt(Ladung.PAPAYA)) {
 				inventar.ladungEntfernen(Ladung.PAPAYA);
-				person.setSpeer(true);
+				inventar.ladungHinzufuegen(Ladung.SPEER);
 				gui.zeigeNachricht("Ich bin endlich die Papaya losgeworden - und habe dafuer einen Speer bekommen! " +
 						"Nun kann ich mich auch zu den silbernen Panthern wagen.");
 			} else {
@@ -319,9 +324,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 	}
 
 	private void spielSpeichern() {
-		//TODO: inventar, hosentasche, noetige Teile
-		//TODO: level, schrittzahl, flaschenpost sichtbar
-		//TODO: Spielfeld sollte Feld von Floss (und Flaschenpost?) speichern, oder?
+		//TODO: schrittzahl, flaschenpost sichtbar
 
 		// create JAXB context and instantiate marshaller
 		JAXBContext context = null;
@@ -360,7 +363,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 			um = context.createUnmarshaller();
 			spiel = (Spiel) um.unmarshal(new FileReader(gespeichertesSpiel));
 			initialisieren(spiel.getSpielfeld(), spiel.getPerson(),
-					spiel.getInventar(), spiel.getNoetigeTeile(), fensterErstellen);
+					spiel.getInventar(), spiel.getNoetigeTeile(), spiel.getFlaschenpost(), fensterErstellen);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e2) {

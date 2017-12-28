@@ -8,7 +8,10 @@ import thousandislands.controller.Konfiguration;
 import thousandislands.model.enums.Richtung;
 import thousandislands.model.enums.Typ;
 
+import javax.xml.bind.annotation.XmlElement;
+
 public class Flaschenpost {
+	@XmlElement
 	private List<Richtung> richtungen = new ArrayList<>();
 	private Spielfeld spielfeld;
 	private Random wuerfel = new Random();
@@ -19,6 +22,10 @@ public class Flaschenpost {
 
 	//fuer JAXB
 	public Flaschenpost() {}
+
+	public void setSpielfeld(Spielfeld spielfeld) {
+		this.spielfeld = spielfeld;
+	}
 
 	public void aktualisieren(int schrittzahl) {
 		int intervall = Konfiguration.FLASCHENPOST_LAENGE + Konfiguration.FLASCHENPOST_ABSTAND;

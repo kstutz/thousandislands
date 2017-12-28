@@ -131,7 +131,6 @@ public class Knopfauswerter {
 			if (inventar.getGesamtgewicht() + Ladung.SEILE.getGewicht() 
 					<= person.getTragfaehigkeit()) {
 				inventar.ladungHinzufuegen(Ladung.SEILE);
-				noetigeTeile.put(Ladung.SEILE, true);
 				gui.zeigeNachricht("Diese Lianen kann ich gut als Taue für mein Schiff benutzen.");
 			} else { //zuviel Gewicht
 				gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
@@ -282,7 +281,7 @@ public class Knopfauswerter {
 	}
 
 	private void ruinenDurchsuchen() {
-		if (!person.hatSpeer()) {
+		if (!inventar.enthaelt(Ladung.SPEER)) {
 			gui.zeigeNachricht("Oh nein, in den Ruinen wohnen silberne Panther! "
 					+ "Sie sehen friedlich aus, aber ich traue mich da erst rein, "
 					+ "wenn ich eine brauchbare Waffe habe.");
@@ -300,6 +299,7 @@ public class Knopfauswerter {
 				<= person.getTragfaehigkeit()) {
 			gui.zeigeNachricht("Jetzt habe ich einen Kompass für mein Schiff!");
 			inventar.ladungHinzufuegen(Ladung.KOMPASS);
+			inventar.ladungEntfernen(Ladung.SPEER);
 			gui.aktualisiereListen();
 		} else { //zuviel Gewicht
 			gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
@@ -343,6 +343,10 @@ public class Knopfauswerter {
 	}
 
 	private void abladen() {
+
+		//alles auf einem Haufen abladen
+		//wenn es Fehler gibt (Papaya etc.) dann Knopf für "Weiter abladen"?
+
 		StringBuilder text = new StringBuilder();
 		List<Ladung> fracht = new ArrayList<>(Arrays.asList(
 				Ladung.RUMPF, Ladung.KOMPASS, Ladung.KORB, Ladung.KRUG,
@@ -367,9 +371,14 @@ public class Knopfauswerter {
 		}
 		
 		if (inventar.enthaelt(Ladung.PAPAYA)) {
-			text.append("Ich will definitiv keine Papaya mit auf mein Schiff nehmen!\n");			
+			text.append("Ich will definitiv keine Papaya mit auf mein Schiff nehmen!\n" +
+					"Die muessen irgendwo anders hin.");
 		}
-		
+
+		if (inventar.enthaelt(Ladung.SPEER)) {
+			text.append("Den Speer behalte ich erstmal bei mir.\n");
+		}
+
 		for (Ladung einzelteil: fracht) {
 			if (inventar.enthaelt(einzelteil)) {
 				if ((einzelteil == Ladung.KORB && !inventar.enthaelt(Ladung.NAHRUNG)) 

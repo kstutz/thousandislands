@@ -18,7 +18,8 @@ public enum Ladung {
 	MAST (5),
 	PAPAYA (2),
 	WERKZEUG (3), 
-	SEGEL (1);
+	SEGEL (1),
+	SPEER(0);
 
 	private final int gewicht;
 

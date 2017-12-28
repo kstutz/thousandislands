@@ -8,28 +8,42 @@ import javax.xml.bind.annotation.XmlElement;
 
 public class Person {
 
+	@XmlElement
+	private int schrittzahl;
 	private int level;
 	private int wasser;
 	private int nahrung;
 	private boolean hatSchatzkarte;
+	@XmlElement
 	private boolean hatFloss;
 //	private boolean hatKrug;
 //	private boolean hatKorb;
-	private boolean hatSpeer;
-	
+
 	public Person() {
 		hatSchatzkarte = false;
 		hatFloss = false;
 //		hatKrug = false;
 //		hatKorb = false;
-		hatSpeer = false;
 		wasser = 100;
 		nahrung = 100;
 		level = 0;
+		schrittzahl = 0;
 	}
 
 //	//noetig fuer JAXB
 //	public Person() {}
+
+	public int getSchrittzahl() {
+		return schrittzahl;
+	}
+
+//	public void setSchrittzahl(int schrittzahl) {
+//		this.schrittzahl = schrittzahl;
+//	}
+
+	public void erhoeheSchrittzahl() {
+		schrittzahl++;
+	}
 
 	public int getLevel() {
 		return level;
@@ -117,12 +131,4 @@ public class Person {
 //	public void setKorb(boolean hatKorb) {
 //		this.hatKorb = hatKorb;
 //	}
-
-	public boolean hatSpeer() {
-		return hatSpeer;
-	}
-
-	public void setSpeer(boolean hatSpeer) {
-		this.hatSpeer = hatSpeer;
-	}
 }
