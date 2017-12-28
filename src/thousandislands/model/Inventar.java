@@ -30,6 +30,10 @@ public class Inventar {
 	public boolean enthaelt(Ladung ladung) {
 		return liste.contains(ladung);
 	}
+
+	public Set<Ladung> getLadeliste() {
+		return liste;
+	}
 	
 	public boolean istLeer() {
 		return liste.isEmpty();

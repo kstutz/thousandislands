@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -35,11 +36,13 @@ public class GuiController implements ActionListener {
 	private Person person;
 	private Inventar inventar;
 	private Fenster fenster;
+	private Map<Ladung, Boolean> noetigeTeile;
 
-	public GuiController(Spielfeld spielfeld, Person person, Inventar inventar){
+	public GuiController(Spielfeld spielfeld, Person person, Inventar inventar, Map<Ladung, Boolean> noetigeTeile){
 		this.spielfeld = spielfeld;
 		this.person = person;
 		this.inventar = inventar;
+		this.noetigeTeile = noetigeTeile;
 
 		fenster = new Fenster();
 		erstelleGui();
@@ -57,10 +60,11 @@ public class GuiController implements ActionListener {
 		this.inventar = inventar;
 	}
 
-	public void resetGui(Spielfeld spielfeld, Person person, Inventar inventar) {
+	public void resetGui(Spielfeld spielfeld, Person person, Inventar inventar, Map<Ladung, Boolean> noetigeTeile) {
 		this.spielfeld = spielfeld;
 		this.person = person;
 		this.inventar = inventar;
+		this.noetigeTeile = noetigeTeile;
 
 		erstelleGui();
 	}
@@ -121,6 +125,11 @@ public class GuiController implements ActionListener {
 		rechteSpalte.setzeWasseranzeige(person.getWasser());
 		rechteSpalte.setzeNahrungsanzeige(person.getNahrung());
 		rechteSpalte.setzeFlossBeladung(inventar.getGesamtgewicht(), person.getTragfaehigkeit());
+	}
+
+	public void aktualisiereListen() {
+		rechteSpalte.listenpanelAktualisieren(noetigeTeile);
+		rechteSpalte.inventarpanelAktualisieren(inventar);
 	}
 	
 	public void zeigeNachricht(String s) {
@@ -226,26 +235,11 @@ public class GuiController implements ActionListener {
 		knopfFuerAlles.setVisible(bool);
 	}
 	
-	public void setzeTeileliste(Set<Ladung> noetigeTeile) {
-		rechteSpalte.listenpanelBefuellen(noetigeTeile);
-	}
-	
-	public void hosentascheHinzufuegen(Ladung teil) {
-		rechteSpalte.zuInventarlisteHinzufügen(teil);
-	}
-	
-	public void hosentascheEntfernen(Ladung teil) {
-		rechteSpalte.ausInventarlisteEntfernen(teil);
-	}
-	
+
 	public void fokusHolen() {
-		fenster.requestFocus();		
+		fenster.requestFocus();
 	}
 
-	public void markiereTeil(String teil) {
-		rechteSpalte.teilAlsGefundenMarkieren(teil);
-	}
-	
 	public void setzeBaumstumpf() {
 		spielfeld.getAktuellesFeldPerson().setZweck(Zweck.BAUMSTUMPF);
 	}

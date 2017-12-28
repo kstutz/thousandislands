@@ -1,9 +1,6 @@
 package thousandislands.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import thousandislands.model.Inventar;
 import thousandislands.model.Person;
@@ -16,10 +13,10 @@ public class Knopfauswerter {
 	private GuiController gui;
 	private Person person;
 	private Inventar inventar;
-	private Set<Ladung> noetigeTeile;
+	private Map<Ladung,Boolean> noetigeTeile;
 	private Spielfeld spielfeld;
 
-	Knopfauswerter(GuiController gui, Person person, Inventar inventar, Set<Ladung> noetigeTeile, Spielfeld spielfeld) {
+	Knopfauswerter(GuiController gui, Person person, Inventar inventar, Map<Ladung,Boolean> noetigeTeile, Spielfeld spielfeld) {
 		this.gui = gui;
 		this.person = person;
 		this.inventar = inventar;
@@ -97,9 +94,8 @@ public class Knopfauswerter {
 	private void holzMitnehmen() {
 		//am Anfang braucht man Holz, um Floss zu bauen
 		if (!person.hatFloss()) {
-			noetigeTeile.remove(Ladung.HOLZ);
+			noetigeTeile.put(Ladung.HOLZ, true);
 			inventar.ladungHinzufuegen(Ladung.HOLZ);
-			gui.markiereTeil(Ladung.HOLZ.toString());
 			if (inventar.enthaelt(Ladung.LIANE)) {
 				gui.zeigeNachricht("Ich habe Holz und Lianen! Jetzt kann ich mir am Strand ein Floss bauen.");
 			} else {
@@ -110,23 +106,21 @@ public class Knopfauswerter {
 			if (inventar.getGesamtgewicht() + Ladung.RUMPF.getGewicht() 
 					<= person.getTragfaehigkeit()) {
 				inventar.ladungHinzufuegen(Ladung.RUMPF);
-				noetigeTeile.remove(Ladung.RUMPF);
-				gui.markiereTeil(Ladung.RUMPF.toString());
 				gui.zeigeNachricht("Aus diesem Holz kann ich den Rumpf für mein Schiff bauen.");
 			} else { //zuviel Gewicht
 				gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 						+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
 			}
 		}
+		gui.aktualisiereListen();
 		gui.knopfFuerAllesSichtbar(false);
 	}
 	
 	private void lianenMitnehmen() {
 		//am Anfang braucht man Lianen, um Floss zu bauen
 		if (!person.hatFloss()) {
-			noetigeTeile.remove(Ladung.LIANE);
+			noetigeTeile.put(Ladung.LIANE, true);
 			inventar.ladungHinzufuegen(Ladung.LIANE);
-			gui.markiereTeil(Ladung.LIANE.toString());
 			if (inventar.enthaelt(Ladung.HOLZ)) {
 				gui.zeigeNachricht("Ich habe Holz und Lianen! Jetzt kann ich mir am Strand ein Floss bauen.");
 			} else {
@@ -137,30 +131,28 @@ public class Knopfauswerter {
 			if (inventar.getGesamtgewicht() + Ladung.SEILE.getGewicht() 
 					<= person.getTragfaehigkeit()) {
 				inventar.ladungHinzufuegen(Ladung.SEILE);
-				noetigeTeile.remove(Ladung.SEILE);
-				gui.markiereTeil(Ladung.SEILE.toString());
+				noetigeTeile.put(Ladung.SEILE, true);
 				gui.zeigeNachricht("Diese Lianen kann ich gut als Taue für mein Schiff benutzen.");
 			} else { //zuviel Gewicht
 				gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 						+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
 			}
 		}
-		gui.knopfFuerAllesSichtbar(false);			
+		gui.aktualisiereListen();
+		gui.knopfFuerAllesSichtbar(false);
 	}
 
 	private void krugFuellen() {
 		gui.zeigeNachricht("Nun habe ich Wasser fuer die Ueberfahrt zum Festland");
 		inventar.ladungHinzufuegen(Ladung.WASSER);
-		gui.markiereTeil(Ladung.WASSER.toString());
-		noetigeTeile.remove(Ladung.WASSER);
-		gui.knopfFuerAllesSichtbar(false);			
+		gui.aktualisiereListen();
+		gui.knopfFuerAllesSichtbar(false);
 	}
 	
 	private void korbFuellen() {
 		gui.zeigeNachricht("Nun habe ich Proviant fuer die Ueberfahrt zum Festland");
 		inventar.ladungHinzufuegen(Ladung.NAHRUNG);
-		gui.markiereTeil(Ladung.NAHRUNG.toString());
-		noetigeTeile.remove(Ladung.NAHRUNG);
+		gui.aktualisiereListen();
 		gui.knopfFuerAllesSichtbar(false);			
 	}
 
@@ -172,7 +164,6 @@ public class Knopfauswerter {
 			if (person.getLevel() == 1) {
 				gui.zeigeNachricht("Toll, ich habe einen Krug! Aber ich muss ihn noch brennen...");
 				inventar.ladungHinzufuegen(Ladung.KRUG_UNGEBRANNT);
-				gui.hosentascheHinzufuegen(Ladung.KRUG_UNGEBRANNT);
 			} else { //level == 2
 				// Gewicht okay
 				if (inventar.getGesamtgewicht() + Ladung.KRUG_UNGEBRANNT.getGewicht() 
@@ -180,14 +171,14 @@ public class Knopfauswerter {
 					gui.zeigeNachricht("Toll, ich habe einen Krug fuer mein Wasser "
 							+ "fuer die Ueberfahrt zum Festland! Aber ich muss ihn noch brennen...");
 					inventar.ladungHinzufuegen(Ladung.KRUG_UNGEBRANNT);
-					gui.hosentascheHinzufuegen(Ladung.KRUG_UNGEBRANNT);
 				} else { //zuviel Gewicht
 					gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 							+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
 				}					
 			}
 		}
-		gui.knopfFuerAllesSichtbar(false);			
+		gui.aktualisiereListen();
+		gui.knopfFuerAllesSichtbar(false);
 	}
 
 	private void korbFlechten() {
@@ -206,15 +197,14 @@ public class Knopfauswerter {
 						<= person.getTragfaehigkeit()) {
 					gui.zeigeNachricht("Jetzt kann ich Proviant fuer die Fahrt zum Festland mitnehmen.");
 					inventar.ladungHinzufuegen(Ladung.KORB);
-					gui.markiereTeil(Ladung.KORB.toString());
-					noetigeTeile.remove(Ladung.KORB);
 				} else { //zuviel Gewicht
 					gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 							+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
 				}					
 //			}
 		}
-		gui.knopfFuerAllesSichtbar(false);			
+		gui.aktualisiereListen();
+		gui.knopfFuerAllesSichtbar(false);
 	}
 
 	private void feuerMachen() {
@@ -231,19 +221,17 @@ public class Knopfauswerter {
 //		if (!person.hatKrug()) {
 //			gui.zeigeNachricht("Super, jetzt kann ich Wasser mitnehmen!");
 //			inventar.ladungEntfernen(Ladung.KRUG_UNGEBRANNT);
-//			gui.hosentascheEntfernen(Ladung.KRUG_UNGEBRANNT);
+//			gui.ausInventarlisteEntfernen(Ladung.KRUG_UNGEBRANNT);
 //			gui.markiereTeil(Ladung.KRUG.toString());
 //			noetigeTeile.remove(Ladung.KRUG);
 //			person.setKrug(true);
 //		} else {
 			inventar.ladungEntfernen(Ladung.KRUG_UNGEBRANNT);
-			gui.hosentascheEntfernen(Ladung.KRUG_UNGEBRANNT);
 			inventar.ladungHinzufuegen(Ladung.KRUG);
-			gui.markiereTeil(Ladung.KRUG.toString());
-			noetigeTeile.remove(Ladung.KRUG);
 			gui.zeigeNachricht("Jetzt kann ich Wasser fuer die Ueberfahrt zum Festland mitnehmen!");
 //		}
-		gui.knopfFuerAllesSichtbar(false);			
+		gui.aktualisiereListen();
+		gui.knopfFuerAllesSichtbar(false);
 	}
 
 	private void papayaMitnehmen() {
@@ -263,8 +251,8 @@ public class Knopfauswerter {
 	private void trotzdemMitnehmen() {
 		gui.zeigeNachricht("Na toll. Jetzt habe ich Papaya.");
 		inventar.ladungHinzufuegen(Ladung.PAPAYA);
-		gui.hosentascheHinzufuegen(Ladung.PAPAYA);
-		gui.knopfFuerAllesSichtbar(false);			
+		gui.aktualisiereListen();
+		gui.knopfFuerAllesSichtbar(false);
 	}
 
 	private void baumFaellen() {
@@ -273,14 +261,13 @@ public class Knopfauswerter {
 				<= person.getTragfaehigkeit()) {
 			gui.zeigeNachricht("Jetzt habe ich einen Mast fuer mein Schiff!");
 			inventar.ladungHinzufuegen(Ladung.MAST);
-			gui.markiereTeil(Ladung.MAST.toString());
-			noetigeTeile.remove(Ladung.MAST);
+			gui.aktualisiereListen();
 			gui.setzeBaumstumpf();
 		} else { //zuviel Gewicht
 			gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 					+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
 		}
-		gui.knopfFuerAllesSichtbar(false);			
+		gui.knopfFuerAllesSichtbar(false);
 	}
 
 	private void flossBauen() {
@@ -290,6 +277,7 @@ public class Knopfauswerter {
 		inventar.ladungEntfernen(Ladung.HOLZ);
 		inventar.ladungEntfernen(Ladung.LIANE);
 		spielfeld.setFlossFeld(spielfeld.getAktuellesFeldPerson());
+		gui.aktualisiereListen();
 		gui.knopfFuerAllesSichtbar(false);
 	}
 
@@ -312,8 +300,7 @@ public class Knopfauswerter {
 				<= person.getTragfaehigkeit()) {
 			gui.zeigeNachricht("Jetzt habe ich einen Kompass für mein Schiff!");
 			inventar.ladungHinzufuegen(Ladung.KOMPASS);
-			gui.markiereTeil(Ladung.KOMPASS.toString());
-			noetigeTeile.remove(Ladung.KOMPASS);
+			gui.aktualisiereListen();
 		} else { //zuviel Gewicht
 			gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 					+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
@@ -326,8 +313,7 @@ public class Knopfauswerter {
 				<= person.getTragfaehigkeit()) {
 			gui.zeigeNachricht("Jetzt habe ich ein Segel für mein Schiff!");
 			inventar.ladungHinzufuegen(Ladung.SEGEL);
-			gui.markiereTeil(Ladung.SEGEL.toString());
-			noetigeTeile.remove(Ladung.SEGEL);
+			gui.aktualisiereListen();
 		} else { //zuviel Gewicht
 			gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 					+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
@@ -348,8 +334,7 @@ public class Knopfauswerter {
 				<= person.getTragfaehigkeit()) {
 			gui.zeigeNachricht("Jetzt habe ich Werkzeug für den Schiffbau!");
 			inventar.ladungHinzufuegen(Ladung.WERKZEUG);
-			gui.markiereTeil(Ladung.WERKZEUG.toString());
-			noetigeTeile.remove(Ladung.WERKZEUG);
+			gui.aktualisiereListen();
 		} else { //zuviel Gewicht
 			gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 					+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
@@ -364,7 +349,7 @@ public class Knopfauswerter {
 				Ladung.SEILE, Ladung.MAST, Ladung.SEGEL, Ladung.WERKZEUG,
 				Ladung.WASSER, Ladung.NAHRUNG));
 		List<String> abladeliste = new ArrayList<>();
-				
+
 		//TODO entfernen
 		System.out.println("Vorher: ");
 		inventar.listeAusgeben();
@@ -394,8 +379,10 @@ public class Knopfauswerter {
 				inventar.ladungEntfernen(einzelteil);
 				spielfeld.getAktuellesFeldPerson().ladeTeilAb(einzelteil);
 				abladeliste.add(einzelteil.toString());
+				noetigeTeile.put(einzelteil, true);
 			}
 		}
+		gui.aktualisiereListen();
 		
 		String abgeladen = String.join(", ", abladeliste);
 		
@@ -408,11 +395,11 @@ public class Knopfauswerter {
 		System.out.println("Nachher: ");
 		inventar.listeAusgeben();
 
-		if (noetigeTeile.isEmpty()) {
+		if (noetigeTeile.values().contains(false)) {
+			gui.knopfFuerAllesSichtbar(false);
+		} else {	//alles gefunden!
 			text.append("Ich habe alle noetigen Bauteile zusammen, also kann ich endlich mein Schiff bauen!");
 			gui.setzeKnopf(Aktion.SCHIFF_BAUEN);
-		} else {
-			gui.knopfFuerAllesSichtbar(false);
 		}
 		
 		gui.zeigeNachricht(text.toString());		

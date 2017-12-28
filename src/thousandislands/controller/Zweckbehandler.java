@@ -1,5 +1,6 @@
 package thousandislands.controller;
 
+import java.util.Map;
 import java.util.Set;
 
 import thousandislands.model.Inventar;
@@ -12,9 +13,9 @@ public class Zweckbehandler {
 	private GuiController gui;
 	private Person person;
 	private Inventar inventar;
-	private Set<Ladung> noetigeTeile;
+	private Map<Ladung,Boolean> noetigeTeile;
 		
-	Zweckbehandler(GuiController gui, Person person, Inventar inventar, Set<Ladung> noetigeTeile) {
+	Zweckbehandler(GuiController gui, Person person, Inventar inventar, Map<Ladung,Boolean> noetigeTeile) {
 		this.gui = gui;
 		this.person = person;
 		this.inventar = inventar;
@@ -68,10 +69,10 @@ public class Zweckbehandler {
 		gui.zeigeNachricht("Wasser!");
 
 		if (person.getLevel() == 2) {
-			if (noetigeTeile.contains(Ladung.KRUG)) {
+			if (!noetigeTeile.get(Ladung.KRUG)) {
 				gui.zeigeNachricht("Wenn ich einen Krug haette, koennte ich Wasser " +
 						"fuer die Ueberfahrt zum Festland mitnehmen.");
-			} else if (noetigeTeile.contains(Ladung.WASSER)){
+			} else if (!noetigeTeile.get(Ladung.WASSER)){
 				gui.zeigeNachricht("Ich kann jetzt die Wasservorräte für mein Schiff auffüllen.");
 				gui.setzeKnopf(Aktion.KRUG_FUELLEN);
 			}
@@ -84,10 +85,10 @@ public class Zweckbehandler {
 		gui.zeigeNachricht("Fruechte!");
 
 		if (person.getLevel() == 2) {
-			if (noetigeTeile.contains(Ladung.KORB)) {
+			if (!noetigeTeile.get(Ladung.KORB)) {
 				gui.zeigeNachricht("Wenn ich einen Korb haette, koennte ich Fruechte " +
 						"fuer die Ueberfahrt zum Festland mitnehmen.");				
-			} else if (noetigeTeile.contains(Ladung.NAHRUNG)){
+			} else if (!noetigeTeile.get(Ladung.NAHRUNG)){
 				gui.zeigeNachricht("Ich kann jetzt die Nahrungsvorräte für mein Schiff auffüllen.");
 				gui.setzeKnopf(Aktion.KORB_FUELLEN);				
 			}
@@ -96,10 +97,10 @@ public class Zweckbehandler {
 
 	private void behandleZweckHolz() {
 		//Level 1: Holz vorhanden
-		if (person.getLevel() == 1 && !noetigeTeile.contains(Ladung.HOLZ)) {
+		if (person.getLevel() == 1 && noetigeTeile.get(Ladung.HOLZ)) {
 			gui.zeigeNachricht("Ich habe schon genug Holz.");				
 		//Level 2: Holz vorhanden
-		} else if (person.getLevel() == 2  && !noetigeTeile.contains(Ladung.RUMPF)) {
+		} else if (person.getLevel() == 2  && noetigeTeile.get(Ladung.RUMPF)) {
 			gui.zeigeNachricht("Ich habe schon genug Holz für den Schiffsrumpf.");
 		} else { //man braucht noch Holz
 			gui.zeigeNachricht("Hier gibt es jede Menge Holz! Und Holz schwimmt gut...");
@@ -109,10 +110,10 @@ public class Zweckbehandler {
 	
 	private void lianenGefunden() {
 		//Level 1: Lianen vorhanden
-		if (person.getLevel() == 1 && !noetigeTeile.contains(Ladung.LIANE)) {
+		if (person.getLevel() == 1 && noetigeTeile.get(Ladung.LIANE)) {
 			gui.zeigeNachricht("Ich habe schon genug Lianen.");
 		//Level 2: Lianen vorhanden
-		} else if (person.getLevel() == 2 && !noetigeTeile.contains(Ladung.SEILE)) {
+		} else if (person.getLevel() == 2 && noetigeTeile.get(Ladung.SEILE)) {
 			gui.zeigeNachricht("Ich habe schon genug Seile.");
 		} else { //man braucht noch Lianen
 			gui.zeigeNachricht("Lianen! Die kann ich gut als Seile verwenden.");
@@ -123,7 +124,7 @@ public class Zweckbehandler {
 	private void tonGefunden() {
 		//wenn schon Ton vorhanden, dann braucht man keinen mehr
 		if (inventar.enthaelt(Ladung.KRUG_UNGEBRANNT)
-				|| !noetigeTeile.contains(Ladung.KRUG)) {
+				|| noetigeTeile.get(Ladung.KRUG)) {
 			gui.zeigeNachricht("Ich brauche vorerst nicht noch mehr Ton.");
 		} else {
 			gui.zeigeNachricht("Hier gibt's Ton! Daraus kann ich mir einen Krug fuer mein Wasser formen.");
@@ -133,7 +134,7 @@ public class Zweckbehandler {
 	
 	private void schilfGefunden() {
 		//wenn schon Korb auf Floss oder auf Schiffbauinsel, dann braucht man keinen mehr
-		if (!noetigeTeile.contains(Ladung.KORB)) {
+		if (noetigeTeile.get(Ladung.KORB)) {
 			gui.zeigeNachricht("Ich habe schon einen Korb für meinen Proviant!");
 		} else {
 			gui.zeigeNachricht("Schilf! Daraus kann ich mir einen Korb für die Früchte flechten.");
@@ -143,7 +144,7 @@ public class Zweckbehandler {
 	
 	private void feuerGefunden() {
 		//im Inventar oder auf Schiffbau-Insel schon Krug vorhanden
-		if (!noetigeTeile.contains(Ladung.KRUG)) {
+		if (noetigeTeile.get(Ladung.KRUG)) {
 			gui.zeigeNachricht("Ich muss nicht noch mehr Tongefäße brennen!");
 		} else {  //kann noch Krug gebrauchen
 			gui.zeigeNachricht("Hier gibt's Feuersteine! Mit denen und den Stöcken, die es hier gibt, "
@@ -184,7 +185,7 @@ public class Zweckbehandler {
 			gui.zeigeNachricht("Hier steht ein alter Tempel mitten im Dschungel.");		
 		} else {
 			//Kompass schon vorhanden
-			if (!noetigeTeile.contains(Ladung.KOMPASS)) {
+			if (noetigeTeile.get(Ladung.KOMPASS)) {
 				gui.zeigeNachricht("Ich habe mir hier schon alles angeschaut. "
 						+ "Hier ist nichts Brauchbares mehr zu finden.");
 			} else { //wir brauchen Kompass

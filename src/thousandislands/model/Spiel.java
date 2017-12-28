@@ -1,5 +1,6 @@
 package thousandislands.model;
 
+import java.util.Map;
 import java.util.Set;
 
 import thousandislands.model.enums.Ladung;
@@ -19,11 +20,11 @@ public class Spiel {
 	@XmlElement
 	private Inventar inventar;
 	@XmlElement
-	private Set<Ladung> noetigeTeile;
+	private Map<Ladung,Boolean> noetigeTeile;
 	private Flaschenpost flaschenpost;
 
 
-	public Spiel(Spielfeld spielfeld, Person person, Inventar inventar, Set<Ladung> noetigeTeile, Flaschenpost flaschenpost) {
+	public Spiel(Spielfeld spielfeld, Person person, Inventar inventar, Map<Ladung,Boolean> noetigeTeile, Flaschenpost flaschenpost) {
 		this.spielfeld = spielfeld;
 		this.person = person;
 		this.inventar = inventar;
@@ -54,7 +55,7 @@ public class Spiel {
 		return spielfeld;
 	}
 
-	public Set<Ladung> getNoetigeTeile() {
+	public Map<Ladung,Boolean> getNoetigeTeile() {
 		return noetigeTeile;
 	}
 

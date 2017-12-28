@@ -7,9 +7,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.Timer;
 import javax.xml.bind.JAXBContext;
@@ -31,12 +29,12 @@ public class Controller extends KeyAdapter implements ActionListener {
 	private Spielfeld spielfeld;
 	private Person person;
 	private Inventar inventar;
-	private Set<Ladung> noetigeTeile;
+	private Map<Ladung, Boolean> noetigeTeile;
 	private int schrittzaehler = 0;
 	private Flaschenpost flaschenpost;
 	private int gedrueckteTaste;
 	private Timer timer;
-	private Zweckbehandler zweckbehandler;
+	private Zweckbehandler zweckbehandler = new Zweckbehandler(gui, person, inventar, noetigeTeile);
 	private Knopfauswerter knopfauswerter;
 	private Spiel spiel;
 
@@ -62,7 +60,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		flaschenpost = new Flaschenpost(spielfeld);
 
 		inventar = new Inventar();
-		noetigeTeile = new HashSet<>();
+		noetigeTeile = new HashMap<>();
 		spiel = new Spiel(spielfeld, person, inventar, noetigeTeile, flaschenpost);
 
 		timer = new Timer(ZEITTAKT_IN_MS, this);
@@ -70,9 +68,9 @@ public class Controller extends KeyAdapter implements ActionListener {
 		timer.setActionCommand("TIMER");
 
 		if (gui == null) {
-			gui = new GuiController(spielfeld, person, inventar);
+			gui = new GuiController(spielfeld, person, inventar, noetigeTeile);
 		} else {
-			gui.resetGui(spielfeld, person, inventar);
+			gui.resetGui(spielfeld, person, inventar, noetigeTeile);
 		}
 
 		gui.aktualisiere();
@@ -87,19 +85,24 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.fokusHolen();
 	}
 
-	private void initialisieren(Spielfeld spielfeld, Person person, Inventar inventar, Set<Ladung> noetigeTeile, boolean fensterErstellen) {
+	private void initialisieren(Spielfeld spielfeld, Person person, Inventar inventar, Map<Ladung, Boolean> noetigeTeile, boolean fensterErstellen) {
 		this.spielfeld = spielfeld;
 		this.person = person;
 		this.inventar = inventar;
+		this.noetigeTeile = noetigeTeile;
 
 		timer = new Timer(ZEITTAKT_IN_MS, this);
 		timer.setInitialDelay(0);
 		timer.setActionCommand("TIMER");
 
+		if (noetigeTeile == null) {
+			noetigeTeile = new HashMap<>();
+		}
+
 		if (fensterErstellen) {
-			gui = new GuiController(spielfeld, person, inventar);
+			gui = new GuiController(spielfeld, person, inventar, noetigeTeile);
 		} else {
-			gui.resetGui(spielfeld, person, inventar);
+			gui.resetGui(spielfeld, person, inventar, noetigeTeile);
 		}
 
 		gui.aktualisiere();
@@ -107,10 +110,6 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.keyListenerHinzufuegen(this);
 		gui.actionListenerHinzufuegen(this);
 		gui.erstelleSchatzkarte(spielfeld.getSchatzkartenanfang());
-
-		if (noetigeTeile == null) {
-			noetigeTeile = new HashSet<>();
-		}
 
 		zweckbehandler = new Zweckbehandler(gui, person, inventar, noetigeTeile);
 		knopfauswerter = new Knopfauswerter(gui, person, inventar, noetigeTeile, spielfeld);
@@ -157,10 +156,13 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.loescheNachrichten();
 		gui.knopfFuerAllesSichtbar(false);
 
+		System.out.println(noetigeTeile.entrySet());
+		inventar.listeAusgeben();
+
 		Feld aktuellesFeld = spielfeld.getAktuellesFeldPerson();
 		if (schrittzaehler % 2 != 1) {
 			person.wasserAbziehen();
-			person.nahrungAbziehen();			
+			person.nahrungAbziehen();
 		}
 		gui.aktualisiere();
 		
@@ -193,8 +195,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		
 		//Schatz heben
 		if (person.hatSchatzkarte() 
-				&& aktuellesFeld.getTyp() == Typ.SCHATZ 
-				&& noetigeTeile.contains(Ladung.SEGEL)) {
+				&& aktuellesFeld.getTyp() == Typ.SCHATZ) {
 			behandleSchatzfund();
 		}
 
@@ -242,19 +243,17 @@ public class Controller extends KeyAdapter implements ActionListener {
 			//erste Begegnung: man bekommt Liste mit Flossteilen
 			person.setLevel(1);
 			gui.zeigeNachricht("Hier ist die Liste, was Du brauchst.");
-			fuelleTeileliste(1);
-			gui.setzeTeileliste(noetigeTeile);
+			fuelleTeileliste();
 		} else if (person.getLevel() == 1) {
-			if (!noetigeTeile.isEmpty()) {
+			if (noetigeTeile.values().contains(false)) {
 				//Tipps, was man noch braucht
 			} else { //man hat schon alle Teile fuers Floss
 				//man bekommt Liste mit Schiffsteilen
 				person.setLevel(2);
 				gui.zeigeNachricht("Hier ist die Liste, was Du brauchst, um ein Schiff zu bauen.");
 				inventar.leeren();
-				fuelleTeileliste(2);
-				gui.setzeTeileliste(noetigeTeile);
-			}					
+				fuelleTeileliste();
+			}
 		} else { //level == 2
 			//Papaya gegen Speer tauschen
 			if (inventar.enthaelt(Ladung.PAPAYA)) {
@@ -266,25 +265,27 @@ public class Controller extends KeyAdapter implements ActionListener {
 				//Tipps, was man noch braucht
 			}
 		}
+		gui.aktualisiereListen();
 	}
 	
-	private void fuelleTeileliste(int level) {
-		if (level == 1) {
-			noetigeTeile.add(Ladung.HOLZ);
-			noetigeTeile.add(Ladung.LIANE);
+	private void fuelleTeileliste() {
+		if (person.getLevel() == 1) {
+			noetigeTeile.put(Ladung.HOLZ, false);
+			noetigeTeile.put(Ladung.LIANE, false);
 //			noetigeTeile.add(Ladung.KRUG);
 //			noetigeTeile.add(Ladung.KORB);
 		} else {
-			noetigeTeile.add(Ladung.RUMPF);
-			noetigeTeile.add(Ladung.MAST);
-			noetigeTeile.add(Ladung.KOMPASS);
-			noetigeTeile.add(Ladung.KRUG);
-			noetigeTeile.add(Ladung.KORB);
-			noetigeTeile.add(Ladung.WASSER);
-			noetigeTeile.add(Ladung.NAHRUNG);
-			noetigeTeile.add(Ladung.SEILE);
-			noetigeTeile.add(Ladung.SEGEL);
-			noetigeTeile.add(Ladung.WERKZEUG);
+			noetigeTeile.clear();
+			noetigeTeile.put(Ladung.RUMPF, false);
+			noetigeTeile.put(Ladung.MAST, false);
+			noetigeTeile.put(Ladung.KOMPASS, false);
+			noetigeTeile.put(Ladung.KRUG, false);
+			noetigeTeile.put(Ladung.KORB, false);
+			noetigeTeile.put(Ladung.WASSER, false);
+			noetigeTeile.put(Ladung.NAHRUNG, false);
+			noetigeTeile.put(Ladung.SEILE, false);
+			noetigeTeile.put(Ladung.SEGEL, false);
+			noetigeTeile.put(Ladung.WERKZEUG, false);
 		}
 	}
 
@@ -302,7 +303,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 					+ "Vielleicht kann mir das später noch nützen.");
 		} else { //im zweiten Spielteil
 			//man hat schon Werkzeug
-			if (!noetigeTeile.contains(Ladung.WERKZEUG)) {
+			if (schonGefunden(Ladung.WERKZEUG)) {
 				gui.zeigeNachricht("Ich habe das Wrack schon durchsucht. "
 						+ "Hier gibt es nichts mehr zu holen.");
 			} else {  //man braucht noch Werkzeug
@@ -311,6 +312,10 @@ public class Controller extends KeyAdapter implements ActionListener {
 				gui.setzeKnopf(Aktion.WRACK_DURCHSUCHEN);
 			}			
 		}
+	}
+
+	private boolean schonGefunden(Ladung ladung) {
+		return noetigeTeile.get(ladung) || inventar.enthaelt(ladung);
 	}
 
 	private void spielSpeichern() {
