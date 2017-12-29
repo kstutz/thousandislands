@@ -33,20 +33,19 @@ public class Landkarte extends JPanel{
 	private void spielfeldZeichnen(Graphics g) {
 		for (int i=0; i<100; i++) {
 			for (int j=0; j<60; j++) {
-				
-				BufferedImage bild = getBildchen(felder[i][j]);
-				if (bild != null) {
-					g.drawImage(bild, i*10, j*10, null);
+
+				if (felder[i][j].istEntdeckt()) {
+					BufferedImage bild = getBildchen(felder[i][j]);
+					if (bild != null) {
+						g.drawImage(bild, i*10, j*10, null);
+					} else {
+						g.setColor(getFarbe(felder[i][j]));
+						g.fillRect(i*10, j*10, 10, 10);
+					}
 				} else {
-					g.setColor(getFarbe(felder[i][j]));
-					g.fillRect(i*10, j*10, 10, 10);					
+					g.setColor(Color.GRAY);
+					g.fillRect(i*10, j*10, 10, 10);
 				}
-				
-				
-//				if (felder[i][j].getZweck() != null) {
-//					BufferedImage bild = getBildchen(felder[i][j].getZweck());
-//					g.drawImage(bild, i*10, j*10, null);
-//				}				
 			}
 		}
 	}
@@ -88,13 +87,9 @@ public class Landkarte extends JPanel{
 		} else if (feld.getTyp() == Typ.ZWECK) {
 			dateiname = feld.getZweck().getDateiname();
 		} else if (spielfeld.getFlossFeld() != null && spielfeld.getFlossFeld().equals(feld)) {
-			if (feld.getTyp() == Typ.STRAND) {
-				dateiname = "floss_strand.png";
-			} else {
-				dateiname = "floss.png";
-			}
+			dateiname = "floss.png";
 		} else if (feld.equals(spielfeld.getFlaschenpostFeld())) {
-			dateiname = "flasche1.png";
+			dateiname = "flasche.png";
 		} else if (feld.getTyp() == Typ.WRACK) {
 			dateiname = "wrack.png";
 		} else if (feld.getTyp() == Typ.SCHIFFBAUSTRAND 
@@ -122,13 +117,13 @@ public class Landkarte extends JPanel{
 			if (spielfeld.getAktuellesFeldPerson().equals(spielfeld.getFlossFeld())) {
 				return "mann_floss.png";
 			} else {
-				return "schwimmer1.png";				
+				return "schwimmer.png";
 			}
 		} else {
 			if (feld.getTyp() == Typ.STRAND || feld.getTyp() == Typ.SCHIFFBAUSTRAND) {
 				return "mann_strand.png";
 			} else if (feld.getTyp() == Typ.WRACK){
-				return "schwimmer1.png";		
+				return "schwimmer.png";
 			} else {
 				return "mann_dschungel.png";				
 			}

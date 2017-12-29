@@ -1,13 +1,9 @@
 package thousandislands.model;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import thousandislands.model.enums.Ladung;
-import thousandislands.model.enums.Richtung;
-import thousandislands.model.enums.Status;
 import thousandislands.model.enums.Typ;
 import thousandislands.model.enums.Zweck;
 
@@ -17,8 +13,9 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Feld {
+
 	@XmlElement
-	private Status status;
+	private boolean entdeckt;
 	private Typ typ;
 	private Zweck zweck;
 	@XmlElement
@@ -29,8 +26,8 @@ public class Feld {
 	private Set<Ladung> ladungshaufen = new HashSet<>();
 	
 	public Feld (int x, int y) {
-		status = Status.ENTDECKT;
-//		status = Status.UNENTDECKT;
+		entdeckt = false;
+//		entdeckt = true;
 		typ = Typ.MEER;
 		this.x = x;
 		this.y = y;
@@ -38,11 +35,15 @@ public class Feld {
 
 	//noetig fuer JAXB
 	public Feld() {}
-	
-	public Status getStatus() {
-		return status;
+
+	public boolean istEntdeckt() {
+		return entdeckt;
 	}
-	
+
+	public void setEntdeckt(boolean entdeckt) {
+		this.entdeckt = entdeckt;
+	}
+
 	public Typ getTyp() {
 		return typ;
 	}
@@ -77,5 +78,17 @@ public class Feld {
 
 	public boolean equals(Feld anderesFeld) {
 		return anderesFeld != null && x == anderesFeld.getX() && y == anderesFeld.getY();
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 1;
+		hash = hash * 17 + x;
+		hash = hash * 31 + y;
+		return hash;
+	}
+
+	public String toString() {
+		return "x: " + x + ", y: " + y;
 	}
 }

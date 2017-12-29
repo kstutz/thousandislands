@@ -68,10 +68,10 @@ public class Zweckbehandler {
 		gui.zeigeNachricht("Wasser!");
 
 		if (person.getLevel() == 2) {
-			if (!noetigeTeile.get(Ladung.KRUG)) {
+			if (!schonVorhanden(Ladung.KRUG)) {
 				gui.zeigeNachricht("Wenn ich einen Krug haette, koennte ich Wasser " +
 						"fuer die Ueberfahrt zum Festland mitnehmen.");
-			} else if (!noetigeTeile.get(Ladung.WASSER)){
+			} else if (!schonVorhanden(Ladung.WASSER)){
 				gui.zeigeNachricht("Ich kann jetzt die Wasservorräte für mein Schiff auffüllen.");
 				gui.setzeKnopf(Aktion.KRUG_FUELLEN);
 			}
@@ -84,10 +84,10 @@ public class Zweckbehandler {
 		gui.zeigeNachricht("Fruechte!");
 
 		if (person.getLevel() == 2) {
-			if (!noetigeTeile.get(Ladung.KORB)) {
+			if (!schonVorhanden(Ladung.KORB)) {
 				gui.zeigeNachricht("Wenn ich einen Korb haette, koennte ich Fruechte " +
 						"fuer die Ueberfahrt zum Festland mitnehmen.");				
-			} else if (!noetigeTeile.get(Ladung.NAHRUNG)){
+			} else if (!schonVorhanden(Ladung.NAHRUNG)){
 				gui.zeigeNachricht("Ich kann jetzt die Nahrungsvorräte für mein Schiff auffüllen.");
 				gui.setzeKnopf(Aktion.KORB_FUELLEN);				
 			}

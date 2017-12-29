@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.swing.Timer;
 import javax.xml.bind.JAXBContext;
@@ -16,11 +17,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import thousandislands.model.*;
-import thousandislands.model.enums.Aktion;
-import thousandislands.model.enums.Ladung;
-import thousandislands.model.enums.Richtung;
-import thousandislands.model.enums.Typ;
-import thousandislands.model.enums.Zweck;
+import thousandislands.model.enums.*;
 
 
 public class Controller extends KeyAdapter implements ActionListener {
@@ -72,6 +69,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 			gui.resetGui(spielfeld, person, inventar, noetigeTeile);
 		}
 
+		deckeUmgebungAuf(spielfeld.getAktuellesFeldPerson());
 		gui.aktualisiere();
 
 		gui.keyListenerHinzufuegen(this);
@@ -108,6 +106,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		}
 
 		gui.aktualisiere();
+		gui.aktualisiereListen();
 
 		gui.keyListenerHinzufuegen(this);
 		gui.actionListenerHinzufuegen(this);
@@ -162,6 +161,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		inventar.listeAusgeben();
 
 		Feld aktuellesFeld = spielfeld.getAktuellesFeldPerson();
+		deckeUmgebungAuf(aktuellesFeld);
 		if (person.getSchrittzahl() % 2 != 1) {
 			person.wasserAbziehen();
 			person.nahrungAbziehen();
@@ -192,9 +192,6 @@ public class Controller extends KeyAdapter implements ActionListener {
 
 		//Flaschenpost erscheinen und verschwinden lassen
 		if (!person.hatSchatzkarte() && person.getLevel() == 2) {
-			//TODO schrittzaehler wird nicht gespeichert
-			//TODO warum ist beim laden die flaschenpost null?
-			//muss beides woanders hin -> Spiel?
 			flaschenpost.aktualisieren(person.getSchrittzahl());
 		}
 		
@@ -239,6 +236,13 @@ public class Controller extends KeyAdapter implements ActionListener {
 		}
 		
 		gui.aktualisiere();
+	}
+
+	private void deckeUmgebungAuf(Feld feld) {
+		List<Feld> nachbarn = new ArrayList<>(spielfeld.getNachbarn(feld));
+		for (Feld nachbar : nachbarn) {
+			nachbar.setEntdeckt(true);
+		}
 	}
 	
 	private void redeMitEingeborenen() {
@@ -324,7 +328,6 @@ public class Controller extends KeyAdapter implements ActionListener {
 	}
 
 	private void spielSpeichern() {
-		//TODO: schrittzahl, flaschenpost sichtbar
 
 		// create JAXB context and instantiate marshaller
 		JAXBContext context = null;

@@ -2,6 +2,7 @@ package thousandislands.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import thousandislands.controller.Konfiguration;
@@ -54,7 +55,7 @@ public class Flaschenpost {
 	}
 
 	private void bewegen() {
-		Feld naechstesFeld;
+		Optional<Feld> naechstesFeld;
 		Feld aktuellesFeld = spielfeld.getFlaschenpostFeld();
 
 		int zufall = wuerfel.nextInt(3);
@@ -73,8 +74,8 @@ public class Flaschenpost {
 			break;
 		}
 		
-		if (naechstesFeld != null && naechstesFeld.getTyp() == Typ.MEER) {
-			spielfeld.setFlaschenpostFeld(naechstesFeld);
+		if (naechstesFeld.isPresent() && naechstesFeld.get().getTyp() == Typ.MEER) {
+			spielfeld.setFlaschenpostFeld(naechstesFeld.get());
 		}
 	}
 

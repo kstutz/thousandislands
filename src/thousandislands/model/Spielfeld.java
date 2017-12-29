@@ -8,8 +8,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -36,33 +35,52 @@ public class Spielfeld {
         return felder;
     }
 
-    public Feld getNachbar(Feld feld, Richtung richtung) {
+    public Optional<Feld> getNachbar(Feld feld, Richtung richtung) {
         int x = feld.getX();
         int y = feld.getY();
-        Feld nachbarFeld = null;
+        Optional<Feld> nachbarFeld = Optional.empty();
         switch (richtung) {
             case NORDEN:
                 if (y > 0) {
-                    nachbarFeld = felder[x][y-1];
+                    nachbarFeld = Optional.of(felder[x][y-1]);
                 }
                 break;
             case OSTEN:
                 if (x < felder.length-1) {
-                    nachbarFeld = felder[x+1][y];
+                    nachbarFeld = Optional.of(felder[x+1][y]);
                 }
                 break;
             case SUEDEN:
                 if (y < felder[0].length-1) {
-                    nachbarFeld = felder[x][y+1];
+                    nachbarFeld = Optional.of(felder[x][y+1]);
                 }
                 break;
             case WESTEN:
                 if (x > 0) {
-                    nachbarFeld = felder[x-1][y];
+                    nachbarFeld = Optional.of(felder[x-1][y]);
                 }
                 break;
         }
         return nachbarFeld;
+    }
+
+    public Set<Feld> getNachbarn(Feld feld) {
+        Set<Feld> direkteNachbarn = new HashSet<>();
+        List<Richtung> richtungen = new ArrayList<>(Arrays.asList(Richtung.class.getEnumConstants()));
+        for (Richtung richtung : richtungen) {
+            getNachbar(feld, richtung).ifPresent(nachbar -> direkteNachbarn.add(nachbar));
+        }
+
+        Set<Feld> alleNachbarn = new HashSet<>();
+
+        for (Feld direkterNachbar: direkteNachbarn) {
+            for (Richtung richtung : richtungen) {
+                getNachbar(direkterNachbar, richtung).ifPresent(nachbar -> alleNachbarn.add(nachbar));
+            }
+        }
+        alleNachbarn.addAll(direkteNachbarn);
+
+        return alleNachbarn;
     }
 
     public Feld getZufaelligesMeerfeld() {
@@ -78,11 +96,14 @@ public class Spielfeld {
 
     public boolean setzePersonWeiter(Richtung richtung) {
 
-        Feld neuesFeld = getNachbar(aktuellesFeldPerson, richtung);
+        Optional<Feld> nachbarfeld = getNachbar(aktuellesFeldPerson, richtung);
 
-        if (neuesFeld == null) {
+        if (!nachbarfeld.isPresent()) {
             return false;
         }
+
+        Feld neuesFeld = nachbarfeld.get();
+
 //        if (person.getLevel == 0 && aktuellesFeldPerson.getTyp() == Typ.STRAND && neuesFeld.getTyp() == Typ.MEER) {
 //        }
 

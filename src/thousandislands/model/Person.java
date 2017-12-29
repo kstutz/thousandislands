@@ -13,6 +13,7 @@ public class Person {
 	private int level;
 	private int wasser;
 	private int nahrung;
+	@XmlElement
 	private boolean hatSchatzkarte;
 	@XmlElement
 	private boolean hatFloss;
