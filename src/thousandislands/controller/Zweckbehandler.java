@@ -194,7 +194,7 @@ public class Zweckbehandler {
 			gui.zeigeNachricht("Hier steht ein alter Tempel mitten im Dschungel.");		
 		} else {
 			//Kompass schon vorhanden
-			if (noetigeTeile.get(Ladung.KOMPASS)) {
+			if (schonVorhanden(Ladung.KOMPASS)) {
 				gui.zeigeNachricht("Ich habe mir hier schon alles angeschaut. "
 						+ "Hier ist nichts Brauchbares mehr zu finden.");
 			} else { //wir brauchen Kompass

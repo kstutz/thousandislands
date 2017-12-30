@@ -1,8 +1,6 @@
 package thousandislands.controller;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
@@ -30,6 +28,7 @@ public class GuiController implements ActionListener {
 	private JButton ladeknopf;
 	private JButton neuknopf;
 	private JButton nochmalknopf;
+	private JButton needankeknopf;
 	private JPanel knopfzeile;
 	private Schatzkarte schatzkarte;
 	private Spielfeld spielfeld;
@@ -54,6 +53,7 @@ public class GuiController implements ActionListener {
 		this.inventar = inventar;
 		this.noetigeTeile = noetigeTeile;
 
+		fenster.removeAll();
 		erstelleGui();
 	}
 
@@ -93,8 +93,11 @@ public class GuiController implements ActionListener {
 		neuknopf = new JButton("Neu starten");
 		neuknopf.setActionCommand("NOCHMAL");
 
-		nochmalknopf = new JButton("Nochmal spielen!");
+		nochmalknopf = new JButton("Au ja!");
 		nochmalknopf.setActionCommand("NOCHMAL");
+
+		needankeknopf = new JButton("Nee danke.");
+		needankeknopf.setActionCommand("BEENDEN");
 
 		knopfzeile = new JPanel();
 		knopfzeile.add(speicherknopf);
@@ -144,6 +147,7 @@ public class GuiController implements ActionListener {
 		ladeknopf.addActionListener(controller);
 		neuknopf.addActionListener(controller);
 		nochmalknopf.addActionListener(controller);
+		needankeknopf.addActionListener(controller);
 	}
 	
 	public void keyListenerHinzufuegen(Controller controller) {
@@ -174,7 +178,9 @@ public class GuiController implements ActionListener {
 		fenster.remove(knopfzeile);
 		
 		//TODO: huebscher machen
-		fenster.add(new JLabel("ENDE"));
+		fenster.setLayout(new FlowLayout());
+		fenster.add(new JLabel("<html>ENDE.<br>Nochmal spielen?</html>"));
 		fenster.add(nochmalknopf);
+		fenster.add(needankeknopf);
 	}
 }

@@ -389,6 +389,8 @@ public class Controller extends KeyAdapter implements ActionListener {
 			}
 		} else if (event.getActionCommand().equals("NOCHMAL")) {
 			spielInitialisieren();
+		} else if (event.getActionCommand().equals("BEENDEN")) {
+			System.exit(0);
 		} else {
 			knopfauswerter.knopfGedrueckt(event.getActionCommand());
 		}
