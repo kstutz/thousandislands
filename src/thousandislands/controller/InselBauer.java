@@ -271,7 +271,8 @@ public class InselBauer {
 			zufall = rand.nextInt(inselfelder.size());
 			schatzfeld = inselfelder.get(zufall);			
 		} while (schatzfeld.getTyp() != Typ.DSCHUNGEL);
-		schatzfeld.setTyp(Typ.SCHATZ);
+		schatzfeld.setTyp(Typ.ZWECK);
+		schatzfeld.setZweck(Zweck.SCHATZ);
 	}
 
 

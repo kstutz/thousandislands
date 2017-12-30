@@ -69,7 +69,6 @@ public class Landkarte extends JPanel{
 		case STRAND: return Color.YELLOW;
 		case SCHIFFBAUSTRAND: return Color.YELLOW;
 		case DSCHUNGEL: return Color.GREEN;
-		case SCHATZ: return Color.GREEN;
 		case ZWECK: return Color.BLACK;
 		case WRACK: return Color.RED;
 		case ROT: return Color.RED;
@@ -95,8 +94,6 @@ public class Landkarte extends JPanel{
 		} else if (feld.getTyp() == Typ.SCHIFFBAUSTRAND 
 				&& !feld.getLadung().isEmpty()) {
 			dateiname = "haufen.png";
-		} else if (feld.getTyp() == Typ.SCHATZ_GEFUNDEN) {
-			dateiname = "schatz.png";
 		}
 		
 		if (!dateiname.isEmpty()) {

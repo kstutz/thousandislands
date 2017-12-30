@@ -16,6 +16,8 @@ public enum Zweck {
 	BAUMSTUMPF ("baumstumpf2.png"),
 	SCHIFFBAU ("leer.png"),
 	OFFEN ("fragezeichen.png"),
+	SCHATZ ("leer.png"),
+	SCHATZ_GEFUNDEN ("schatz.png"),
 	LEER ("leer.png");
 
 	private final String dateiname;

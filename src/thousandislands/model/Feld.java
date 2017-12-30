@@ -26,8 +26,8 @@ public class Feld {
 	private Set<Ladung> ladungshaufen = new HashSet<>();
 	
 	public Feld (int x, int y) {
-		entdeckt = false;
-//		entdeckt = true;
+//		entdeckt = false;
+		entdeckt = true;
 		typ = Typ.MEER;
 		this.x = x;
 		this.y = y;

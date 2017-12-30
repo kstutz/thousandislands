@@ -39,18 +39,6 @@ public class Spiel {
 		return person;
 	}
 
-	public String getWasser() {
-		return person.getWasser() + " / " + person.getMaxWasser();
-	}
-
-	public String getNahrung() {
-		return person.getNahrung() + " / " + person.getMaxNahrung();
-	}
-
-	public boolean hatFloss() {
-		return person.hatFloss();
-	}
-
 	public Spielfeld getSpielfeld() {
 		return spielfeld;
 	}

@@ -54,6 +54,12 @@ public class Zweckbehandler {
 		case RUINE:
 			ruineGefunden();
 			break;
+		case SCHATZ:
+			schatzgefunden();
+			break;
+		case SCHATZ_GEFUNDEN:
+			segelMitnehmen();
+			break;
 		case LEER:
 			gui.zeigeNachricht("Auf dieser Insel scheint es gar nichts Interessantes zu geben!");
 			break;
@@ -99,7 +105,7 @@ public class Zweckbehandler {
 		if (person.getLevel() == 1 && noetigeTeile.get(Ladung.HOLZ)) {
 			gui.zeigeNachricht("Ich habe schon genug Holz.");				
 		//Level 2: Holz vorhanden
-		} else if (person.getLevel() == 2  && schonVorhanden(Ladung.RUMPF)) {
+		} else if (person.getLevel() == 2  && schonVorhanden(Ladung.PLANKEN)) {
 			gui.zeigeNachricht("Ich habe schon genug Holz für den Schiffsrumpf.");
 		} else { //man braucht noch Holz
 			gui.zeigeNachricht("Hier gibt es jede Menge Holz! Und Holz schwimmt gut...");
@@ -196,6 +202,20 @@ public class Zweckbehandler {
 						+ "Vielleicht finde ich hier etwas, das ich gebrauchen kann.");
 				gui.setzeKnopf(Aktion.RUINEN_DURCHSUCHEN);
 			}				
+		}
+	}
+
+	private void schatzgefunden() {
+		if (person.hatSchatzkarte() && !schonVorhanden(Ladung.SEGEL)) {
+			gui.zeigeNachricht("Hey, hier ist eine Schatzkiste im Dschungel versteckt!");
+			gui.setzeKnopf(Aktion.OEFFNEN);
+		}
+	}
+
+	private void segelMitnehmen() {
+		if (!schonVorhanden(Ladung.SEGEL)) {
+			gui.zeigeNachricht("Ein Segel!");
+			gui.setzeKnopf(Aktion.SEGEL_MITNEHMEN);
 		}
 	}
 }

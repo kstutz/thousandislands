@@ -107,10 +107,12 @@ public class Spielfeld {
 //        if (person.getLevel == 0 && aktuellesFeldPerson.getTyp() == Typ.STRAND && neuesFeld.getTyp() == Typ.MEER) {
 //        }
 
-        if (aktuellesFeldPerson.getTyp() == Typ.MEER && neuesFeld.getTyp() == Typ.DSCHUNGEL) {
+        if (aktuellesFeldPerson.getTyp() == Typ.MEER
+                && (neuesFeld.getTyp() == Typ.DSCHUNGEL || neuesFeld.getTyp() == Typ.ZWECK)) {
             return false;
         }
-        if (aktuellesFeldPerson.getTyp() == Typ.DSCHUNGEL && neuesFeld.getTyp() == Typ.MEER) {
+        if ((aktuellesFeldPerson.getTyp() == Typ.DSCHUNGEL || aktuellesFeldPerson.getTyp() == Typ.ZWECK)
+                && neuesFeld.getTyp() == Typ.MEER) {
             return false;
         }
 

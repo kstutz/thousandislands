@@ -9,6 +9,9 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import thousandislands.model.Feld;
+import thousandislands.model.enums.Zweck;
+
+import static thousandislands.model.enums.Zweck.SCHATZ;
 
 public class Schatzkarte extends JDialog{
 	private Feld[][] felder;
@@ -50,8 +53,12 @@ public class Schatzkarte extends JDialog{
 			case MEER: return Color.LIGHT_GRAY;
 			case STRAND: return Color.GRAY;	
 			case DSCHUNGEL: return Color.DARK_GRAY;
-			case ZWECK: return Color.BLACK;
-			case SCHATZ: return Color.RED;
+			case ZWECK:
+				if (feld.getZweck() == Zweck.SCHATZ) {
+					return Color.RED;
+				} else {
+					return Color.BLACK;
+				}
 			default: return Color.DARK_GRAY;
 			}
 		}

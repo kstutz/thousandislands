@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import javax.swing.Timer;
 import javax.xml.bind.JAXBContext;
@@ -56,7 +55,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		flaschenpost = new Flaschenpost(spielfeld);
 
 		inventar = new Inventar();
-		noetigeTeile = new HashMap<>();
+		noetigeTeile = new LinkedHashMap<>();
 		spiel = new Spiel(spielfeld, person, inventar, noetigeTeile, flaschenpost);
 
 		timer = new Timer(ZEITTAKT_IN_MS, this);
@@ -96,7 +95,7 @@ public class Controller extends KeyAdapter implements ActionListener {
 		timer.setActionCommand("TIMER");
 
 		if (noetigeTeile == null) {
-			noetigeTeile = new HashMap<>();
+			noetigeTeile = new LinkedHashMap<>();
 		}
 
 		if (fensterErstellen) {
@@ -157,8 +156,8 @@ public class Controller extends KeyAdapter implements ActionListener {
 		gui.loescheNachrichten();
 		gui.knopfFuerAllesSichtbar(false);
 
-		System.out.println(noetigeTeile.entrySet());
-		inventar.listeAusgeben();
+//		System.out.println(noetigeTeile.entrySet());
+//		inventar.listeAusgeben();
 
 		Feld aktuellesFeld = spielfeld.getAktuellesFeldPerson();
 		deckeUmgebungAuf(aktuellesFeld);
@@ -194,12 +193,6 @@ public class Controller extends KeyAdapter implements ActionListener {
 		if (!person.hatSchatzkarte() && person.getLevel() == 2) {
 			flaschenpost.aktualisieren(person.getSchrittzahl());
 		}
-		
-		//Schatz heben
-		if (person.hatSchatzkarte() 
-				&& aktuellesFeld.getTyp() == Typ.SCHATZ) {
-			behandleSchatzfund();
-		}
 
 		//Zweckfelder behandeln
 		if (aktuellesFeld.getTyp() == Typ.ZWECK) {
@@ -223,18 +216,22 @@ public class Controller extends KeyAdapter implements ActionListener {
 				&& aktuellesFeld.getTyp() == Typ.STRAND) {
 			gui.setzeKnopf(Aktion.FLOSS_BAUEN);
 		}
-		
-		//Schiffbaustrand
-		if (person.getLevel() == 2 && aktuellesFeld.getTyp() == Typ.SCHIFFBAUSTRAND
-				&& !inventar.istLeer()) {
-			gui.setzeKnopf(Aktion.ABLADEN);
-		}
-		
+
 		if (person.getLevel() == 1 && person.hatFloss()) {
 			gui.zeigeNachricht("Ich habe ein Floss gebaut! \n" +
 					"Ich sollte zu den Eingeborenen zurueckkehren.");
 		}
-		
+
+		//Schiffbaustrand
+		if (aktuellesFeld.getTyp() == Typ.SCHIFFBAUSTRAND) {
+			if (person.getLevel() == 2 && !inventar.istLeer()) {
+				gui.setzeKnopf(Aktion.ABLADEN);
+			}
+			if (allesGefunden()) {
+				gui.setzeKnopf(Aktion.SCHIFF_BAUEN);
+			}
+		}
+
 		gui.aktualisiere();
 	}
 
@@ -285,16 +282,16 @@ public class Controller extends KeyAdapter implements ActionListener {
 //			noetigeTeile.add(Ladung.KORB);
 		} else {
 			noetigeTeile.clear();
-			noetigeTeile.put(Ladung.RUMPF, false);
-			noetigeTeile.put(Ladung.MAST, false);
-			noetigeTeile.put(Ladung.KOMPASS, false);
 			noetigeTeile.put(Ladung.KRUG, false);
-			noetigeTeile.put(Ladung.KORB, false);
 			noetigeTeile.put(Ladung.WASSER, false);
+			noetigeTeile.put(Ladung.KORB, false);
 			noetigeTeile.put(Ladung.NAHRUNG, false);
 			noetigeTeile.put(Ladung.SEILE, false);
+			noetigeTeile.put(Ladung.PLANKEN, false);
+			noetigeTeile.put(Ladung.MAST, false);
 			noetigeTeile.put(Ladung.SEGEL, false);
 			noetigeTeile.put(Ladung.WERKZEUG, false);
+			noetigeTeile.put(Ladung.KOMPASS, false);
 		}
 	}
 
@@ -325,6 +322,10 @@ public class Controller extends KeyAdapter implements ActionListener {
 
 	private boolean schonGefunden(Ladung ladung) {
 		return noetigeTeile.get(ladung) || inventar.enthaelt(ladung);
+	}
+
+	private boolean allesGefunden() {
+		return person.getLevel() == 2 && !noetigeTeile.values().contains(false);
 	}
 
 	private void spielSpeichern() {

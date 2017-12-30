@@ -8,6 +8,7 @@ import thousandislands.model.Spielfeld;
 import thousandislands.model.enums.Aktion;
 import thousandislands.model.enums.Ladung;
 import thousandislands.model.enums.Typ;
+import thousandislands.model.enums.Zweck;
 
 public class Knopfauswerter {
 	private GuiController gui;
@@ -68,14 +69,17 @@ public class Knopfauswerter {
 		case "KOMPASS_MITNEHMEN":
 			kompassMitnehmen();
 			break;
-		case "SEGEL_MITNEHMEN":
-			segelMitnehmen();
-			break;
 		case "WRACK_DURCHSUCHEN":
 			wrackDurchsuchen();
 			break;
 		case "WERKZEUG_MITNEHMEN":
 			werkzeugMitnehmen();
+			break;
+		case "OEFFNEN":
+			kisteOeffnen();
+			break;
+		case "SEGEL_MITNEHMEN":
+			segelMitnehmen();
 			break;
 		case "ABLADEN":
 			abladen();
@@ -103,10 +107,10 @@ public class Knopfauswerter {
 			}
 		} else { //hat Floss
 			// Gewicht okay
-			if (inventar.getGesamtgewicht() + Ladung.RUMPF.getGewicht() 
+			if (inventar.getGesamtgewicht() + Ladung.PLANKEN.getGewicht()
 					<= person.getTragfaehigkeit()) {
-				inventar.ladungHinzufuegen(Ladung.RUMPF);
-				gui.zeigeNachricht("Aus diesem Holz kann ich den Rumpf für mein Schiff bauen.");
+				inventar.ladungHinzufuegen(Ladung.PLANKEN);
+				gui.zeigeNachricht("Aus diesem Holz kann ich Planken für mein Schiff machen.");
 			} else { //zuviel Gewicht
 				gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
 						+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
@@ -271,8 +275,7 @@ public class Knopfauswerter {
 
 	private void flossBauen() {
 		person.setFloss(true);
-		gui.zeigeNachricht("Toll, jetzt habe ich ein Floss, so dass ich schneller vorankomme "
-				+ "und mehr Dinge transportieren kann.");
+		gui.zeigeNachricht("Toll, jetzt habe ich ein Floss, so dass ich mehr Dinge transportieren kann.");
 		inventar.ladungEntfernen(Ladung.HOLZ);
 		inventar.ladungEntfernen(Ladung.LIANE);
 		spielfeld.setFlossFeld(spielfeld.getAktuellesFeldPerson());
@@ -308,20 +311,6 @@ public class Knopfauswerter {
 		gui.knopfFuerAllesSichtbar(false);			
 	}
 
-	private void segelMitnehmen() {
-		if (inventar.getGesamtgewicht() + Ladung.SEGEL.getGewicht() 
-				<= person.getTragfaehigkeit()) {
-			gui.zeigeNachricht("Jetzt habe ich ein Segel für mein Schiff!");
-			inventar.ladungHinzufuegen(Ladung.SEGEL);
-			gui.aktualisiereListen();
-		} else { //zuviel Gewicht
-			gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
-					+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
-		}
-		spielfeld.getAktuellesFeldPerson().setTyp(Typ.SCHATZ_GEFUNDEN);
-		gui.knopfFuerAllesSichtbar(false);			
-	}
-
 	private void wrackDurchsuchen() {
 		gui.zeigeNachricht("Im Wrack gibt es nicht viel Brauchbares, "
 				+ "aber ich habe immerhin einige Werkzeuge gefunden.");
@@ -342,14 +331,32 @@ public class Knopfauswerter {
 		gui.knopfFuerAllesSichtbar(false);			
 	}
 
-	private void abladen() {
+	private void kisteOeffnen() {
+		gui.zeigeNachricht("Hey, der Schatz ist eine alte Piraten-Notfallkiste! \n" +
+				"Sie enthält ein Segel, wie praktisch.");
+		spielfeld.getAktuellesFeldPerson().setZweck(Zweck.SCHATZ_GEFUNDEN);
+		gui.kartenknopfSichtbar(false);
+		gui.setzeKnopf(Aktion.SEGEL_MITNEHMEN);
+	}
 
-		//alles auf einem Haufen abladen
-		//wenn es Fehler gibt (Papaya etc.) dann Knopf für "Weiter abladen"?
+	private void segelMitnehmen() {
+		if (inventar.getGesamtgewicht() + Ladung.SEGEL.getGewicht()
+				<= person.getTragfaehigkeit()) {
+			gui.zeigeNachricht("Jetzt habe ich ein Segel für mein Schiff!");
+			inventar.ladungHinzufuegen(Ladung.SEGEL);
+			gui.aktualisiereListen();
+			gui.knopfFuerAllesSichtbar(false);
+		} else { //zuviel Gewicht
+			gui.zeigeNachricht("Wenn ich das auch noch mitnehme, sinkt mein Floß! "
+					+ "Ich muss erstmal etwas an meinem Schiffbauplatz abladen.");
+		}
+	}
+
+	private void abladen() {
 
 		StringBuilder text = new StringBuilder();
 		List<Ladung> fracht = new ArrayList<>(Arrays.asList(
-				Ladung.RUMPF, Ladung.KOMPASS, Ladung.KORB, Ladung.KRUG,
+				Ladung.PLANKEN, Ladung.KOMPASS, Ladung.KORB, Ladung.KRUG,
 				Ladung.SEILE, Ladung.MAST, Ladung.SEGEL, Ladung.WERKZEUG,
 				Ladung.WASSER, Ladung.NAHRUNG));
 		List<String> abladeliste = new ArrayList<>();
@@ -397,13 +404,10 @@ public class Knopfauswerter {
 		
 		if (!abgeladen.isEmpty()) {
 			text.append("Ich habe abgeladen: ");
-			text.append(abgeladen);			
+			text.append(abgeladen);
+			text.append("\n");
 		}
 		
-		//TODO entfernen
-		System.out.println("Nachher: ");
-		inventar.listeAusgeben();
-
 		if (noetigeTeile.values().contains(false)) {
 			gui.knopfFuerAllesSichtbar(false);
 		} else {	//alles gefunden!

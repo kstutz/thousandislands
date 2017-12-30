@@ -48,18 +48,6 @@ public class GuiController implements ActionListener {
 		erstelleGui();
 	}
 
-	public void setSpielfeld(Spielfeld spielfeld) {
-		this.spielfeld = spielfeld;
-	}
-
-	public void setPerson(Person person) {
-		this.person = person;
-	}
-
-	public void setInventar(Inventar inventar) {
-		this.inventar = inventar;
-	}
-
 	public void resetGui(Spielfeld spielfeld, Person person, Inventar inventar, Map<Ladung, Boolean> noetigeTeile) {
 		this.spielfeld = spielfeld;
 		this.person = person;
@@ -145,72 +133,9 @@ public class GuiController implements ActionListener {
 	}	
 	
 	public void setzeKnopf(Aktion aktion) {
-		knopfFuerAlles.setVisible(true);
-		
-		switch(aktion) {
-		
-		case HOLZ_MITNEHMEN:
-			knopfFuerAlles.setText("Holz mitnehmen");
-			break;
-		case LIANEN_MITNEHMEN:
-			knopfFuerAlles.setText("Lianen mitnehmen");
-			break;
-		case KRUG_FUELLEN:
-			knopfFuerAlles.setText("Krug fuellen");
-			break;
-		case KORB_FUELLEN:
-			knopfFuerAlles.setText("Korb fuellen");
-			break;
-		case KRUG_FORMEN:
-			knopfFuerAlles.setText("Krug formen");
-			break;			
-		case FEUER_MACHEN:
-			knopfFuerAlles.setText("Feuer machen");
-			break;
-		case KRUG_BRENNEN:
-			knopfFuerAlles.setText("Krug brennen");
-			break;
-		case KORB_FLECHTEN:
-			knopfFuerAlles.setText("Korb flechten");
-			break;
-		case PAPAYA_MITNEHMEN:
-			knopfFuerAlles.setText("Papaya mitnehmen");
-			break;
-		case TROTZDEM_MITNEHMEN:
-			knopfFuerAlles.setText("<html>Trotzdem<br/>mitnehmen</html>");
-			break;
-		case BAUM_FAELLEN:
-			knopfFuerAlles.setText("Baum fällen");
-			break;
-		case SEGEL_MITNEHMEN:
-			knopfFuerAlles.setText("Segel mitnehmen");
-			break;
-		case FLOSS_BAUEN:
-			knopfFuerAlles.setText("Floß bauen");
-			break;
-		case RUINEN_DURCHSUCHEN:
-			knopfFuerAlles.setText("Ruinen durchsuchen");
-			break;
-		case KOMPASS_MITNEHMEN:
-			knopfFuerAlles.setText("Kompass mitnehmen");
-			break;
-		case WRACK_DURCHSUCHEN:
-			knopfFuerAlles.setText("Wrack durchsuchen");
-			break;
-		case WERKZEUG_MITNEHMEN:
-			knopfFuerAlles.setText("<html>Werkzeug<br/>mitnehmen</html>");
-			break;
-		case ABLADEN:
-			knopfFuerAlles.setText("Abladen");
-			break;
-		case SCHIFF_BAUEN:
-			knopfFuerAlles.setText("Schiff bauen");
-			break;
-		default:
-			break;
-		
-		}
+		knopfFuerAlles.setText(aktion.getKnopftext());
 		knopfFuerAlles.setActionCommand(aktion.toString());
+		knopfFuerAlles.setVisible(true);
 	}
 
 	public void actionListenerHinzufuegen(Controller controller) {
@@ -234,7 +159,6 @@ public class GuiController implements ActionListener {
 	public void knopfFuerAllesSichtbar(boolean bool) {
 		knopfFuerAlles.setVisible(bool);
 	}
-	
 
 	public void fokusHolen() {
 		fenster.requestFocus();
